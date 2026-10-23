@@ -19,6 +19,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { ChannelPlan, planChannel } from './channel-plan';
 import { RequestEngine, newShortRef } from './request-engine';
 import { ReplyLabel } from './reply-classifier';
+import { DispatchQueueService } from '../queue/dispatch-queue.service';
 import {
   GROUP_STATUSES,
   RequestCounts,
@@ -80,6 +81,7 @@ export interface ListItemShape {
   dueAt: string | null;
   completedAt: string | null;
   nextCheckAt: string | null;
+  nextAttemptAt: string | null;
   lastActivityAt: string;
 }
 
@@ -104,6 +106,7 @@ function toListItem(r: RequestDoc | (RemovalRequest & { _id: Types.ObjectId }), 
     dueAt: iso(r.dueAt),
     completedAt: iso(r.completedAt),
     nextCheckAt: iso(r.nextCheckAt),
+    nextAttemptAt: iso(r.nextAttemptAt),
     lastActivityAt: r.lastActivityAt.toISOString(),
   };
 }
@@ -121,18 +124,25 @@ export class RequestsService {
     private readonly crypto: CryptoService,
     private readonly pdf: PdfService,
     private readonly notifications: NotificationsService,
+    private readonly dispatchQueue: DispatchQueueService,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
   // ------------------------------------------------------------------ profile lifecycle hooks
-  async createForProfile(profile: ProfileDoc): Promise<{ emailRequests: number; manualActions: number }> {
+  async createForProfile(profile: ProfileDoc): Promise<{ emailRequests: number; manualActions: number; dailyEmailBatchSize: number }> {
     const brokers = await this.brokers.sendableBrokers();
     const revived = await this.engine.reviveSuspended(profile._id);
     let emailRequests = revived.email;
     let manualActions = revived.manual;
+    const now = this.engine.clock.now();
+    const createdForQueue: Array<{ id: string; userId: string; profileId: string; brokerKey: string; cycle: number }> = [];
+
     for (const b of brokers) {
       const plan = planChannel(b);
       if (!plan) continue;
+      // Stagger email requests in daily batches of userDailyRequestLimit (default 5)
+      const dayOffset = plan.channel === 'email' ? Math.floor(emailRequests / this.config.userDailyRequestLimit) : 0;
+      const scheduledAt = dayOffset === 0 ? now : addDays(now, dayOffset);
       const doc = await this.engine.createRequest(profile, {
         brokerKey: b.slug,
         brokerName: b.name,
@@ -140,12 +150,28 @@ export class RequestsService {
         brokerCategory: b.category,
         plan,
         cycle: 1,
+        scheduledAt,
       });
       if (!doc) continue;
-      if (plan.channel === 'email') emailRequests += 1;
-      else manualActions += 1;
+      if (plan.channel === 'email') {
+        emailRequests += 1;
+        createdForQueue.push({
+          id: String(doc._id),
+          userId: String(profile.userId),
+          profileId: String(profile._id),
+          brokerKey: b.slug,
+          cycle: 1,
+        });
+      } else {
+        manualActions += 1;
+      }
     }
-    return { emailRequests, manualActions };
+
+    if (createdForQueue.length && this.dispatchQueue.isReady) {
+      await this.dispatchQueue.enqueueBatch(createdForQueue);
+    }
+
+    return { emailRequests, manualActions, dailyEmailBatchSize: this.config.userDailyRequestLimit };
   }
 
   cancelQueuedForProfile(profileId: Types.ObjectId): Promise<void> {
@@ -514,8 +540,18 @@ export class RequestsService {
         plan,
         cycle: 1,
       });
-      if (doc) created.push(toListItem(doc, doc.createdAt));
-      else skipped.push({ brokerId, reason: 'exists' });
+      if (doc) {
+        created.push(toListItem(doc, doc.createdAt));
+        if (plan.channel === 'email' && this.dispatchQueue.isReady) {
+          await this.dispatchQueue.enqueueRequest({
+            id: String(doc._id),
+            userId: String(doc.userId),
+            profileId: String(doc.profileId),
+            brokerKey: doc.brokerKey,
+            cycle: doc.cycle,
+          });
+        }
+      } else skipped.push({ brokerId, reason: 'exists' });
     }
     return { created, skipped };
   }
@@ -609,6 +645,15 @@ export class RequestsService {
       custom: { name: dto.name.trim(), website: dto.website, contactEmail: dto.contactEmail?.toLowerCase(), notes: dto.notes },
     });
     if (!doc) throw conflict('Could not create the request, try again', 'INVALID_STATE');
+    if (plan.channel === 'email' && this.dispatchQueue.isReady) {
+      await this.dispatchQueue.enqueueRequest({
+        id: String(doc._id),
+        userId: String(doc.userId),
+        profileId: String(doc.profileId),
+        brokerKey: doc.brokerKey,
+        cycle: doc.cycle,
+      });
+    }
     return toListItem(doc, doc.createdAt);
   }
 }

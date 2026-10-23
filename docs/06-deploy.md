@@ -8,6 +8,7 @@ flowchart LR
   U[Utente] -->|HTTPS| W[Frontend nginx<br/>Cloud Run]
   W -->|/api/*| A[API NestJS<br/>Cloud Run]
   A --> M[(MongoDB Atlas)]
+  A --> REDIS[(Redis Cloud)]
   A -->|invio| R[Resend]
   R -->|webhook email.received| A
   S[Cloud Scheduler] -->|POST /internal/cron/tick| A
@@ -18,6 +19,7 @@ flowchart LR
 
 - Progetto Google Cloud con Cloud Run, Artifact Registry, Secret Manager e Cloud Scheduler abilitati.
 - Cluster MongoDB Atlas (anche M0/M10 per cominciare) con accesso di rete per Cloud Run.
+- Istanza Redis (Redis Cloud o Google Memorystore) per la coda di invio asincrono BullMQ.
 - Account Resend con dominio di invio e dominio di ricezione (vedi [Installazione](./05-installazione-e-configurazione.md#attivare-linvio-reale-con-resend)).
 - Un dominio per l'applicazione, ad esempio `cancellamy.example.org`.
 
@@ -45,6 +47,7 @@ Crea i segreti in Secret Manager e montali come variabili d'ambiente:
 | `jwt-access-secret` | `openssl rand -base64 48` |
 | `data-encryption-key` | `openssl rand -base64 32` (**conservane una copia offline**) |
 | `mongodb-uri` | Stringa di connessione Atlas |
+| `redis-url` | Stringa di connessione Redis (BullMQ) |
 | `resend-api-key`, `resend-webhook-secret` | Da Resend |
 | `cron-secret` | Una stringa casuale lunga |
 
@@ -58,9 +61,10 @@ gcloud run deploy cancellamy-api \
   --set-env-vars NODE_ENV=production,MAIL_MODE=dry-run,APP_URL=https://cancellamy.example.org,\
 CORS_ORIGINS=https://cancellamy.example.org,TRUST_PROXY=true,SCHEDULER_ENABLED=false,\
 MAIL_FROM='Cancellamy <richieste@example.org>',INBOUND_DOMAIN=in.example.org,\
-OPERATOR_NAME='La tua organizzazione',SUPPORT_EMAIL=supporto@example.org \
+OPERATOR_NAME='La tua organizzazione',SUPPORT_EMAIL=supporto@example.org,\
+RESEND_DAILY_LIMIT=100,RESEND_MONTHLY_LIMIT=3000,USER_DAILY_REQUEST_LIMIT=5 \
   --set-secrets JWT_ACCESS_SECRET=jwt-access-secret:latest,DATA_ENCRYPTION_KEY=data-encryption-key:latest,\
-MONGODB_URI=mongodb-uri:latest,RESEND_API_KEY=resend-api-key:latest,\
+MONGODB_URI=mongodb-uri:latest,REDIS_URL=redis-url:latest,RESEND_API_KEY=resend-api-key:latest,\
 RESEND_WEBHOOK_SECRET=resend-webhook-secret:latest,CRON_SECRET=cron-secret:latest
 ```
 

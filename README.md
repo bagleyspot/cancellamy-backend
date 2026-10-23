@@ -27,6 +27,7 @@ This repository is the API (NestJS 11, TypeScript strict, MongoDB). The web app 
 | Delega | The user signs an authorization (typed name must match). A PDF with the signature hash is attached to every email. Revocable |
 | Registry | 490+ brokers in `registry/brokers.yaml` (provenance and license per entry). Only `verified` entries are contacted automatically |
 | Requests | Email (via Resend) or guided manual action (web form, phone, PEC, the RPO). Italian or English text depending on the broker |
+| Queue & Quota Guard | Asynchronous queue with BullMQ and Redis: max 5 requests/day per user (anti-monopoly fair-share) and strict Resend daily (100) and monthly (3000) caps to protect deliverability |
 | Replies | Inbound webhook (`email.received`), matching by reply address + reference code + sender domain, heuristic classification (completed / refused / id required / more info) |
 | Deadlines | Overdue after 30 days, two automatic reminders, manual reminder, complaint draft (text + PDF), renewal every 90 days |
 | Extras | Custom removals, notifications (in-app + email), monthly reports, data export (art. 20), account deletion, admin area |
@@ -131,6 +132,7 @@ src/
   profiles/    profile CRUD, delega, PDF, activation
   brokers/     registry loader, public catalogue, admin edits
   requests/    channel planning, state machine, engine (send, reply, overdue, renew), user actions
+  queue/       BullMQ queue, Redis connection, staggered batching, serial delivery worker
   inbound/     Resend webhook, matching, unmatched queue
   scheduler/   lease + periodic tasks, cron endpoint
   notifications/ reports/ pdf/ templates/ mail/ admin/ health/

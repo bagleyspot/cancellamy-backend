@@ -11,6 +11,7 @@ import { RequestEngine } from '../requests/request-engine';
 import { BreachesService } from '../breaches/breaches.service';
 import { DelistingsService } from '../delistings/delistings.service';
 import { NuisanceService } from '../nuisance/nuisance.service';
+import { DispatchQueueService } from '../queue/dispatch-queue.service';
 
 const LOCK_ID = 'scheduler';
 const LOCK_TTL_MS = 5 * 60 * 1000;
@@ -49,6 +50,7 @@ export class SchedulerService implements OnApplicationBootstrap, OnApplicationSh
     private readonly delistings: DelistingsService,
     private readonly nuisance: NuisanceService,
     private readonly mail: MailService,
+    private readonly dispatchQueue: DispatchQueueService,
     private readonly clock: Clock,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
@@ -108,6 +110,9 @@ export class SchedulerService implements OnApplicationBootstrap, OnApplicationSh
     try {
       result.overdue = (await this.engine.markOverdue()).length;
       result.synced = await this.engine.syncNewBrokers(20);
+      if (this.dispatchQueue.isReady) {
+        await this.dispatchQueue.enqueueDueRequests(this.config.sendBatchSize);
+      }
       for (const req of await this.engine.claimQueued(this.config.sendBatchSize)) {
         const outcome = await this.engine.deliverClaimed(req);
         if (outcome === 'sent') result.sent += 1;

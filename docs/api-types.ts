@@ -185,6 +185,7 @@ export interface SignAuthorizationRequest {
 export interface ActivateProfileResponse {
   emailRequests: number; // queued to be sent by email
   manualActions: number; // require user action (web form, phone...)
+  dailyEmailBatchSize?: number; // max automated email requests sent per user per day (fair-share quota)
 }
 
 // ------------------------------------------------------------------ brokers (registry)
@@ -296,6 +297,7 @@ export interface RequestListItem {
   dueAt: string | null; // sentAt + 30 days (art. 12.3 GDPR)
   completedAt: string | null;
   nextCheckAt: string | null; // when the renewal will be sent
+  nextAttemptAt: string | null; // when the next send attempt is scheduled (daily batching)
   lastActivityAt: string;
 }
 

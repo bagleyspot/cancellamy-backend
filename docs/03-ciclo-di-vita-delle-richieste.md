@@ -70,9 +70,16 @@ una **nuova** richiesta.
 
 ## L'invio
 
-Lo scheduler (un giro al minuto) prende le richieste `queued` il cui profilo è attivo, a lotti (`SEND_BATCH_SIZE`,
-predefinito 25) e invia:
+L'invio delle richieste email è regolato da una **coda asincrona gestita con BullMQ e Redis** (`DispatchQueueService`),
+con il coordinamento dello scheduler periodico. Le richieste non partono tutte all'istante, ma vengono scaglionate
+secondo una politica di equità (**Fair-Share**) e protezione delle quote del fornitore:
 
+- **Scaglionamento per utente (massimo 5 al giorno):** All'attivazione del profilo o all'aggiunta di richieste, le email
+  vengono calendarizzate a blocchi di massimo 5 al giorno per utente (`USER_DAILY_REQUEST_LIMIT=5`). Il primo blocco
+  parte oggi (distanziato di alcuni secondi per evitare raffiche), il secondo dopo 24 ore, il terzo dopo 48 ore, e così via.
+- **Protezione quote Resend (100/giorno, 3000/mese):** Il sistema tiene traccia dei volumi complessivi. A 95 email inviate
+  nella giornata, le richieste massive si mettono automaticamente in pausa per riservare le ultime 5 email a comunicazioni
+  critiche di sistema (verifiche account, reset password). I job residui vengono rischedulati a domani senza errori.
 - **Mittente:** `Cancellamy per conto di Nome Cognome <indirizzo MAIL_FROM>`.
 - **Rispondi a:** un indirizzo per profilo, `r-<token>@INBOUND_DOMAIN`, che permette di collegare le risposte.
 - **Oggetto:** `Richiesta di cancellazione e opposizione (artt. 17 e 21 GDPR) - Nome Cognome [CNC-XXXXXXXX]`.
@@ -82,6 +89,11 @@ predefinito 25) e invia:
   documenti se non indispensabili (minimizzazione) e l'avviso del possibile reclamo al Garante.
 - **Idempotenza:** ogni invio usa una chiave (`req-<id>-erasure`) così il fornitore non recapita due volte lo stesso
   messaggio, anche se l'operazione viene ripetuta.
+
+### Perché questa limitazione è essenziale
+1. **Evitare il blocco dell'account email:** Rispettare rigorosamente il tetto di 100 email/giorno e 3000 email/mese di Resend.
+2. **Prevenire il monopolio da parte di un singolo utente:** Senza questo limite, un solo utente che attiva un profilo con oltre 360 broker consumerebbe immediatamente la quota di 3 giorni e mezzo per l'intera piattaforma.
+3. **Tutela della deliverability e antispam:** I provider email e i broker destinatari penalizzano fortemente i domini che generano picchi anomali istantanei. L'invio dilazionato assicura che le richieste vengano lette e lavorate regolarmente.
 
 ### Se l'invio fallisce
 

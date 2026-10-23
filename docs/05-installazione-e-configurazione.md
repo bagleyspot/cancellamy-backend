@@ -7,6 +7,7 @@
 | Node.js | 20 o superiore (sviluppato e testato con 22) |
 | npm | 10 o superiore (il lockfile è prodotto con npm 11) |
 | MongoDB | 6 o superiore (testato con 7 e 8) |
+| Redis | 7 o superiore / Redis Cloud (richiesto per le code asincrone BullMQ e l'invio scaglionato) |
 | Docker | Facoltativo (database locale, immagini di produzione) |
 | Resend | Solo per l'invio reale: account, dominio di invio e dominio di ricezione |
 
@@ -178,6 +179,10 @@ risultare **same-site**: la soluzione più semplice è servirli dallo stesso dom
 | `REMINDER_INTERVAL_DAYS` | `15` | Distanza tra i solleciti |
 | `RENEWAL_DAYS` | `90` | Giorni prima di una nuova verifica dopo la cancellazione |
 | `SEND_BATCH_SIZE` | `25` | Email inviate al massimo per giro dello scheduler |
+| `RESEND_DAILY_LIMIT` | `100` | Quota massima globale di email al giorno con Resend |
+| `RESEND_MONTHLY_LIMIT` | `3000` | Quota massima globale di email al mese con Resend |
+| `RESEND_SYSTEM_RESERVE` | `5` | Posti giornalieri riservati a email critiche di sistema (verifiche/reset) |
+| `USER_DAILY_REQUEST_LIMIT` | `5` | Massimo numero di richieste automatiche inviate al giorno per singolo utente |
 | `SEED_ON_BOOT` | `true` | Carica/aggiorna il registry all'avvio |
 | `REGISTRY_PATH` | `registry/brokers.yaml` | Percorso del file del registry |
 
@@ -187,6 +192,20 @@ risultare **same-site**: la soluzione più semplice è servirli dallo stesso dom
 |---|---|---|
 | `SCHEDULER_ENABLED` | `true` | Timer interno. Mettilo a `false` se usi Cloud Scheduler |
 | `SCHEDULER_INTERVAL_SECONDS` | `60` | Frequenza del timer interno (minimo 5) |
+
+### Coda asincrona e rate limiting (BullMQ + Redis)
+
+Le richieste email vengono inserite nella coda `request-dispatch` gestita con BullMQ e Redis per evitare picchi e garantire un invio uniforme a scaglioni.
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `REDIS_URL` | `redis://localhost:6379` | Stringa di connessione Redis completa (con credenziali se necessarie) |
+| `REDIS_HOST` | `localhost` | Host Redis |
+| `REDIS_PORT` | `6379` | Porta Redis |
+| `REDIS_USERNAME` | `default` | Utente Redis |
+| `REDIS_PASSWORD` | vuota | Password di autenticazione Redis (da impostare solo nel tuo `.env`, mai nel repository) |
+| `REDIS_TLS` | `false` | Se abilitare TLS per la connessione Redis |
+| `QUEUE_ENABLED` | `true` (in test: `false`) | Abilita la coda e i worker BullMQ per il recapito asincrono |
 
 ### Funzioni opzionali
 
@@ -235,6 +254,25 @@ Con `MAIL_MODE=resend` il pulsante di simulazione delle risposte è disattivato 
 
 Limiti del fornitore: l'API di Resend consente circa 2 richieste al secondo; lo scheduler rallenta di 600 ms tra un
 invio e l'altro in modalità reale.
+
+### Gestione quote e prevenzione monopolio (Fair-Share)
+
+Cancellamy integra un sistema automatico di controllo quote (`MailQuotaService`):
+
+1. **Quote Resend globali:**
+   - **Giornaliera:** Massimo 100 email al giorno (`RESEND_DAILY_LIMIT=100`).
+   - **Mensile:** Massimo 3000 email al mese (`RESEND_MONTHLY_LIMIT=3000`).
+   - **Riserva email di sistema:** 5 email al giorno sono riservate per verifiche account e recupero password (`RESEND_SYSTEM_RESERVE=5`). Le richieste massive si arrestano automaticamente a 95 email/giorno, impedendo il blocco dell'accesso per gli utenti.
+
+2. **Scaglionamento e limite per utente (Fair-Share):**
+   - Ogni utente ha un limite di **5 richieste automatiche al giorno** (`USER_DAILY_REQUEST_LIMIT=5`).
+   - Quando un utente attiva un profilo con centinaia di broker (es. ~368 broker verificati), le richieste email vengono create con date programmate a scaglioni giornalieri progressivi (le prime 5 oggi, le successive 5 domani, ecc.).
+   - Il runtime dello scheduler verifica atomicamente i volumi inviati dall'utente: se un utente ha già raggiunto le 5 richieste odierne, i suoi task residui vengono posticipati al giorno successivo, consentendo allo scheduler di servire gli altri utenti della piattaforma.
+
+**Perché questa limitazione è fondamentale:**
+- **Zero superamento quote:** Protegge dalle tariffe extra o dalla sospensione dell'account Resend Free.
+- **Anti-monopolizzazione:** Nessun singolo utente può consumare in pochi minuti l'intero budget giornaliero del server a scapito degli altri.
+- **Reputazione del dominio (deliverability):** Evita picchi improvvisi di centinaia di email che farebbero finire il dominio mittente nelle blacklist antispam dei broker.
 
 ## Verifica dell'installazione
 

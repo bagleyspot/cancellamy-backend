@@ -32,6 +32,7 @@ Tutto è visibile in un'area personale con avanzamento, cronologia, messaggi e n
 | Funzione | Dettaglio |
 |---|---|
 | Richieste automatiche | Email in italiano (o inglese per broker esteri) con la delega firmata in allegato e i soli dati utili a identificarti |
+| Invio scaglionato (BullMQ & Fair-Share) | Coda asincrona Redis/BullMQ: massimo 5 richieste al giorno per utente per rispettare le quote operative (100/giorno, 3000/mese) e prevenire filtri antispam |
 | Azioni guidate | Per moduli web, telefono, PEC e Registro Pubblico delle Opposizioni: istruzioni e testo già compilato da copiare |
 | Controllo scadenze | 30 giorni dall'invio (art. 12.3 GDPR), poi due solleciti automatici e uno manuale |
 | Risposte | Ricevute via email e classificate: cancellazione confermata, rifiuto, richiesta di documento, richiesta di informazioni |

@@ -12,18 +12,21 @@ flowchart TB
     AUTH[Auth e sessioni]
     PROF[Profili e delega]
     REQ[Motore delle richieste]
+    QUEUE[Coda asincrona BullMQ]
     INB[Webhook risposte]
     SCH[Scheduler con lease]
     REG[Registry]
     MAIL[Mail: dry-run o Resend]
   end
   DB[(MongoDB)]
+  REDIS[(Redis Cloud)]
   RES[Resend]
   SPA -->|JSON, cookie httpOnly| HTTP
   HTTP --> AUTH & PROF & REQ & REG
-  REQ --> MAIL --> RES
+  REQ --> QUEUE --> REDIS
+  QUEUE --> MAIL --> RES
   RES -->|email.received| INB --> REQ
-  SCH --> REQ
+  SCH --> QUEUE & REQ
   AUTH & PROF & REQ & REG & INB & SCH --> DB
 ```
 
@@ -45,6 +48,7 @@ Principi di progetto:
 | `profiles/` | CRUD profili, dati cifrati, delega, PDF, attivazione, pausa |
 | `brokers/` | Caricamento del registry, catalogo pubblico, modifiche admin |
 | `requests/` | Pianificazione canale, macchina a stati, motore (invio, risposte, scadenze, rinnovi), azioni utente |
+| `queue/` | Gestione code BullMQ, connessione Redis, invio a scaglioni e worker seriale (`DispatchQueueService`) |
 | `inbound/` | Webhook di Resend, abbinamento delle risposte, posta non abbinata |
 | `scheduler/` | Giri periodici con lease, endpoint `/internal/cron/tick` |
 | `notifications/`, `reports/` | Notifiche in app e per email, report mensili |
@@ -59,7 +63,7 @@ Principi di progetto:
 | `mail/` | Trasporti `dry-run` e `resend`, email di sistema |
 | `admin/`, `health/` | Area admin, health check |
 
-Moduli Nest: `AppConfigModule`, `DbModule` e `MailModule` sono globali; `AuthModule`, `BrokersModule` e
+Moduli Nest: `AppConfigModule`, `DbModule`, `MailModule` e `QueueModule` sono globali; `AuthModule`, `BrokersModule` e
 `DomainModule` (profili, richieste, inbound, scheduler, notifiche, report, admin) completano l'applicazione.
 
 ## Modello dati (MongoDB)
@@ -73,6 +77,7 @@ Moduli Nest: `AppConfigModule`, `DbModule` e `MailModule` sono globali; `AuthMod
 | `brokers` | Il registry in database: canali, stato di verifica, `sendEnabled`, campi modificati dall'admin | Slug univoco |
 | `removalrequests` | Richiesta: broker, canale, stato, ciclo, date, cronologia, istruzioni manuali | Indice univoco profilo+broker+ciclo; codice `CNC-…` univoco |
 | `messages` | Messaggi in entrata e in uscita: **oggetto e testo cifrati**, allegati (solo metadati), classificazione | |
+| `mailquotas` | Contatori atomici con indice TTL per tracciare quote Resend (100/giorno, 3000/mese) e fair-share per utente (5/giorno) | |
 | `unmatchedinbound` | Risposte non abbinate (oggetto e testo cifrati) | Per l'admin |
 | `notifications`, `reports` | Notifiche e report mensili | Report univoco per profilo+periodo |
 | `locks` | Lease dello scheduler | |
@@ -173,6 +178,13 @@ Il trasporto è scelto da `MAIL_MODE`:
   **permanenti** (4xx).
 
 Le email di sistema (verifica, reset, notifiche) usano lo stesso trasporto con un modello HTML minimale.
+
+### Gestione code asincrone e quote (BullMQ + Redis)
+
+L'invio delle richieste non avviene in modo sincrono o con burst incontrollati:
+- **Coda BullMQ (`request-dispatch`):** I compiti di invio sono persistiti su Redis Cloud (`ioredis`) e processati da un Worker con concorrenza 1 e limitatore a 600 ms per richiesta (pieno rispetto dei rate limit dell'API Resend).
+- **Politica Fair-Share:** Ogni utente riceve al massimo **5 invii automatici al giorno**. Le richieste in eccesso vengono programmate su Redis con ritardi giornalieri progressivi (`scheduledAt` differito di 24h, 48h, ecc.).
+- **Guardia delle quote globali Resend:** Monitoraggio continuo dei tetti di **100 email/giorno** e **3000 email/mese**, con riserva di 5 email/giorno per garantire il recapito di email critiche (codici di verifica, link di reset password). Se la quota giornaliera di invio massivo (95) viene raggiunta, i job BullMQ rimandano automaticamente l'esecuzione al giorno successivo a mezzanotte UTC.
 
 ## Frontend
 
