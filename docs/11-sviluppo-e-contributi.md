@@ -136,6 +136,29 @@ Funzioni che il progetto non ha ancora e dove avrebbe senso lavorare:
   rispecchia e potrebbe essere più restrittivo in alcuni formati.
 - Elenco completo e ragionamento: `cancellamy-frontend/docs/FRONTEND-NOTES.md`.
 
+## Repository, protezioni e rilasci (per i maintainer)
+
+Entrambi i repository (`cancellamy-backend`, `cancellamy-frontend`) hanno le stesse regole:
+
+- **`main` è protetto da un ruleset senza bypass** (vale anche per gli admin): serve una pull request, merge solo
+  *squash*, cronologia lineare, firma dei commit (li firma GitHub al merge), conversazioni risolte, nessun force-push né
+  cancellazione, branch aggiornato rispetto a `main` e tutti i check obbligatori verdi. Non sono richieste approvazioni
+  (progetto con un solo maintainer), ma `CODEOWNERS` assegna la review.
+- **Titolo della PR = messaggio di commit su `main`**: deve seguire Conventional Commits (`feat:`, `fix:`, `docs:`,
+  `registry:`...). Il check «PR title» lo verifica.
+- **Check obbligatori**: lint/typecheck/unit, e2e con MongoDB (solo backend), build, licenze delle dipendenze, build e
+  scansione Trivy dell'immagine Docker, CodeQL, dependency review, scansione segreti (gitleaks), lint dei workflow
+  (actionlint e zizmor). In più, non bloccanti: OpenSSF Scorecard e controllo dei link.
+- **Sicurezza GitHub**: secret scanning con push protection, Dependabot (alert, security updates e aggiornamenti
+  settimanali; i major si decidono a mano), segnalazioni private delle vulnerabilità, token dei workflow in sola
+  lettura, solo azioni autorizzate e fissate per SHA, tag `v*` immutabili.
+- **Rilasci**: [release-please](https://github.com/googleapis/release-please) tiene aperta una PR di rilascio generata
+  dai titoli dei commit. Fondendola si crea tag e release e il workflow pubblica l'immagine su
+  `ghcr.io/bagleyspot/<repo>` (multi-architettura, con attestazione di provenienza e SBOM). Le PR create con il
+  `GITHUB_TOKEN` non avviano gli altri workflow: per far partire i check sulla PR di rilascio chiudila e riaprila,
+  oppure aggiungi il secret `RELEASE_PLEASE_TOKEN` (token fine-grained con permessi contents e pull-requests).
+- **Branch di lavoro**: i branch si cancellano da soli dopo il merge.
+
 ## Licenza e contributi
 
 Codice: AGPL-3.0-only; dati del registry (`registry/`): CC BY-SA 4.0. Chi esegue una versione modificata come servizio di rete deve offrire il codice sorgente agli
