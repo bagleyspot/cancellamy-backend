@@ -38,7 +38,7 @@ OpenAPI UI: `/api/docs`, JSON: `/api/docs-json`.
 | POST | /profiles/:id/authorization | SignAuthorizationRequest → 201 AuthorizationDto (status draft→ready) |
 | GET | /profiles/:id/authorization/pdf | → application/pdf (the signed delega) |
 | DELETE | /profiles/:id/authorization | → 204 (revokes, status→draft, queued requests cancelled) |
-| POST | /profiles/:id/activate | → ActivateProfileResponse (needs status `ready`; 409 `PROFILE_NOT_READY`; 403 `EMAIL_NOT_VERIFIED`) |
+| POST | /profiles/:id/activate | → ActivateProfileResponse (needs status `ready`; 409 `PROFILE_NOT_READY`; 403 `EMAIL_NOT_VERIFIED`; includes `dailyEmailBatchSize` for BullMQ fair-share) |
 | POST | /profiles/:id/pause | → ProfileDto |
 | POST | /profiles/:id/resume | → ProfileDto |
 

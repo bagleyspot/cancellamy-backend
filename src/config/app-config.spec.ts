@@ -6,6 +6,13 @@ describe('loadConfig', () => {
     expect(c.mailMode).toBe('dry-run');
     expect(c.dataEncryptionKey).toHaveLength(32);
     expect(c.responseDeadlineDays).toBe(30);
+    expect(c.resendDailyLimit).toBe(100);
+    expect(c.resendMonthlyLimit).toBe(3000);
+    expect(c.resendSystemReserve).toBe(5);
+    expect(c.userDailyRequestLimit).toBe(5);
+    expect(c.redisHost).toBe('localhost');
+    expect(c.redisPort).toBe(6379);
+    expect(c.queueEnabled).toBe(true);
   });
 
   it('refuses production without secrets', () => {

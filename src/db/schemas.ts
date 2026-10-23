@@ -304,6 +304,16 @@ export type ProcessedWebhookDoc = HydratedDocument<ProcessedWebhook>;
 export const ProcessedWebhookModel = SchemaFactory.createForClass(ProcessedWebhook);
 ProcessedWebhookModel.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 });
 
+@Schema({ timestamps: true, collection: 'mailquotas' })
+export class MailQuota {
+  @Prop({ required: true, unique: true }) key!: string;
+  @Prop({ required: true, default: 0 }) count!: number;
+  @Prop({ required: true }) expiresAt!: Date;
+}
+export type MailQuotaDoc = HydratedDocument<MailQuota>;
+export const MailQuotaModel = SchemaFactory.createForClass(MailQuota);
+MailQuotaModel.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 
 // ---------------------------------------------------------------- v2 collections
 @Schema({ timestamps: { createdAt: true, updatedAt: false }, collection: 'attachmentfiles' })

@@ -37,6 +37,17 @@ export interface AppConfig {
   reminderIntervalDays: number;
   renewalDays: number;
   sendBatchSize: number;
+  resendDailyLimit: number;
+  resendMonthlyLimit: number;
+  resendSystemReserve: number;
+  userDailyRequestLimit: number;
+  redisUrl: string;
+  redisHost: string;
+  redisPort: number;
+  redisUsername: string;
+  redisPassword?: string;
+  redisTls: boolean;
+  queueEnabled: boolean;
   seedOnBoot: boolean;
   registryPath: string;
   appVersion: string;
@@ -182,6 +193,17 @@ export function loadConfig(env: Env = process.env): AppConfig {
     reminderIntervalDays: int(env, 'REMINDER_INTERVAL_DAYS', 15, 1),
     renewalDays: int(env, 'RENEWAL_DAYS', 90, 1),
     sendBatchSize: int(env, 'SEND_BATCH_SIZE', 25, 1),
+    resendDailyLimit: int(env, 'RESEND_DAILY_LIMIT', 100, 1),
+    resendMonthlyLimit: int(env, 'RESEND_MONTHLY_LIMIT', 3000, 1),
+    resendSystemReserve: int(env, 'RESEND_SYSTEM_RESERVE', 5, 0),
+    userDailyRequestLimit: int(env, 'USER_DAILY_REQUEST_LIMIT', 5, 1),
+    redisUrl: env.REDIS_URL ?? 'redis://localhost:6379',
+    redisHost: env.REDIS_HOST ?? 'localhost',
+    redisPort: int(env, 'REDIS_PORT', 6379, 1),
+    redisUsername: env.REDIS_USERNAME ?? 'default',
+    redisPassword: env.REDIS_PASSWORD ?? '',
+    redisTls: bool(env, 'REDIS_TLS', false),
+    queueEnabled: bool(env, 'QUEUE_ENABLED', nodeEnv !== 'test'),
     seedOnBoot: bool(env, 'SEED_ON_BOOT', true),
     registryPath: env.REGISTRY_PATH ?? join(process.cwd(), 'registry', 'brokers.yaml'),
     appVersion: env.npm_package_version ?? '0.1.0',

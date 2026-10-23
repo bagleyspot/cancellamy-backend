@@ -60,6 +60,18 @@ In **Richieste** trovi quattro schede:
 | **Completate** | Il broker ha confermato la cancellazione | Niente: tra 90 giorni controlliamo di nuovo |
 | **Non rimovibili** | Rifiutata dal broker o annullata | Leggi il motivo; valuta un reclamo |
 
+### Invio a scaglioni (perché non partono tutte subito)
+
+Quando attivi un profilo con oltre 360 broker coperti, le richieste automatiche **non vengono inviate tutte nello stesso minuto**:
+vengono gestite tramite un sistema di code asincrone (**BullMQ e Redis**) e scaglionate a un massimo di **5 richieste al giorno per utente**.
+
+**Perché questa limitazione:**
+1. **Rispetto delle quote del fornitore email:** Cancellamy adotta piani di invio sostenibili (100 email al giorno, 3000 al mese con Resend).
+2. **Equità (Fair-Share):** Evita che un singolo utente consumi l'intera disponibilità giornaliera lasciando gli altri utenti senza notifiche o invii.
+3. **Reputazione del dominio (deliverability):** L'invio massivo istantaneo di centinaia di email farebbe contrassegnare il mittente come spam da parte dei broker, compromettendo le risposte.
+
+Nella scheda **In corso**, ogni richiesta in coda indica chiaramente la data programmata per il suo invio (es. "Invio programmato: oggi", "Invio programmato: 24 ott").
+
 Puoi cercare per nome del broker, filtrare per categoria e scorrere le pagine. Ogni richiesta ha un riferimento
 del tipo `CNC-7K2P9Q4M`: compare nell'oggetto delle email e serve a collegare le risposte.
 

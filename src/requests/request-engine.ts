@@ -18,6 +18,7 @@ import { SenderAuthError } from '../sender/smtp-sender.service';
 import { ChannelPlan, planChannel } from './channel-plan';
 import { ReplyLabel, classifyReply, indicatesNoData } from './reply-classifier';
 import { RequestStatus, canTransition } from './status';
+import { MailQuotaService } from '../mail/mail-quota.service';
 
 const REF_ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 export const MAX_REMINDERS = 2;
@@ -53,6 +54,7 @@ export interface NewRequestSpec {
   plan: ChannelPlan;
   cycle: number;
   custom?: { name: string; website?: string; contactEmail?: string; notes?: string };
+  scheduledAt?: Date;
 }
 
 export interface InboundMessageInput {
@@ -80,6 +82,7 @@ export class RequestEngine {
     private readonly crypto: CryptoService,
     private readonly outbound: OutboundService,
     private readonly notifications: NotificationsService,
+    readonly mailQuota: MailQuotaService,
     readonly clock: Clock,
     @Inject(APP_CONFIG) readonly config: AppConfig,
   ) {}
@@ -204,7 +207,7 @@ export class RequestEngine {
           cycle: spec.cycle,
           custom: spec.custom,
           manual: spec.plan.manual,
-          nextAttemptAt: isEmail ? now : undefined,
+          nextAttemptAt: isEmail ? (spec.scheduledAt ?? now) : undefined,
           lastActivityAt: now,
           timeline: [{ at: now, type: 'created', status: isEmail ? 'queued' : 'action_required' }],
         });
@@ -495,11 +498,19 @@ export class RequestEngine {
   }
 
   // ------------------------------------------------------------------ scheduler tasks
-  /** Atomically claims queued email requests whose profile is active. */
+  /** Atomically claims queued email requests whose profile is active, respecting global & per-user daily quotas. */
   async claimQueued(limit: number): Promise<RequestDoc[]> {
+    const globalCheck = await this.mailQuota.canSendGlobal(this.config.mailMode, false);
+    if (!globalCheck.allowed) {
+      this.logger.warn(`claimQueued: ${globalCheck.reason}. Sospensione elaborazione coda.`);
+      return [];
+    }
+
     const now = this.clock.now();
     const claimed: RequestDoc[] = [];
     const activeProfiles = new Map<string, boolean>();
+    const claimedPerUser = new Map<string, number>();
+
     for (let i = 0; i < limit * 3 && claimed.length < limit; i++) {
       const doc = await this.requests.findOneAndUpdate(
         {
@@ -523,6 +534,23 @@ export class RequestEngine {
         await this.requests.updateOne({ _id: doc._id }, { $set: { nextAttemptAt: new Date(now.getTime() + 10 * 60 * 1000) }, $unset: { lockedUntil: 1 } });
         continue;
       }
+
+      // Fair-share per-user check: maximum userDailyRequestLimit (default 5) requests sent per user per day
+      const userIdStr = String(doc.userId);
+      const userSentToday = await this.mailQuota.getUserDailySent(doc.userId);
+      const userInBatch = claimedPerUser.get(userIdStr) ?? 0;
+
+      if (userSentToday + userInBatch >= this.config.userDailyRequestLimit) {
+        // User quota for today reached. Postpone this request to tomorrow so it doesn't starve other users in queue.
+        const tomorrow = this.mailQuota.getStartOfTomorrow(now);
+        await this.requests.updateOne(
+          { _id: doc._id },
+          { $set: { nextAttemptAt: tomorrow }, $unset: { lockedUntil: 1 } },
+        );
+        continue;
+      }
+
+      claimedPerUser.set(userIdStr, userInBatch + 1);
       claimed.push(doc);
     }
     return claimed;
@@ -536,6 +564,7 @@ export class RequestEngine {
       await this.sendInitial(req);
       req.lockedUntil = undefined;
       await req.save();
+      await this.mailQuota.recordUserSend(req.userId);
       return 'sent';
     } catch (err) {
       if (err instanceof SenderAuthError) {
@@ -603,6 +632,11 @@ export class RequestEngine {
 
   /** Automatic reminders for overdue email requests (max 2, spaced by REMINDER_INTERVAL_DAYS). */
   async sendDueReminders(limit: number): Promise<number> {
+    const globalCheck = await this.mailQuota.canSendGlobal(this.config.mailMode, false);
+    if (!globalCheck.allowed) {
+      this.logger.warn(`sendDueReminders: ${globalCheck.reason}. Sospensione solleciti.`);
+      return 0;
+    }
     const now = this.clock.now();
     const threshold = addDays(now, -this.config.reminderIntervalDays);
     const candidates = await this.requests
@@ -614,6 +648,7 @@ export class RequestEngine {
       if (profile?.status !== 'active' || profile.senderError) continue;
       try {
         await this.sendReminder(req);
+        await this.mailQuota.recordUserSend(req.userId);
         sent += 1;
       } catch (err) {
         if (err instanceof SenderAuthError) await this.markSenderError(req.profileId, err.message);
@@ -683,12 +718,17 @@ export class RequestEngine {
     if (!brokers.length) return 0;
     const profiles = await this.profiles.find({ status: 'active' }).sort({ _id: 1 }).limit(profileLimit);
     let created = 0;
+    const now = this.clock.now();
     for (const profile of profiles) {
       const existing = new Set((await this.requests.find({ profileId: profile._id, kind: { $ne: 'access' }, cycle: { $gte: 1 } }).distinct('brokerKey')) as string[]);
+      const queuedCount = await this.requests.countDocuments({ profileId: profile._id, status: 'queued', channel: 'email' });
+      let emailOffset = queuedCount;
       for (const b of brokers) {
         if (existing.has(b.slug)) continue;
         const plan = planChannel(b);
         if (!plan) continue;
+        const dayOffset = plan.channel === 'email' ? Math.floor(emailOffset / this.config.userDailyRequestLimit) : 0;
+        const scheduledAt = dayOffset === 0 ? now : addDays(now, dayOffset);
         const doc = await this.createRequest(profile, {
           brokerKey: b.slug,
           brokerName: b.name,
@@ -696,8 +736,12 @@ export class RequestEngine {
           brokerCategory: b.category,
           plan,
           cycle: 1,
+          scheduledAt,
         });
-        if (doc) created += 1;
+        if (doc) {
+          created += 1;
+          if (plan.channel === 'email') emailOffset += 1;
+        }
       }
     }
     return created;
@@ -721,11 +765,13 @@ export class RequestEngine {
     const suspended = await this.requests.find({ profileId, status: 'cancelled', suspendedAt: { $exists: true } });
     let email = 0;
     let manual = 0;
+    const now = this.clock.now();
     for (const r of suspended) {
       const isEmail = r.channel === 'email';
+      const dayOffset = isEmail ? Math.floor(email / this.config.userDailyRequestLimit) : 0;
       r.status = isEmail ? 'queued' : 'action_required';
       r.actionReason = isEmail ? undefined : (r.actionReason ?? 'manual_steps');
-      r.nextAttemptAt = isEmail ? this.clock.now() : undefined;
+      r.nextAttemptAt = isEmail ? (dayOffset === 0 ? now : addDays(now, dayOffset)) : undefined;
       r.suspendedAt = undefined;
       this.timeline(r, 'status_changed', r.status, 'Profilo riattivato');
       await r.save();
