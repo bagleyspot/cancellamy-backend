@@ -10,21 +10,79 @@
 | Docker | Facoltativo (database locale, immagini di produzione) |
 | Resend | Solo per l'invio reale: account, dominio di invio e dominio di ricezione |
 
-## Avvio in locale (modalità prova)
+## Struttura dei repository fratelli (Obbligatoria)
+
+Cancellamy è composto da due repository indipendenti che **devono risiedere affiancati nella stessa cartella genitore**:
+
+```
+cancellamy-workspace/
+  ├── cancellamy-backend/    # API NestJS, MongoDB, Scheduler, Registro broker
+  ├── cancellamy-frontend/   # Applicazione web React 19 / Vite / Tailwind
+  ├── start-dev.sh           # Script di bootstrap e avvio rapido unificato
+  └── Makefile               # Task runner per avvio, test e verifiche
+```
+
+### Perché devono essere affiancati?
+1. **Docker Compose & Self-Hosting:** La configurazione di deploy `cancellamy-backend/selfhost/docker-compose.yml` compila l'immagine del frontend direttamente da `../../cancellamy-frontend`.
+2. **Contratto API TypeScript:** Il frontend importa e mantiene allineate le definizioni dei tipi API (`docs/api-types.ts` <-> `src/api/types.ts`).
+3. **Sviluppo integrato:** Il dev-server Vite (`localhost:5173`) inoltra automaticamente le chiamate `/api` al backend (`localhost:3010`), consentendo di lavorare a schermo intero senza configurare CORS o reverse proxy manuali.
+
+Per clonarli entrambi:
+```bash
+mkdir cancellamy-workspace && cd cancellamy-workspace
+git clone https://github.com/bagleyspot/cancellamy-backend.git
+git clone https://github.com/bagleyspot/cancellamy-frontend.git
+```
+
+---
+
+## Avvio Rapido (Consigliato: 30 secondi)
+
+Dalla cartella principale del workspace o dall'interno di `cancellamy-backend`:
+
+```bash
+# Con il Makefile:
+make dev
+
+# Oppure direttamente con lo script:
+./start-dev.sh
+
+# Oppure con npm dall'interno di cancellamy-backend:
+cd cancellamy-backend && npm run dev:all
+```
+
+Lo script `start-dev.sh` esegue automaticamente:
+1. Controllo della struttura dei repository e delle versioni di Node/npm.
+2. Installazione automatica di `node_modules` se non presenti.
+3. Test di connettività verso MongoDB (con fallback automatico su un demone locale su porta 27099 o Docker).
+4. Avvio contemporaneo del backend su porta `3010` e del frontend su `5173`.
+5. Gestione trasparente di `Ctrl+C` per arrestare tutti i processi in background senza lasciare porte orfane occupate.
+
+Dashboard e URL disponibili:
+- **Frontend Web App:** [http://127.0.0.1:5173](http://127.0.0.1:5173)
+- **Backend API:** [http://127.0.0.1:3010/api/v1](http://127.0.0.1:3010/api/v1)
+- **Documentazione Swagger:** [http://127.0.0.1:3010/api/docs](http://127.0.0.1:3010/api/docs)
+- **Health Check:** [http://127.0.0.1:3010/health/ready](http://127.0.0.1:3010/health/ready)
+
+---
+
+## Avvio manuale (Terminali separati)
+
+Se preferisci controllare singolarmente i processi in finestre di terminale separate:
 
 ```bash
 # 1. Database
 cd cancellamy-backend
-docker compose up -d mongo          # oppure usa un MongoDB tuo e imposta MONGODB_URI
+docker compose up -d mongo          # oppure usa Atlas/Mongo locale impostando MONGODB_URI
 
 # 2. Backend
-cp .env.example .env                # poi modifica almeno i segreti (vedi sotto)
-npm ci
-npm run start:dev                   # API su http://localhost:3000/api/v1, Swagger su /api/docs
+cp .env.example .env                # poi modifica almeno i segreti se necessario
+npm install
+npm run start:dev                   # API su http://localhost:3010/api/v1 (o PORT configurata)
 
-# 3. Frontend (altro terminale)
+# 3. Frontend (in un altro terminale)
 cd ../cancellamy-frontend
-npm ci
+npm install
 npm run dev                         # http://localhost:5173, inoltra /api al backend
 ```
 

@@ -19,6 +19,7 @@ import { Clock } from '../common/clock';
 import { CryptoService } from '../common/crypto.service';
 import { BrokersService } from '../brokers/brokers.service';
 import { IncomingAttachment, RequestEngine } from '../requests/request-engine';
+import { htmlToText } from './html-to-text';
 
 export interface InboundEmail {
   providerEmailId: string;
@@ -49,19 +50,6 @@ const REF_RE = /CNC-[23456789A-HJ-NP-Z]{8}/i;
 function domainOf(address: string): string {
   const m = /@([^>\s]+)/.exec(address);
   return (m?.[1] ?? '').toLowerCase();
-}
-
-function htmlToText(html: string): string {
-  return html
-    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, '')
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .trim();
 }
 
 @Injectable()

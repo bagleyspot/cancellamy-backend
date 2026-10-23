@@ -37,11 +37,29 @@ Documents (ID cards) are **never stored**: they are forwarded to the broker and 
 
 ## Quick start
 
+Cancellamy consists of two sibling repositories: `cancellamy-backend` and `cancellamy-frontend`. They must be cloned side-by-side in the same parent directory:
+
+```bash
+# Clone both sibling repositories
+mkdir cancellamy-workspace && cd cancellamy-workspace
+git clone https://github.com/bagleyspot/cancellamy-backend.git
+git clone https://github.com/bagleyspot/cancellamy-frontend.git
+
+# Rapid bootstrap: checks MongoDB, starts backend (port 3010) & frontend (port 5173) in 30 seconds
+./start-dev.sh
+# or from cancellamy-backend:
+npm run dev:all
+# or via Makefile:
+make dev
+```
+
+Alternatively, to run manually with separate terminals:
+
 ```bash
 docker compose up -d mongo            # or point MONGODB_URI at your own MongoDB
 cp .env.example .env                  # edit secrets, see below
 npm ci
-npm run start:dev                     # http://localhost:3000/api/v1, Swagger at /api/docs
+npm run start:dev                     # http://localhost:3010/api/v1, Swagger at /api/docs
 ```
 
 Generate secrets: `openssl rand -base64 48` (JWT) and `openssl rand -base64 32` (`DATA_ENCRYPTION_KEY`).
