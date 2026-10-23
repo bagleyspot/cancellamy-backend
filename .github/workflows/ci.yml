@@ -28,7 +28,7 @@ jobs:
           node-version: 22
           cache: npm
       - name: Use npm 11 (the lockfile is produced with it)
-        run: npm install -g npm@11
+        run: npm install -g npm@11.14.0
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
@@ -55,7 +55,7 @@ jobs:
           node-version: 22
           cache: npm
       - name: Use npm 11 (the lockfile is produced with it)
-        run: npm install -g npm@11
+        run: npm install -g npm@11.14.0
       - run: npm ci
       - run: npm run test:e2e
 
@@ -74,7 +74,7 @@ jobs:
           node-version: 22
           cache: npm
       - name: Use npm 11 (the lockfile is produced with it)
-        run: npm install -g npm@11
+        run: npm install -g npm@11.14.0
       - run: npm ci
       - run: npm run build
 
@@ -93,6 +93,6 @@ jobs:
           node-version: 22
           cache: npm
       - name: Use npm 11 (the lockfile is produced with it)
-        run: npm install -g npm@11
+        run: npm install -g npm@11.14.0
       - run: npm ci
       - run: npm run check:licenses
