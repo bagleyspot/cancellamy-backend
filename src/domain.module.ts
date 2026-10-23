@@ -27,6 +27,7 @@ import { ReportsController } from './reports/reports.controller';
 import { ReportsService } from './reports/reports.service';
 import { DataMapController } from './requests/data-map.controller';
 import { RequestEngine } from './requests/request-engine';
+import { DispatchQueueService } from './queue/dispatch-queue.service';
 import { RequestsController } from './requests/requests.controller';
 import { RequestsService } from './requests/requests.service';
 import { InternalController } from './scheduler/internal.controller';
@@ -53,6 +54,7 @@ import { SchedulerService } from './scheduler/scheduler.service';
     ProfileDataService,
     ProfilesService,
     RequestEngine,
+    DispatchQueueService,
     RequestsService,
     NotificationsService,
     ReportsService,

@@ -140,7 +140,7 @@ describe('profiles and authorization', () => {
     await api.post(`/profiles/${id}/activate`).expect(409);
     await api.post(`/profiles/${id}/authorization`).send({ signatureName: 'Mario Rossi', accepted: true }).expect(201);
     const act = await api.post(`/profiles/${id}/activate`).expect(200);
-    expect(act.body).toEqual({ emailRequests: 2, manualActions: 2 });
+    expect(act.body).toMatchObject({ emailRequests: 2, manualActions: 2, dailyEmailBatchSize: 5 });
     expect((await authed(ctx, s).get(`/profiles/${id}`).expect(200)).body.requestCounts).toMatchObject({ total: 4, inProgress: 2, actionRequired: 2, notRemovable: 0 });
   });
 

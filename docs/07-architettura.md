@@ -63,7 +63,7 @@ Principi di progetto:
 | `mail/` | Trasporti `dry-run` e `resend`, email di sistema |
 | `admin/`, `health/` | Area admin, health check |
 
-Moduli Nest: `AppConfigModule`, `DbModule`, `MailModule` e `QueueModule` sono globali; `AuthModule`, `BrokersModule` e
+Moduli Nest: `AppConfigModule`, `DbModule` e `MailModule` sono globali; `AuthModule`, `BrokersModule` e
 `DomainModule` (profili, richieste, inbound, scheduler, notifiche, report, admin) completano l'applicazione.
 
 ## Modello dati (MongoDB)

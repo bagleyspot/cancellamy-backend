@@ -14,7 +14,6 @@ import { DbModule } from './db/db.module';
 import { DomainModule } from './domain.module';
 import { HealthController } from './health/health.controller';
 import { MailModule } from './mail/mail.module';
-import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
@@ -47,7 +46,6 @@ import { QueueModule } from './queue/queue.module';
     }),
     DbModule,
     MailModule,
-    QueueModule,
     AuthModule,
     BrokersModule,
     DomainModule,
