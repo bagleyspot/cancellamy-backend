@@ -242,7 +242,6 @@ export interface BrokerDto extends BrokerSummary {
   legalBasisNote: string | null;
   obstacles: string | null;
   idRequested: string | null; // yes | no | maybe | not-stated
-  incogniListed: boolean;
   sendEnabled: boolean; // false => not contacted automatically yet
   notes: string | null;
 }

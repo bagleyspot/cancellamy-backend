@@ -317,7 +317,6 @@ export class RequestsService {
       legalBasisNote: null,
       obstacles: null,
       idRequested: null,
-      incogniListed: false,
       sendEnabled: false,
       notes: r.custom?.notes ?? null,
     };

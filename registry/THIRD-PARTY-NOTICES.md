@@ -8,14 +8,12 @@ The provenance of every entry is recorded in `provenance[]` inside `brokers.yaml
 
 https://github.com/datenanfragen/data. Public-domain dedication: no notice required, credited here as a courtesy.
 
-## Salicath/incognito (MIT)
-
-https://github.com/Salicath/incognito
+## Open-source data broker dataset (MIT)
 
 ```
 MIT License
 
-Copyright (c) 2026 Incognito Contributors
+Copyright (c) 2026 Open-source Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

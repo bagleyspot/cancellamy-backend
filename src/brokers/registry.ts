@@ -26,7 +26,6 @@ export interface RegistryEntry {
   legalBasisNote?: string;
   obstacles?: string;
   idRequested?: string;
-  incogniListed: boolean;
   notes?: string;
   streams: string[];
 }
@@ -43,7 +42,6 @@ interface RawEntry {
   legal_basis_note?: string;
   obstacles?: string;
   id_requested?: string | boolean;
-  incogni_listed?: boolean;
   notes?: string;
   stream_origin?: string[];
 }
@@ -83,7 +81,6 @@ export function parseRegistry(source: string): RegistryEntry[] {
       legalBasisNote: str(raw.legal_basis_note),
       obstacles: str(raw.obstacles),
       idRequested: raw.id_requested === undefined ? undefined : String(raw.id_requested),
-      incogniListed: raw.incogni_listed === true,
       notes: str(raw.notes),
       streams: Array.isArray(raw.stream_origin) ? raw.stream_origin.map(String) : [],
     });

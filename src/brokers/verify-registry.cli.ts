@@ -39,7 +39,6 @@ interface RawBrokerEntry {
   obstacles?: string;
   id_requested?: string | boolean;
   verification?: { status?: string; last_verified?: string };
-  incogni_listed?: boolean;
   notes?: string;
   provenance?: RawProvenance[];
   stream_origin?: string[];

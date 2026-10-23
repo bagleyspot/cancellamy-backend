@@ -77,22 +77,16 @@ Tutto è visibile in un'area personale con avanzamento, cronologia, messaggi e n
 Contare i soggetti non basta: conta quanti hanno un recapito verificato. Per questo il registry è la parte più
 preziosa del progetto e il modo migliore per contribuire ([come](./04-registry.md#come-contribuire)).
 
-## Confronto con Incogni
+## Principi del progetto
 
-Cancellamy replica il modello di servizio di Incogni (iscrizione, delega, richieste automatiche, cruscotto di
-stato, rinnovi periodici, richieste personalizzate, piano famiglia, report) ma con scelte diverse:
-
-| | Incogni | Cancellamy |
-|---|---|---|
-| Costo | A pagamento | Gratuito, software libero (AGPL-3.0) |
-| Codice | Chiuso | Aperto e verificabile |
-| Copertura | Elenco di circa 420 broker, in gran parte statunitensi (45 con indicazione UE nella sua tabella pubblica) | Registry orientato all'Italia e all'UE, con provenienza e licenza di ogni dato |
-| Italia | Disponibile ai residenti; nessun broker italiano riconoscibile dai nomi | Elenchi telefonici (DBU), aggregatori camerali, Registro delle Opposizioni, strumenti del Garante |
-| Trasparenza | Elenco pubblico dei nomi | Elenco con recapiti, stato di verifica, ostacoli legali noti per ogni voce |
-| Dati dell'utente | Gestiti dal fornitore | Cifrati a livello di campo; puoi ospitare l'istanza in proprio |
-
-Il confronto sulla copertura si basa sulla tabella pubblica di Incogni consultata il 23 ottobre 2026; le sue
-funzioni interne non sono state verificate dall'utilizzo del servizio.
+| Aspetto | Scelta di Cancellamy |
+|---|---|
+| Costo | Gratuito, software libero (AGPL-3.0) |
+| Codice | Aperto e verificabile |
+| Copertura | Registry orientato all'Italia e all'UE, con provenienza e licenza di ogni dato |
+| Italia | Elenchi telefonici (DBU), aggregatori camerali, Registro delle Opposizioni, strumenti del Garante |
+| Trasparenza | Elenco con recapiti, stato di verifica, ostacoli legali noti per ogni voce |
+| Dati dell'utente | Cifrati a livello di campo; puoi ospitare l'istanza in proprio |
 
 ## Come è organizzato il progetto
 

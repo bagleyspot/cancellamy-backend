@@ -67,7 +67,6 @@ modifiche dell'admin non vengono sovrascritte** da un successivo caricamento del
   verification:
     status: verified
     last_verified: '2026-10-23'
-  incogni_listed: true            # compare nella tabella pubblica di Incogni
   notes: ...
   provenance:                     # da dove vengono i dati
     - stream: D                   # flusso di ricerca (A, B, C, D)
@@ -105,8 +104,8 @@ Il registry è la fusione di sei filoni di ricerca (23 ottobre 2026):
 
 | Flusso | Contenuto | Licenza dei dati |
 |---|---|---|
-| **A** | Tabella pubblica di Incogni (solo nomi, categorie e indicazione di copertura) | Fatti pubblici |
-| **B** | Dataset aperti: datenanfragen/data (CC0), Salicath/incognito (MIT), drumandbytes/eraser (MIT), registro della California, studio EDPB sui data broker belgi | Per ogni voce in `provenance[].license` |
+| **A** | Directory pubbliche di data broker (solo nomi, categorie e indicazione di copertura) | Fatti pubblici |
+| **B** | Dataset aperti: datenanfragen/data (CC0), drumandbytes/eraser (MIT), registro della California, studio EDPB sui data broker belgi | Per ogni voce in `provenance[].license` |
 | **C** | Ricerca originale su soggetti italiani ed europei (elenchi, aggregatori, centrali rischi, strumenti del Garante) | `own-research` |
 | **D** | Ricerca originale su fornitori B2B | `own-research` |
 | **F** | Elenco pubblico delle 36 aziende aderenti ad **ANCIC** (informazioni commerciali) dal portale `informativaprivacyancic.it`: 18 nuove voci italiane `needs_research` e il riferimento ANCIC su 18 voci già presenti | Fatti pubblici (solo nomi) |

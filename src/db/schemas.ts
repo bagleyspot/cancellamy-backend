@@ -118,7 +118,6 @@ export class Broker {
   @Prop() legalBasisNote?: string;
   @Prop() obstacles?: string;
   @Prop() idRequested?: string;
-  @Prop({ default: false }) incogniListed!: boolean;
   @Prop() notes?: string;
   @Prop({ default: false, index: true }) sendEnabled!: boolean;
   /** Fields edited by an admin: the registry reseed never overwrites them. */

@@ -19,7 +19,6 @@ export interface BrokerDtoShape {
   legalBasisNote: string | null;
   obstacles: string | null;
   idRequested: string | null;
-  incogniListed: boolean;
   sendEnabled: boolean;
   notes: string | null;
 }
@@ -38,7 +37,6 @@ export function toBrokerDto(b: Broker): BrokerDtoShape {
     legalBasisNote: b.legalBasisNote ?? null,
     obstacles: b.obstacles ?? null,
     idRequested: b.idRequested ?? null,
-    incogniListed: b.incogniListed,
     sendEnabled: b.sendEnabled,
     notes: b.notes ?? null,
   };
@@ -66,7 +64,6 @@ export class BrokersService {
         legalBasisNote: e.legalBasisNote,
         obstacles: e.obstacles,
         idRequested: e.idRequested,
-        incogniListed: e.incogniListed,
         streams: e.streams,
         lastVerified: e.lastVerified,
       };

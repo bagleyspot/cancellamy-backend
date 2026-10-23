@@ -15,7 +15,7 @@ Questa documentazione è pensata per tre tipi di lettori. Parti dalla colonna ch
 
 ## Indice
 
-1. [Panoramica](./01-panoramica.md): che cos'è, cosa fa e cosa non fa, limiti onesti, confronto con Incogni.
+1. [Panoramica](./01-panoramica.md): che cos'è, cosa fa e cosa non fa, limiti onesti, architettura del servizio.
 2. [Guida utente](./02-guida-utente.md): dalla registrazione al reclamo al Garante, schermata per schermata, con FAQ e glossario.
 3. [Ciclo di vita delle richieste](./03-ciclo-di-vita-delle-richieste.md): stati, tempi, solleciti, rinnovi, risposte dei broker.
 4. [Il registry dei broker](./04-registry.md): formato, stati di verifica, regole di invio automatico, come contribuire.
