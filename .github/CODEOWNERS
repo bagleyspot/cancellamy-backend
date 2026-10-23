@@ -1,0 +1,8 @@
+# Every change needs a review request to the maintainer; sensitive areas are listed explicitly.
+*                       @bagleyspot
+/.github/               @bagleyspot
+/registry/              @bagleyspot
+/src/auth/              @bagleyspot
+/src/common/crypto.service.ts @bagleyspot
+/Dockerfile             @bagleyspot
+/SECURITY.md            @bagleyspot

@@ -1,0 +1,31 @@
+name: Workflow lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+
+permissions: {}
+
+jobs:
+  actionlint:
+    name: Lint workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: actionlint
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo \
+            rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 \
+            -color
+      - name: zizmor (workflow security audit)
+        run: |
+          docker run --rm -v "$PWD:/repo" -w /repo \
+            ghcr.io/zizmorcore/zizmor:1.31.1@sha256:42d409dbb851d4c5d35a058cf042b828bea1e3f2884378c526eb0974780e18d9 \
+            --offline --min-severity medium .github

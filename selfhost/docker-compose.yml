@@ -1,0 +1,72 @@
+# Complete Cancellamy stack for self-hosting: MongoDB + API + web app (nginx proxying /api to the API).
+#
+#   cd cancellamy-backend/selfhost
+#   cp selfhost.env.example .env          # then edit: at least the two secrets
+#   docker compose up -d --build
+#
+# The frontend repository must sit next to this one (../../cancellamy-frontend) or set FRONTEND_CONTEXT.
+name: cancellamy
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.adminCommand("ping")']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ..
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: '8080'
+      MONGODB_URI: mongodb://mongo:27017/cancellamy
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET (openssl rand -base64 48)}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?set DATA_ENCRYPTION_KEY (openssl rand -base64 32) and back it up}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      CORS_ORIGINS: ${APP_URL:-http://localhost:8080}
+      TRUST_PROXY: 'true'
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      MAIL_MODE: ${MAIL_MODE:-dry-run}
+      MAIL_FROM: ${MAIL_FROM:-Cancellamy <richieste@example.org>}
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-supporto@example.org}
+      INBOUND_DOMAIN: ${INBOUND_DOMAIN:-in.example.org}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_WEBHOOK_SECRET: ${RESEND_WEBHOOK_SECRET:-}
+      OPERATOR_NAME: ${OPERATOR_NAME:-Cancellamy (istanza di prova)}
+      OPERATOR_ADDRESS: ${OPERATOR_ADDRESS:-}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      FEATURES_DISABLED: ${FEATURES_DISABLED:-}
+      HAVEIBEENPWNED_API_KEY: ${HAVEIBEENPWNED_API_KEY:-}
+      SMS_PROVIDER: ${SMS_PROVIDER:-none}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM: ${TWILIO_FROM:-}
+      TSA_URL: ${TSA_URL:-}
+      LEADERBOARD_MIN_USERS: ${LEADERBOARD_MIN_USERS:-20}
+      # A single API instance: the built-in scheduler is enough.
+      SCHEDULER_ENABLED: 'true'
+
+  web:
+    build:
+      context: ${FRONTEND_CONTEXT:-../../cancellamy-frontend}
+      args:
+        VITE_SOURCE_URL: ${SOURCE_URL:-}
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      API_UPSTREAM: http://api:8080
+    ports:
+      - '${WEB_PORT:-8080}:8080'
+
+volumes:
+  mongo-data:

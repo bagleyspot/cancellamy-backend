@@ -1,0 +1,211 @@
+import { Global, Module } from '@nestjs/common';
+import { join } from 'path';
+
+export const APP_CONFIG = Symbol('APP_CONFIG');
+
+export type MailMode = 'dry-run' | 'resend';
+
+export interface AppConfig {
+  nodeEnv: 'development' | 'test' | 'production';
+  port: number;
+  logLevel: string;
+  mongoUri: string;
+  jwtAccessSecret: string;
+  dataEncryptionKey: Buffer;
+  appUrl: string;
+  corsOrigins: string[];
+  cookieSecure: boolean;
+  cookieSameSite: 'lax' | 'strict' | 'none';
+  trustProxy: boolean;
+  mailMode: MailMode;
+  mailFrom: string;
+  supportEmail: string;
+  inboundDomain: string;
+  resendApiKey: string;
+  resendWebhookSecret: string;
+  operatorName: string;
+  operatorAddress: string;
+  maxProfilesPerUser: number;
+  customRequestsPerMonth: number;
+  adminEmails: string[];
+  throttleLimit: number;
+  authThrottleLimit: number;
+  schedulerEnabled: boolean;
+  schedulerIntervalSeconds: number;
+  cronSecret: string;
+  responseDeadlineDays: number;
+  reminderIntervalDays: number;
+  renewalDays: number;
+  sendBatchSize: number;
+  seedOnBoot: boolean;
+  registryPath: string;
+  appVersion: string;
+  // --- optional capabilities (self-hosters enable what they need)
+  featuresDisabled: string[];
+  haveIBeenPwnedApiKey: string;
+  hibpUserAgent: string;
+  hibpRequestIntervalMs: number;
+  breachRecheckDays: number;
+  smsProvider: 'none' | 'dry-run' | 'twilio';
+  twilioAccountSid: string;
+  twilioAuthToken: string;
+  twilioFrom: string;
+  identityRequirePhone: boolean;
+  tsaUrl: string;
+  leaderboardMinUsers: number;
+  attachmentRetentionDays: number;
+  maxAttachmentBytes: number;
+  /** Development/test only: allow SMTP hosts on private networks and any port. */
+  smtpAllowPrivateHosts: boolean;
+}
+
+export const FEATURE_NAMES = ['sender', 'dossier', 'access', 'delisting', 'leaderboard', 'nuisance', 'breach'] as const;
+export type FeatureName = (typeof FEATURE_NAMES)[number];
+
+export interface FeatureFlags {
+  senderSmtp: boolean;
+  dossier: boolean;
+  dossierTimestamp: boolean;
+  accessRequests: boolean;
+  identityPhone: boolean;
+  breachCheck: boolean;
+  delisting: boolean;
+  leaderboard: boolean;
+  nuisance: boolean;
+}
+
+export function computeFeatures(c: AppConfig): FeatureFlags {
+  const on = (f: FeatureName) => !c.featuresDisabled.includes(f);
+  return {
+    senderSmtp: on('sender'),
+    dossier: on('dossier'),
+    dossierTimestamp: on('dossier') && !!c.tsaUrl,
+    accessRequests: on('access'),
+    identityPhone: c.smsProvider !== 'none',
+    breachCheck: on('breach') && !!c.haveIBeenPwnedApiKey,
+    delisting: on('delisting'),
+    leaderboard: on('leaderboard'),
+    nuisance: on('nuisance'),
+  };
+}
+
+type Env = Record<string, string | undefined>;
+
+function int(env: Env, key: string, def: number, min = 0): number {
+  const raw = env[key];
+  if (raw === undefined || raw === '') return def;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < min) throw new Error(`Invalid ${key}: expected integer >= ${min}`);
+  return n;
+}
+
+function bool(env: Env, key: string, def: boolean): boolean {
+  const raw = env[key];
+  if (raw === undefined || raw === '') return def;
+  return ['1', 'true', 'yes', 'on'].includes(raw.toLowerCase());
+}
+
+function list(env: Env, key: string): string[] {
+  return (env[key] ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+/** Parses and validates the environment. Throws with a clear message on misconfiguration. */
+export function loadConfig(env: Env = process.env): AppConfig {
+  const nodeEnv = (env.NODE_ENV ?? 'development') as AppConfig['nodeEnv'];
+  if (!['development', 'test', 'production'].includes(nodeEnv)) throw new Error('Invalid NODE_ENV');
+  const prod = nodeEnv === 'production';
+
+  const mailMode = (env.MAIL_MODE ?? 'dry-run') as MailMode;
+  if (!['dry-run', 'resend'].includes(mailMode)) throw new Error('MAIL_MODE must be dry-run or resend');
+  if (mailMode === 'resend' && !env.RESEND_API_KEY) throw new Error('RESEND_API_KEY is required when MAIL_MODE=resend');
+  if (mailMode === 'resend' && !env.INBOUND_DOMAIN) throw new Error('INBOUND_DOMAIN is required when MAIL_MODE=resend');
+
+  const jwtAccessSecret = env.JWT_ACCESS_SECRET ?? (prod ? '' : 'dev-only-insecure-jwt-secret-change-me-please');
+  if (jwtAccessSecret.length < 32) throw new Error('JWT_ACCESS_SECRET must be at least 32 characters');
+
+  const keyB64 = env.DATA_ENCRYPTION_KEY ?? (prod ? '' : Buffer.alloc(32, 7).toString('base64'));
+  const dataEncryptionKey = Buffer.from(keyB64, 'base64');
+  if (dataEncryptionKey.length !== 32) throw new Error('DATA_ENCRYPTION_KEY must be base64 of exactly 32 bytes');
+
+  const sameSite = (env.COOKIE_SAMESITE ?? 'lax').toLowerCase() as AppConfig['cookieSameSite'];
+  if (!['lax', 'strict', 'none'].includes(sameSite)) throw new Error('COOKIE_SAMESITE must be lax, strict or none');
+  const cookieSecure = bool(env, 'COOKIE_SECURE', prod);
+  if (sameSite === 'none' && !cookieSecure) throw new Error('COOKIE_SAMESITE=none requires COOKIE_SECURE=true');
+
+  const smsProvider = (env.SMS_PROVIDER ?? 'none') as AppConfig['smsProvider'];
+  if (!['none', 'dry-run', 'twilio'].includes(smsProvider)) throw new Error('SMS_PROVIDER must be none, dry-run or twilio');
+  if (smsProvider === 'twilio' && !(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM)) {
+    throw new Error('TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM are required when SMS_PROVIDER=twilio');
+  }
+  const featuresDisabled = list(env, 'FEATURES_DISABLED').map((f) => f.toLowerCase());
+  for (const f of featuresDisabled) {
+    if (!(FEATURE_NAMES as readonly string[]).includes(f)) throw new Error(`Unknown feature in FEATURES_DISABLED: ${f}`);
+  }
+  const tsaUrl = env.TSA_URL ?? '';
+  if (tsaUrl && !/^https?:\/\//.test(tsaUrl)) throw new Error('TSA_URL must be an http(s) URL');
+
+  const appUrl = (env.APP_URL ?? 'http://localhost:5173').replace(/\/+$/, '');
+  const inboundDomain = env.INBOUND_DOMAIN ?? 'in.example.org';
+
+  return {
+    nodeEnv,
+    port: int(env, 'PORT', 3000, 1),
+    logLevel: env.LOG_LEVEL ?? 'info',
+    mongoUri: env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/cancellamy',
+    jwtAccessSecret,
+    dataEncryptionKey,
+    appUrl,
+    corsOrigins: env.CORS_ORIGINS ? list(env, 'CORS_ORIGINS') : [appUrl],
+    cookieSecure,
+    cookieSameSite: sameSite,
+    trustProxy: bool(env, 'TRUST_PROXY', false),
+    mailMode,
+    mailFrom: env.MAIL_FROM ?? 'Cancellamy <richieste@example.org>',
+    supportEmail: env.SUPPORT_EMAIL ?? 'supporto@example.org',
+    inboundDomain,
+    resendApiKey: env.RESEND_API_KEY ?? '',
+    resendWebhookSecret: env.RESEND_WEBHOOK_SECRET ?? '',
+    operatorName: env.OPERATOR_NAME ?? 'Cancellamy (istanza di prova)',
+    operatorAddress: env.OPERATOR_ADDRESS ?? '',
+    maxProfilesPerUser: int(env, 'MAX_PROFILES_PER_USER', 5, 1),
+    customRequestsPerMonth: int(env, 'CUSTOM_REQUESTS_PER_MONTH', 10, 0),
+    adminEmails: list(env, 'ADMIN_EMAILS').map((e) => e.toLowerCase()),
+    throttleLimit: int(env, 'THROTTLE_LIMIT', 120, 1),
+    authThrottleLimit: int(env, 'AUTH_THROTTLE_LIMIT', 10, 1),
+    schedulerEnabled: bool(env, 'SCHEDULER_ENABLED', true),
+    schedulerIntervalSeconds: int(env, 'SCHEDULER_INTERVAL_SECONDS', 60, 5),
+    cronSecret: env.CRON_SECRET ?? '',
+    responseDeadlineDays: int(env, 'RESPONSE_DEADLINE_DAYS', 30, 1),
+    reminderIntervalDays: int(env, 'REMINDER_INTERVAL_DAYS', 15, 1),
+    renewalDays: int(env, 'RENEWAL_DAYS', 90, 1),
+    sendBatchSize: int(env, 'SEND_BATCH_SIZE', 25, 1),
+    seedOnBoot: bool(env, 'SEED_ON_BOOT', true),
+    registryPath: env.REGISTRY_PATH ?? join(process.cwd(), 'registry', 'brokers.yaml'),
+    appVersion: env.npm_package_version ?? '0.1.0',
+    featuresDisabled,
+    haveIBeenPwnedApiKey: env.HAVEIBEENPWNED_API_KEY ?? '',
+    hibpUserAgent: env.HIBP_USER_AGENT ?? 'Cancellamy',
+    hibpRequestIntervalMs: int(env, 'HIBP_REQUEST_INTERVAL_MS', 6500, 0),
+    breachRecheckDays: int(env, 'BREACH_RECHECK_DAYS', 30, 1),
+    smsProvider,
+    twilioAccountSid: env.TWILIO_ACCOUNT_SID ?? '',
+    twilioAuthToken: env.TWILIO_AUTH_TOKEN ?? '',
+    twilioFrom: env.TWILIO_FROM ?? '',
+    identityRequirePhone: bool(env, 'IDENTITY_REQUIRE_PHONE', smsProvider !== 'none'),
+    tsaUrl,
+    leaderboardMinUsers: int(env, 'LEADERBOARD_MIN_USERS', 20, 1),
+    attachmentRetentionDays: int(env, 'ATTACHMENT_RETENTION_DAYS', 30, 1),
+    maxAttachmentBytes: int(env, 'MAX_ATTACHMENT_BYTES', 10 * 1024 * 1024, 1),
+    smtpAllowPrivateHosts: bool(env, 'SMTP_ALLOW_PRIVATE_HOSTS', false),
+  };
+}
+
+@Global()
+@Module({
+  providers: [{ provide: APP_CONFIG, useFactory: () => loadConfig() }],
+  exports: [APP_CONFIG],
+})
+export class AppConfigModule {}

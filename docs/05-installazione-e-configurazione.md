@@ -1,0 +1,189 @@
+# 5 · Installazione e configurazione
+
+## Requisiti
+
+| Componente | Versione |
+|---|---|
+| Node.js | 20 o superiore (sviluppato e testato con 22) |
+| npm | 10 o superiore (il lockfile è prodotto con npm 11) |
+| MongoDB | 6 o superiore (testato con 7 e 8) |
+| Docker | Facoltativo (database locale, immagini di produzione) |
+| Resend | Solo per l'invio reale: account, dominio di invio e dominio di ricezione |
+
+## Avvio in locale (modalità prova)
+
+```bash
+# 1. Database
+cd cancellamy-backend
+docker compose up -d mongo          # oppure usa un MongoDB tuo e imposta MONGODB_URI
+
+# 2. Backend
+cp .env.example .env                # poi modifica almeno i segreti (vedi sotto)
+npm ci
+npm run start:dev                   # API su http://localhost:3000/api/v1, Swagger su /api/docs
+
+# 3. Frontend (altro terminale)
+cd ../cancellamy-frontend
+npm ci
+npm run dev                         # http://localhost:5173, inoltra /api al backend
+```
+
+Genera i segreti:
+
+```bash
+openssl rand -base64 48   # JWT_ACCESS_SECRET
+openssl rand -base64 32   # DATA_ENCRYPTION_KEY
+```
+
+> ⚠️ **Fai un backup di `DATA_ENCRYPTION_KEY`.** Se la perdi, i dati personali cifrati nel database non sono più
+> leggibili. Non esiste una procedura di recupero.
+
+Se la porta 3000 o 5173 è già occupata: imposta `PORT` nel backend e, per il frontend, `VITE_PROXY_TARGET` (ad
+esempio `VITE_PROXY_TARGET=http://localhost:3010 npm run dev`).
+
+In sviluppo `src/load-env.ts` legge `.env` se esiste; in produzione si usano solo le variabili d'ambiente reali.
+
+### Primo accesso e amministratore
+
+1. Registrati dall'applicazione.
+2. In modalità prova l'email di verifica non viene spedita. Imposta `LOG_LEVEL=debug`: il corpo delle email di
+   sistema compare nel log del backend, con il link `…/verifica-email?token=…`. Aprilo nel browser.
+3. Per avere un amministratore, elenca la sua email in `ADMIN_EMAILS` **prima** della registrazione: chi si registra
+   con quell'indirizzo diventa admin e vede il menu **Amministrazione**.
+
+### Provare il flusso completo senza inviare nulla
+
+Crea un profilo, firma la delega e attivalo. Le richieste vengono "inviate" in modalità prova (etichetta **Prova**).
+Dalla pagina di una richiesta usa **Simula una risposta del broker** per vedere cambiare stato, cronologia e
+notifiche. Per vedere scadenze e solleciti serve far trascorrere il tempo: i test automatici lo fanno con un
+orologio simulato (vedi [Sviluppo](./11-sviluppo-e-contributi.md)).
+
+## Variabili d'ambiente (backend)
+
+Tutte opzionali in sviluppo; in produzione i segreti sono obbligatori. Il file `.env.example` ne contiene un campione
+e la validazione è in `src/config/app-config.ts` (l'avvio fallisce con un messaggio chiaro se qualcosa non va).
+
+### Server e database
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `NODE_ENV` | `development` | `development`, `test` o `production` |
+| `PORT` | `3000` | Porta HTTP (Cloud Run la imposta da sé) |
+| `LOG_LEVEL` | `info` | Livello dei log (`debug` mostra le email in modalità prova) |
+| `MONGODB_URI` | `mongodb://127.0.0.1:27017/cancellamy` | Connessione a MongoDB |
+| `TRUST_PROXY` | `false` | `true` dietro un proxy/balancer, per leggere l'IP reale |
+
+### Segreti
+
+| Variabile | Descrizione |
+|---|---|
+| `JWT_ACCESS_SECRET` | Firma dei token di accesso, almeno 32 caratteri. **Obbligatorio in produzione** |
+| `DATA_ENCRYPTION_KEY` | Chiave AES-256 in base64 di 32 byte. **Obbligatoria in produzione**, da conservare con cura |
+| `RESEND_API_KEY` | Chiave API di Resend (solo con `MAIL_MODE=resend`) |
+| `RESEND_WEBHOOK_SECRET` | Segreto di firma del webhook `email.received` (formato `whsec_…`) |
+| `CRON_SECRET` | Segreto per `POST /internal/cron/tick` (se vuoto l'endpoint risponde 404) |
+
+### Indirizzi, CORS e cookie
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `APP_URL` | `http://localhost:5173` | URL pubblico del frontend (usato nei link delle email) |
+| `CORS_ORIGINS` | = `APP_URL` | Origini consentite, separate da virgola |
+| `COOKIE_SECURE` | `true` in produzione | Cookie solo HTTPS |
+| `COOKIE_SAMESITE` | `lax` | `lax`, `strict` o `none` (`none` richiede `COOKIE_SECURE=true`) |
+
+Il cookie di sessione `cnc_rt` è `HttpOnly`, ha percorso `/api/v1/auth` e dura 30 giorni. Frontend e API devono
+risultare **same-site**: la soluzione più semplice è servirli dallo stesso dominio (nginx del frontend con proxy su
+`/api/`, vedi [Deploy](./06-deploy.md)).
+
+### Email
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `MAIL_MODE` | `dry-run` | `dry-run`: registra senza inviare. `resend`: invio reale |
+| `MAIL_FROM` | `Cancellamy <richieste@example.org>` | Mittente (deve appartenere a un dominio verificato su Resend) |
+| `SUPPORT_EMAIL` | `supporto@example.org` | Indirizzo di supporto mostrato nell'app |
+| `INBOUND_DOMAIN` | `in.example.org` | Dominio che riceve le risposte; obbligatorio con `resend` |
+| `OPERATOR_NAME` | `Cancellamy (istanza di prova)` | Nome di chi gestisce l'istanza: compare nella delega e nelle email |
+| `OPERATOR_ADDRESS` | vuoto | Indirizzo dell'operatore |
+
+### Limiti e comportamento
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `MAX_PROFILES_PER_USER` | `5` | Profili per account |
+| `CUSTOM_REQUESTS_PER_MONTH` | `10` | Richieste personalizzate al mese per utente |
+| `ADMIN_EMAILS` | vuoto | Email (separate da virgola) che diventano admin alla registrazione |
+| `THROTTLE_LIMIT` | `120` | Richieste al minuto per IP (generale) |
+| `AUTH_THROTTLE_LIMIT` | `10` | Richieste al minuto per IP sugli endpoint di autenticazione |
+| `RESPONSE_DEADLINE_DAYS` | `30` | Giorni concessi al broker |
+| `REMINDER_INTERVAL_DAYS` | `15` | Distanza tra i solleciti |
+| `RENEWAL_DAYS` | `90` | Giorni prima di una nuova verifica dopo la cancellazione |
+| `SEND_BATCH_SIZE` | `25` | Email inviate al massimo per giro dello scheduler |
+| `SEED_ON_BOOT` | `true` | Carica/aggiorna il registry all'avvio |
+| `REGISTRY_PATH` | `registry/brokers.yaml` | Percorso del file del registry |
+
+### Scheduler
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `SCHEDULER_ENABLED` | `true` | Timer interno. Mettilo a `false` se usi Cloud Scheduler |
+| `SCHEDULER_INTERVAL_SECONDS` | `60` | Frequenza del timer interno (minimo 5) |
+
+### Funzioni opzionali
+
+Tutte spente finché non le configuri; l'interfaccia nasconde da sola ciò che non è disponibile (`GET /config` →
+`features`). Dettagli in [Funzionalità avanzate](./12-funzionalita-avanzate.md).
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `FEATURES_DISABLED` | vuoto | Elenco, separato da virgole, di funzioni da spegnere: `sender`, `dossier`, `access`, `delisting`, `leaderboard`, `nuisance`, `breach`. Un nome sconosciuto blocca l'avvio |
+| `HAVEIBEENPWNED_API_KEY` | vuoto | Chiave di Have I Been Pwned: attiva il controllo delle violazioni (altrimenti nascosto) |
+| `HIBP_USER_AGENT` | `Cancellamy` | User-Agent inviato a HIBP (richiesto dal servizio) |
+| `HIBP_REQUEST_INTERVAL_MS` | `6500` | Pausa tra due interrogazioni (limite del piano del servizio) |
+| `BREACH_RECHECK_DAYS` | `30` | Ogni quanto si ripete il controllo di una email |
+| `SMS_PROVIDER` | `none` | `none`, `dry-run` (solo log) o `twilio`: abilita la verifica dei telefoni |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` | vuoto | Obbligatori con `SMS_PROVIDER=twilio` |
+| `IDENTITY_REQUIRE_PHONE` | `true` se c'è un fornitore SMS | Se attivo, per l'identità verificata servono anche i telefoni del profilo |
+| `TSA_URL` | vuoto | Autorità di marcatura temporale RFC 3161 per il dossier (es. `https://freetsa.org/tsr`). Solo l'impronta viene inviata |
+| `LEADERBOARD_MIN_USERS` | `20` | Utenti distinti minimi perché un broker compaia nella classifica pubblica |
+| `ATTACHMENT_RETENTION_DAYS` | `30` | Per quanto si conservano (cifrati) gli allegati ricevuti dai broker |
+| `MAX_ATTACHMENT_BYTES` | `10485760` | Dimensione massima di un allegato ricevuto da conservare |
+| `SMTP_ALLOW_PRIVATE_HOSTS` | `false` | Solo sviluppo e test: consente server SMTP in rete privata e qualsiasi porta |
+
+## Variabili del frontend
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `VITE_API_BASE_URL` | `/api/v1` | Base URL dell'API. Tienila same-origin |
+| `VITE_PROXY_TARGET` | `http://localhost:3000` | Solo in sviluppo: dove il server Vite inoltra `/api` |
+| `VITE_SOURCE_URL` | segnaposto GitHub | Repository che serve il codice in esecuzione (obbligo AGPL §13), mostrato nel footer |
+
+## Attivare l'invio reale con Resend
+
+1. **Dominio di invio.** In Resend verifica un dominio (record SPF e DKIM) e imposta `MAIL_FROM` con un indirizzo di
+   quel dominio.
+2. **Dominio di ricezione.** Abilita la ricezione (inbound) per un dominio o sottodominio (ad esempio
+   `in.example.org`) e impostalo in `INBOUND_DOMAIN`. Le risposte dei broker arrivano a `r-<token>@INBOUND_DOMAIN`.
+3. **Webhook.** Crea un webhook per l'evento `email.received` verso `https://<tuo-api>/api/v1/webhooks/resend` e
+   copia il segreto di firma in `RESEND_WEBHOOK_SECRET`. Le firme sono verificate (Standard Webhooks, tolleranza di
+   5 minuti) e le consegne sono deduplicate.
+4. **Chiave API.** Imposta `RESEND_API_KEY` e `MAIL_MODE=resend`.
+5. **Prima prova.** Con un tuo profilo e un solo broker abilitato (area admin), controlla che l'email arrivi e che
+   una tua risposta a `r-…@INBOUND_DOMAIN` compaia nella richiesta. Prima di attivare tutti i broker, rileggi il
+   registry.
+
+Con `MAIL_MODE=resend` il pulsante di simulazione delle risposte è disattivato (`SIMULATION_DISABLED`).
+
+Limiti del fornitore: l'API di Resend consente circa 2 richieste al secondo; lo scheduler rallenta di 600 ms tra un
+invio e l'altro in modalità reale.
+
+## Verifica dell'installazione
+
+```bash
+curl localhost:3000/health            # {"status":"ok"}
+curl localhost:3000/health/ready      # {"status":"ok","mongo":"up"}
+curl localhost:3000/api/v1/config     # mailMode, numero broker, limiti
+```
+
+All'avvio il backend carica il registry: nel log trovi "registry seeded: N created, M updated".

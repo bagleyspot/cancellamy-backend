@@ -1,0 +1,3056 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "HealthController_live",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "HealthController_ready",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "operationId": "AuthController_verifyEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/resend-verification": {
+      "post": {
+        "operationId": "AuthController_resend",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "operationId": "AuthController_forgot",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "operationId": "AuthController_reset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "MeController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Me"
+        ]
+      },
+      "patch": {
+        "operationId": "MeController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Me"
+        ]
+      },
+      "delete": {
+        "operationId": "MeController_remove",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/api/v1/me/change-password": {
+      "post": {
+        "operationId": "MeController_changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/api/v1/me/export": {
+      "get": {
+        "operationId": "MeController_export",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/api/v1/config": {
+      "get": {
+        "operationId": "BrokersController_publicConfig",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/brokers": {
+      "get": {
+        "operationId": "BrokersController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "regulator",
+                "opposition_register",
+                "phone_directory",
+                "caller_id_app",
+                "reverse_lookup",
+                "business_register",
+                "business_info",
+                "credit_bureau",
+                "kyc_pep",
+                "lead_seller",
+                "people_search",
+                "b2b_enrichment",
+                "marketing_adtech",
+                "recruitment",
+                "risk_mitigation",
+                "data_broker",
+                "address_data",
+                "search_engine",
+                "news_archive",
+                "public_records",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "verified_needs_review",
+                "third_party",
+                "needs_research"
+              ]
+            }
+          },
+          {
+            "name": "sendable",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/brokers/stats": {
+      "get": {
+        "operationId": "BrokersController_stats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/brokers/leaderboard": {
+      "get": {
+        "operationId": "BrokersController_board",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/brokers/{id}": {
+      "get": {
+        "operationId": "BrokersController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/admin/brokers": {
+      "get": {
+        "operationId": "BrokersController_adminList",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "regulator",
+                "opposition_register",
+                "phone_directory",
+                "caller_id_app",
+                "reverse_lookup",
+                "business_register",
+                "business_info",
+                "credit_bureau",
+                "kyc_pep",
+                "lead_seller",
+                "people_search",
+                "b2b_enrichment",
+                "marketing_adtech",
+                "recruitment",
+                "risk_mitigation",
+                "data_broker",
+                "address_data",
+                "search_engine",
+                "news_archive",
+                "public_records",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "verified",
+                "verified_needs_review",
+                "third_party",
+                "needs_research"
+              ]
+            }
+          },
+          {
+            "name": "sendable",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/admin/brokers/{id}": {
+      "patch": {
+        "operationId": "BrokersController_adminPatch",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminBrokerPatchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/admin/brokers/reseed": {
+      "post": {
+        "operationId": "BrokersController_reseed",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
+    "/api/v1/profiles": {
+      "get": {
+        "operationId": "ProfilesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "post": {
+        "operationId": "ProfilesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}": {
+      "get": {
+        "operationId": "ProfilesController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "patch": {
+        "operationId": "ProfilesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "delete": {
+        "operationId": "ProfilesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/authorization/text": {
+      "get": {
+        "operationId": "ProfilesController_authorizationText",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/authorization": {
+      "post": {
+        "operationId": "ProfilesController_sign",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignAuthorizationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      },
+      "delete": {
+        "operationId": "ProfilesController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/authorization/pdf": {
+      "get": {
+        "operationId": "ProfilesController_authorizationPdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/activate": {
+      "post": {
+        "operationId": "ProfilesController_activate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/pause": {
+      "post": {
+        "operationId": "ProfilesController_pause",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/resume": {
+      "post": {
+        "operationId": "ProfilesController_resume",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Profiles"
+        ]
+      }
+    },
+    "/api/v1/requests": {
+      "get": {
+        "operationId": "RequestsController_list",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "erasure",
+                "access"
+              ]
+            }
+          },
+          {
+            "name": "profileId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 24,
+              "type": "string"
+            }
+          },
+          {
+            "name": "group",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "in_progress",
+                "action_required",
+                "completed",
+                "not_removable"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "queued",
+                "sent",
+                "replied",
+                "action_required",
+                "overdue",
+                "escalated",
+                "completed",
+                "refused",
+                "cancelled"
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "regulator",
+                "opposition_register",
+                "phone_directory",
+                "caller_id_app",
+                "reverse_lookup",
+                "business_register",
+                "business_info",
+                "credit_bureau",
+                "kyc_pep",
+                "lead_seller",
+                "people_search",
+                "b2b_enrichment",
+                "marketing_adtech",
+                "recruitment",
+                "risk_mitigation",
+                "data_broker",
+                "address_data",
+                "search_engine",
+                "news_archive",
+                "public_records",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 100,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/summary": {
+      "get": {
+        "operationId": "RequestsController_summary",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 24,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/custom": {
+      "post": {
+        "operationId": "RequestsController_custom",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/access": {
+      "post": {
+        "operationId": "RequestsController_access",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccessRequestsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}": {
+      "get": {
+        "operationId": "RequestsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/mark-done": {
+      "post": {
+        "operationId": "RequestsController_markDone",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/outcome": {
+      "post": {
+        "operationId": "RequestsController_outcome",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutcomeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/provide-id": {
+      "post": {
+        "operationId": "RequestsController_provideId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProvideIdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/reminder": {
+      "post": {
+        "operationId": "RequestsController_reminder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/escalate": {
+      "post": {
+        "operationId": "RequestsController_escalate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/dossier.zip": {
+      "get": {
+        "operationId": "RequestsController_dossierZip",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timestamp",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/complaint.pdf": {
+      "get": {
+        "operationId": "RequestsController_complaintPdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/findings": {
+      "put": {
+        "operationId": "RequestsController_findings",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessFindingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/messages/{messageId}/attachments/{attachmentId}": {
+      "get": {
+        "operationId": "RequestsController_attachment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/cancel": {
+      "post": {
+        "operationId": "RequestsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/{id}/simulate-reply": {
+      "post": {
+        "operationId": "RequestsController_simulate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateReplyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "operationId": "NotificationsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/unread-count": {
+      "get": {
+        "operationId": "NotificationsController_unread",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/notifications/read": {
+      "post": {
+        "operationId": "NotificationsController_read",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkReadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/reports": {
+      "get": {
+        "operationId": "ReportsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/generate": {
+      "post": {
+        "operationId": "ReportsController_generate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/admin/stats": {
+      "get": {
+        "operationId": "AdminController_stats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/v1/admin/inbound-unmatched": {
+      "get": {
+        "operationId": "AdminController_unmatched",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/v1/admin/inbound-unmatched/{id}/assign": {
+      "post": {
+        "operationId": "AdminController_assign",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/v1/admin/outbox": {
+      "get": {
+        "operationId": "AdminController_outbox",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/v1/webhooks/resend": {
+      "post": {
+        "operationId": "InboundController_resend",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Inbound"
+        ]
+      }
+    },
+    "/internal/cron/tick": {
+      "post": {
+        "operationId": "InternalController_tick",
+        "parameters": [
+          {
+            "name": "x-cron-secret",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Internal"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/sender": {
+      "get": {
+        "operationId": "SenderController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Sender"
+        ]
+      },
+      "put": {
+        "operationId": "SenderController_set",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetSenderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Sender"
+        ]
+      },
+      "delete": {
+        "operationId": "SenderController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Sender"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/sender/test": {
+      "post": {
+        "operationId": "SenderController_test",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestSenderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Sender"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/identity": {
+      "get": {
+        "operationId": "IdentityController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/identity/send-code": {
+      "post": {
+        "operationId": "IdentityController_sendCode",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/identity/confirm": {
+      "post": {
+        "operationId": "IdentityController_confirm",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Identity"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/breaches": {
+      "get": {
+        "operationId": "BreachesController_summary",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Breaches"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/breaches/check": {
+      "post": {
+        "operationId": "BreachesController_check",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Breaches"
+        ]
+      }
+    },
+    "/api/v1/delistings": {
+      "get": {
+        "operationId": "DelistingsController_list",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 24,
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "to_submit",
+                "submitted",
+                "approved",
+                "partially_approved",
+                "denied",
+                "appealed",
+                "cancelled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Delistings"
+        ]
+      },
+      "post": {
+        "operationId": "DelistingsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DelistingInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Delistings"
+        ]
+      }
+    },
+    "/api/v1/delistings/{id}": {
+      "get": {
+        "operationId": "DelistingsController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Delistings"
+        ]
+      },
+      "patch": {
+        "operationId": "DelistingsController_patch",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DelistingPatchDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Delistings"
+        ]
+      },
+      "delete": {
+        "operationId": "DelistingsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Delistings"
+        ]
+      }
+    },
+    "/api/v1/delistings/{id}/guide": {
+      "get": {
+        "operationId": "DelistingsController_guide",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Delistings"
+        ]
+      }
+    },
+    "/api/v1/nuisance": {
+      "get": {
+        "operationId": "NuisanceController_overview",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "maxLength": 24,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Nuisance"
+        ]
+      },
+      "post": {
+        "operationId": "NuisanceController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuisanceReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Nuisance"
+        ]
+      }
+    },
+    "/api/v1/nuisance/complaint": {
+      "post": {
+        "operationId": "NuisanceController_complaint",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuisanceComplaintDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Nuisance"
+        ]
+      }
+    },
+    "/api/v1/nuisance/complaint.pdf": {
+      "get": {
+        "operationId": "NuisanceController_complaintPdf",
+        "parameters": [
+          {
+            "name": "profileId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "maxLength": 24,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Nuisance"
+        ]
+      }
+    },
+    "/api/v1/nuisance/{id}": {
+      "delete": {
+        "operationId": "NuisanceController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Nuisance"
+        ]
+      }
+    },
+    "/api/v1/profiles/{id}/data-map": {
+      "get": {
+        "operationId": "DataMapController_map",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "DataMap"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Cancellamy API",
+    "description": "",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 128
+          },
+          "acceptTerms": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "acceptTerms"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "TokenDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "password": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "token",
+          "password"
+        ]
+      },
+      "SettingsPatchDto": {
+        "type": "object",
+        "properties": {
+          "notifyByEmail": {
+            "type": "boolean"
+          },
+          "monthlyReport": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateMeDto": {
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/SettingsPatchDto"
+          }
+        },
+        "required": [
+          "settings"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "DeleteAccountDto": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "ChannelDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "email",
+              "pec",
+              "web_form",
+              "phone",
+              "postal",
+              "other"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "value",
+          "verified"
+        ]
+      },
+      "AdminBrokerPatchDto": {
+        "type": "object",
+        "properties": {
+          "sendEnabled": {
+            "type": "boolean"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "verified_needs_review",
+              "third_party",
+              "needs_research"
+            ]
+          },
+          "channels": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelDto"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 2000
+          }
+        }
+      },
+      "AddressInputDto": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "zip": {
+            "type": "string",
+            "maxLength": 12
+          },
+          "province": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "country": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2
+          }
+        },
+        "required": [
+          "street",
+          "city",
+          "zip",
+          "country"
+        ]
+      },
+      "ProfileInputDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "emails": {
+            "minItems": 1,
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email",
+              "maxLength": 254
+            }
+          },
+          "phones": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[+\\d][\\d\\s().-]{5,24}$"
+            }
+          },
+          "addresses": {
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AddressInputDto"
+            }
+          },
+          "fiscalCode": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{11,16}$"
+          },
+          "aliases": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "emails",
+          "phones",
+          "addresses",
+          "aliases"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "emails": {
+            "minItems": 1,
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email",
+              "maxLength": 254
+            }
+          },
+          "phones": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[+\\d][\\d\\s().-]{5,24}$"
+            }
+          },
+          "addresses": {
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AddressInputDto"
+            }
+          },
+          "fiscalCode": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{11,16}$"
+          },
+          "aliases": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            }
+          }
+        }
+      },
+      "SignAuthorizationDto": {
+        "type": "object",
+        "properties": {
+          "signatureName": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "accepted": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "signatureName",
+          "accepted"
+        ]
+      },
+      "CustomRequestDto": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "website": {
+            "type": "string",
+            "maxLength": 300,
+            "format": "uri"
+          },
+          "contactEmail": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "profileId",
+          "name"
+        ]
+      },
+      "CreateAccessRequestsDto": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "brokerIds": {
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 200
+            }
+          }
+        },
+        "required": [
+          "profileId",
+          "brokerIds"
+        ]
+      },
+      "OutcomeDto": {
+        "type": "object",
+        "properties": {
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "refused",
+              "action_required",
+              "in_progress"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "outcome"
+        ]
+      },
+      "ProvideIdDto": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
+      "AccessFindingsDto": {
+        "type": "object",
+        "properties": {
+          "found": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "maxItems": 9,
+            "items": {
+              "type": "string",
+              "enum": [
+                "identifiers",
+                "contacts",
+                "addresses",
+                "professional",
+                "financial",
+                "online_activity",
+                "location",
+                "demographics",
+                "other"
+              ]
+            }
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "found",
+          "categories"
+        ]
+      },
+      "SimulateReplyDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "refused",
+              "id_required",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "MarkReadDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateReportDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "AssignDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SmtpInputDto": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "maxLength": 253,
+            "pattern": "^[A-Za-z0-9.-]+$"
+          },
+          "port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "secure": {
+            "type": "boolean"
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "fromAddress": {
+            "type": "string",
+            "maxLength": 254,
+            "format": "email"
+          }
+        },
+        "required": [
+          "host",
+          "port",
+          "secure",
+          "username",
+          "password",
+          "fromAddress"
+        ]
+      },
+      "SetSenderDto": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "cancellamy",
+              "smtp"
+            ]
+          },
+          "smtp": {
+            "$ref": "#/components/schemas/SmtpInputDto"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "TestSenderDto": {
+        "type": "object",
+        "properties": {
+          "smtp": {
+            "$ref": "#/components/schemas/SmtpInputDto"
+          }
+        }
+      },
+      "SendCodeDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "email",
+              "phone"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 254
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ]
+      },
+      "ConfirmCodeDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "email",
+              "phone"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{6}$"
+          }
+        },
+        "required": [
+          "type",
+          "value",
+          "code"
+        ]
+      },
+      "DelistingInputDto": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "google",
+              "bing",
+              "other"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2000,
+            "format": "uri"
+          },
+          "searchQuery": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "outdated",
+              "irrelevant",
+              "inaccurate",
+              "excessive",
+              "no_public_interest",
+              "other"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "profileId",
+          "engine",
+          "url",
+          "reason"
+        ]
+      },
+      "DelistingPatchDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "to_submit",
+              "submitted",
+              "approved",
+              "partially_approved",
+              "denied",
+              "appealed",
+              "cancelled"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "explanation": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        }
+      },
+      "NuisanceReportDto": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "call",
+              "sms",
+              "messaging",
+              "email",
+              "post"
+            ]
+          },
+          "callerNumber": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "company": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "receivedAt": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "consentGiven": {
+            "type": "string",
+            "enum": [
+              "no",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "profileId",
+          "channel",
+          "receivedAt"
+        ]
+      },
+      "NuisanceComplaintDto": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "reportIds": {
+            "maxItems": 500,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 24
+            }
+          }
+        },
+        "required": [
+          "profileId"
+        ]
+      }
+    }
+  }
+}

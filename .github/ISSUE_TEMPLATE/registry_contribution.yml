@@ -1,0 +1,44 @@
+name: Registry contribution
+description: Add a data broker or correct the contact of an existing one
+labels: [registry]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The registry is licensed CC BY-SA 4.0. Only submit facts you read on the **official site** of the
+        organisation. Never copy contacts from CC BY-NC-SA or proprietary lists. Do not include personal data.
+  - type: input
+    id: broker
+    attributes:
+      label: Organisation name and registry id (if it exists)
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of change
+      options: [New broker, Correct a contact, Contact no longer works, Wrong category or legal note]
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: URL where you read the contact (official site)
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Privacy / data protection contact (email, form URL or PEC)
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Obstacles, identity requirements, replies you received.
+  - type: checkboxes
+    id: license
+    attributes:
+      label: Confirmation
+      options:
+        - label: I read this on the official site and I agree to release it under CC BY-SA 4.0
+          required: true

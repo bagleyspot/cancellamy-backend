@@ -1,0 +1,36 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste personal data, tokens or real broker replies containing personal data.
+        Security problems go through a private advisory (see SECURITY.md).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment
+      options: [Docker Compose (selfhost), Cloud Run, Local development, Other]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      render: shell

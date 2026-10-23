@@ -1,0 +1,69 @@
+version: 1
+entries:
+  - id: acme-leads
+    name: Acme Leads Inc.
+    website: https://www.acmeleads.com
+    domain: acmeleads.com
+    category: b2b_enrichment
+    hq_country: US
+    channels:
+      - { type: email, value: privacy@acmeleads.com, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [D]
+  - id: infoitalia
+    name: Info Italia S.p.A.
+    website: https://www.infoitalia.it
+    domain: infoitalia.it
+    category: business_info
+    hq_country: IT
+    channels:
+      - { type: email, value: privacy@infoitalia.it, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [C]
+  - id: form-only
+    name: Solo Modulo SRL
+    website: https://www.solomodulo.it
+    domain: solomodulo.it
+    category: people_search
+    channels:
+      - { type: web_form, value: 'https://www.solomodulo.it/privacy/modulo', verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [C]
+  - id: rpo
+    name: Registro Pubblico delle Opposizioni
+    website: https://www.registrodelleopposizioni.it
+    domain: registrodelleopposizioni.it
+    category: opposition_register
+    channels:
+      - { type: web_form, value: 'https://www.registrodelleopposizioni.it', verified: true }
+      - { type: phone, value: '800 957 766', verified: true }
+      - { type: email, value: info.abbonati@registrodelleopposizioni.it, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [C]
+  - id: not-yet
+    name: Da Verificare Ltd
+    website: https://www.daverificare.com
+    domain: daverificare.com
+    category: marketing_adtech
+    channels:
+      - { type: email, value: dpo@daverificare.com, verified: false }
+    verification: { status: third_party }
+    stream_origin: [B]
+  - id: garante
+    name: Garante Privacy
+    website: https://www.garanteprivacy.it
+    domain: garanteprivacy.it
+    category: regulator
+    channels:
+      - { type: email, value: protocollo@gpdp.it, verified: true }
+    verification: { status: verified }
+    stream_origin: [C]
+  - id: credit-bureau
+    name: Centrale Rischi Test
+    website: https://www.centralerischi.example
+    domain: centralerischi.example
+    category: credit_bureau
+    channels:
+      - { type: email, value: privacy@centralerischi.example, verified: true }
+    verification: { status: verified }
+    stream_origin: [C]
