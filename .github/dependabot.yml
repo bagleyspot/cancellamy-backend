@@ -20,10 +20,11 @@ updates:
         patterns: ['eslint', '@eslint/*', 'typescript-eslint', 'prettier']
       minor-and-patch:
         update-types: [minor, patch]
+    # Major upgrades are decided by hand (they often need code changes); known pin: NestJS 12 is ESM-only and
+    # @nestjs/swagger lacks TypeScript 7 support.
     ignore:
-      # Deliberate pins: NestJS 12 is ESM-only and @nestjs/swagger does not support TypeScript 7 yet.
-      - dependency-name: '@nestjs/*'
-        update-types: ['version-update:semver-major']
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
@@ -47,3 +48,7 @@ updates:
       default-days: 7
     commit-message:
       prefix: 'build(deps)'
+    ignore:
+      # Stay on the Node.js 22 LTS line; bump it deliberately.
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
