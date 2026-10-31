@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
 import { Broker, BrokerDoc } from '../db/schemas';
 import { Paginated, escapeRegex, pageParams } from '../common/pagination';
-import { RegistryEntry, defaultSendEnabled } from './registry';
+import { RegistryEntry, defaultSendEnabled, parseMarkets } from './registry';
 import { BrokersQuery, AdminBrokerPatchDto } from './brokers.dto';
 
 export interface BrokerDtoShape {
@@ -61,6 +61,7 @@ export class BrokersService {
         domain: e.domain,
         category: e.category,
         hqCountry: e.hqCountry,
+        officialSiteVerified: e.officialSiteVerified,
         legalBasisNote: e.legalBasisNote,
         obstacles: e.obstacles,
         idRequested: e.idRequested,
@@ -71,6 +72,7 @@ export class BrokersService {
         verificationStatus: e.verificationStatus,
         channels: e.channels,
         notes: e.notes,
+        markets: e.markets,
         sendEnabled: defaultSendEnabled(e),
       };
       if (!edited) {
@@ -143,6 +145,10 @@ export class BrokersService {
     if (patch.notes !== undefined) {
       b.notes = patch.notes ?? undefined;
       edited.add('notes');
+    }
+    if (patch.markets !== undefined) {
+      b.markets = parseMarkets(patch.markets);
+      edited.add('markets');
     }
     b.adminEdited = [...edited];
     await b.save();

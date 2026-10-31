@@ -91,7 +91,7 @@ Manual-channel requests are created directly in `action_required`.
 |---|---|---|
 | GET | /admin/stats | AdminStatsDto |
 | GET | /admin/brokers?q=&category=&status=&page=&limit= | Paginated<BrokerDto> |
-| PATCH | /admin/brokers/:id | AdminBrokerPatch → BrokerDto |
+| PATCH | /admin/brokers/:id | AdminBrokerPatch → BrokerDto. `markets` (ISO country codes or `ALL` / `EU` / `EEA`) says where the broker operates: one without markets and headquarters is not contacted automatically; admin edits survive a reseed |
 | POST | /admin/brokers/reseed | → `{ created, updated }` |
 | GET | /admin/inbound-unmatched | UnmatchedInboundDto[] |
 | POST | /admin/inbound-unmatched/:id/assign | `{ requestId }` → 204 |

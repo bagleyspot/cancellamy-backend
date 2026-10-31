@@ -21,6 +21,21 @@ La creazione è **idempotente**: per ogni coppia profilo/soggetto/ciclo esiste u
 o ripetere l'operazione non crea duplicati. Se il registry guadagna nuovi soggetti abilitati, lo scheduler li
 aggiunge ai profili già attivi (a lotti di 20 profili per giro).
 
+### Quali soggetti riceve un profilo
+
+Non tutti i soggetti abilitati sono pertinenti a tutti: un residente in Italia non ha motivo di ricevere in blocco le richieste
+verso broker che operano solo in Germania o negli Stati Uniti. All'attivazione (e quando lo scheduler aggiunge soggetti nuovi)
+la scelta dipende dai **paesi degli indirizzi del profilo** (in mancanza, l'Italia) e dai `markets` di ogni voce del registry
+(se mancano, dalla sede `hq_country`). Con l'impostazione predefinita `BROKER_RELEVANCE=prioritize`:
+
+1. **per primi** i soggetti pertinenti (mercato del profilo, `ALL`/`GLOBAL`, oppure `EU`/`EEA` per un residente nello Spazio
+   economico europeo), prima quelli con un contatto letto sul sito ufficiale, poi gli altri per nome;
+2. **per ultimi** i soggetti di altri mercati;
+3. **mai in automatico** i soggetti di cui non si conosce il mercato, finché non vengono classificati nel registry.
+
+Con `strict` partono solo i pertinenti; con `off` partono tutti, nell'ordine del registry (comportamento precedente). Le
+richieste già create, i rinnovi e le richieste personalizzate non cambiano.
+
 ## Stati
 
 | Stato | Gruppo in app | Significato |

@@ -114,6 +114,10 @@ export class Broker {
   @Prop() domain?: string;
   @Prop({ required: true, index: true }) category!: string;
   @Prop() hqCountry?: string;
+  /** Countries (ISO 3166-1 alpha-2) the entry operates in, or ALL / EU / EEA. Empty = not classified yet. */
+  @Prop({ type: [String], default: [] }) markets!: string[];
+  /** At least one contact was read on the entity's own official site (registry provenance), not only validated automatically. */
+  @Prop({ default: false }) officialSiteVerified!: boolean;
   @Prop({ required: true, index: true, default: 'needs_research' }) verificationStatus!: string;
   @Prop() lastVerified?: string;
   @Prop({ type: [BrokerChannelModel], default: [] }) channels!: BrokerChannel[];

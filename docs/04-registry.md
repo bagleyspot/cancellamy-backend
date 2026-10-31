@@ -49,6 +49,16 @@ Una voce ha `sendEnabled` attivo all'importazione se e solo se:
 Un amministratore può cambiare `sendEnabled`, lo stato di verifica, i canali e le note dall'area admin. **Le
 modifiche dell'admin non vengono sovrascritte** da un successivo caricamento del file (`adminEdited`).
 
+## Pertinenza: `markets` e `hq_country`
+
+`markets` dice dove opera il soggetto (codici ISO come `IT`, `DE`; oppure `ALL`, `EU`, `EEA`); se manca si usa la sede,
+`hq_country`. Servono a scegliere e ordinare i soggetti per ogni profilo (vedi
+[Quali soggetti riceve un profilo](./03-ciclo-di-vita-delle-richieste.md#quali-soggetti-riceve-un-profilo)): **una voce senza
+né `markets` né `hq_country` non viene contattata in automatico** (con `BROKER_RELEVANCE=prioritize` o `strict`). Quando
+aggiungi o verifichi una voce, indica anche i mercati (un admin può impostarli dalla `PATCH /admin/brokers/:id`; le modifiche non vengono sovrascritte dal reseed). Il caricamento ricava inoltre `officialSiteVerified` (vero se almeno una
+fonte in `provenance` ha `verified_on_official_site: true`), che serve a contattare per primi i soggetti verificati sul sito
+ufficiale.
+
 ## Formato di una voce
 
 ```yaml
@@ -58,6 +68,7 @@ modifiche dell'admin non vengono sovrascritte** da un successivo caricamento del
   domain: lusha.com               # dominio registrabile, usato per abbinare le risposte
   category: b2b_enrichment
   hq_country: US
+  markets: [IT, DE]               # dove opera: codici paese ISO, oppure ALL / EU / EEA; vuoto = da classificare
   channels:
     - type: email                 # email | pec | web_form | phone | postal | other
       value: privacy@lusha.com

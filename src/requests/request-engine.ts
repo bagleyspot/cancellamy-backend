@@ -12,6 +12,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { ProfileDataService } from '../profiles/profile-data.service';
 import { ProfilePii, fullName } from '../profiles/profile.types';
 import { BrokersService } from '../brokers/brokers.service';
+import { profileCountries, selectBrokersForProfile } from '../brokers/relevance';
 import { Lang, RequestEmailContext, accessEmail, erasureEmail, idProvidedEmail, reminderEmail } from '../templates/request-templates';
 import { OutboundService } from '../sender/outbound.service';
 import { SenderAuthError } from '../sender/smtp-sender.service';
@@ -714,12 +715,14 @@ export class RequestEngine {
 
   /** Creates requests for sendable brokers that active profiles do not have yet (e.g. newly enabled ones). */
   async syncNewBrokers(profileLimit: number): Promise<number> {
-    const brokers = await this.brokers.sendableBrokers();
-    if (!brokers.length) return 0;
+    const sendable = await this.brokers.sendableBrokers();
+    if (!sendable.length) return 0;
     const profiles = await this.profiles.find({ status: 'active' }).sort({ _id: 1 }).limit(profileLimit);
     let created = 0;
     const now = this.clock.now();
     for (const profile of profiles) {
+      // The same matching as at activation: a broker that is not relevant to this profile is not added later either.
+      const { brokers } = selectBrokersForProfile(sendable, profileCountries(this.data.pii(profile).addresses), this.config.brokerRelevance);
       const existing = new Set((await this.requests.find({ profileId: profile._id, kind: { $ne: 'access' }, cycle: { $gte: 1 } }).distinct('brokerKey')) as string[]);
       const queuedCount = await this.requests.countDocuments({ profileId: profile._id, status: 'queued', channel: 'email' });
       let emailOffset = queuedCount;

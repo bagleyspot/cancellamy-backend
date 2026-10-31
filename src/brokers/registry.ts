@@ -20,6 +20,8 @@ export interface RegistryEntry {
   domain?: string;
   category: string;
   hqCountry?: string;
+  markets: string[];
+  officialSiteVerified: boolean;
   verificationStatus: string;
   lastVerified?: string;
   channels: BrokerChannel[];
@@ -37,6 +39,8 @@ interface RawEntry {
   domain?: string;
   category?: string;
   hq_country?: string;
+  markets?: unknown[];
+  provenance?: Array<{ verified_on_official_site?: boolean }>;
   verification?: { status?: string; last_verified?: string };
   channels?: Array<{ type?: string; value?: string; label?: string; verified?: boolean }>;
   legal_basis_note?: string;
@@ -47,6 +51,12 @@ interface RawEntry {
 }
 
 const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
+
+/** Markets come as a list whose items are sometimes comma separated ("DE,AT,CH") or "unknown": one clean code per item. */
+export function parseMarkets(raw: unknown): string[] {
+  const tokens = (Array.isArray(raw) ? raw : []).flatMap((m) => String(m).split(/[\s,;/]+/));
+  return [...new Set(tokens.map((t) => t.trim().toUpperCase()).filter((t) => t && t !== 'UNKNOWN'))];
+}
 
 export function parseRegistry(source: string): RegistryEntry[] {
   const doc = yaml.load(source) as { entries?: RawEntry[] } | undefined;
@@ -75,6 +85,8 @@ export function parseRegistry(source: string): RegistryEntry[] {
       domain: str(raw.domain),
       category,
       hqCountry: str(raw.hq_country),
+      markets: parseMarkets(raw.markets),
+      officialSiteVerified: (raw.provenance ?? []).some((p) => p?.verified_on_official_site === true),
       verificationStatus: str(raw.verification?.status) ?? 'needs_research',
       lastVerified: str(raw.verification?.last_verified),
       channels,

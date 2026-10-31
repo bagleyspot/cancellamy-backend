@@ -468,6 +468,7 @@ export interface AdminBrokerPatch {
   verificationStatus?: VerificationStatus;
   channels?: BrokerChannelDto[];
   notes?: string | null;
+  markets?: string[]; // ISO country codes or ALL / EU / EEA; [] = not classified (not contacted automatically)
 }
 
 export interface AutoVerifyResultDto {

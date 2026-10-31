@@ -184,6 +184,7 @@ risultare **same-site**: la soluzione più semplice è servirli dallo stesso dom
 | `RESEND_SYSTEM_RESERVE` | `5` | Posti giornalieri riservati a email critiche di sistema (verifiche/reset) |
 | `USER_DAILY_REQUEST_LIMIT` | `5` | Massimo numero di richieste automatiche inviate al giorno per singolo utente |
 | `SEED_ON_BOOT` | `true` | Carica/aggiorna il registry all'avvio |
+| `BROKER_RELEVANCE` | `prioritize` | Come si scelgono i soggetti per un nuovo profilo: `prioritize` (pertinenti per primi, altri mercati per ultimi, mercato ignoto mai), `strict` (solo i pertinenti), `off` (tutti, come prima). Vedi [ciclo di vita](./03-ciclo-di-vita-delle-richieste.md#quali-soggetti-riceve-un-profilo) |
 | `REGISTRY_PATH` | `registry/brokers.yaml` | Percorso del file del registry |
 
 ### Scheduler

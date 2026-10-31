@@ -6,6 +6,7 @@ import {
   IsIn,
   IsOptional,
   IsString,
+  Matches,
   MaxLength,
   ValidateNested,
 } from 'class-validator';
@@ -57,6 +58,8 @@ export class AdminBrokerPatchDto {
   @IsOptional() @IsIn(VERIFICATION_STATUSES as readonly string[]) verificationStatus?: string;
   @IsOptional() @IsArray() @ArrayMaxSize(20) @ValidateNested({ each: true }) @Type(() => ChannelDto) channels?: ChannelDto[];
   @IsOptional() @IsString() @MaxLength(2000) notes?: string | null;
+  /** Where the broker operates: ISO country codes or ALL / EU / EEA. An empty list marks it as not classified. */
+  @IsOptional() @IsArray() @ArrayMaxSize(60) @Matches(/^([A-Za-z]{2}|ALL|EU|EEA|GLOBAL)$/i, { each: true }) markets?: string[];
 }
 
 export class AutoVerifyBrokersDto {

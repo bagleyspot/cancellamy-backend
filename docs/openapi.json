@@ -2570,6 +2570,14 @@
             "type": "string",
             "nullable": true,
             "maxLength": 2000
+          },
+          "markets": {
+            "maxItems": 60,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^([A-Za-z]{2}|ALL|EU|EEA|GLOBAL)$"
+            }
           }
         }
       },

@@ -49,7 +49,8 @@ describe('admin area', () => {
     const bad = await api.patch('/admin/brokers/not-yet').send({ verificationStatus: 'bogus' }).expect(400);
     expect(bad.body.code).toBe('VALIDATION_ERROR');
     await api.patch('/admin/brokers/missing').send({ sendEnabled: true }).expect(404);
-    const patched = (await api.patch('/admin/brokers/not-yet').send({ sendEnabled: true, verificationStatus: 'verified', notes: 'checked by hand', channels: [{ type: 'email', value: 'dpo@daverificare.com', verified: true }] }).expect(200)).body;
+    await api.patch('/admin/brokers/not-yet').send({ markets: ['Italy'] }).expect(400);
+    const patched = (await api.patch('/admin/brokers/not-yet').send({ sendEnabled: true, verificationStatus: 'verified', markets: ['it'], notes: 'checked by hand', channels: [{ type: 'email', value: 'dpo@daverificare.com', verified: true }] }).expect(200)).body;
     expect(patched).toMatchObject({ sendEnabled: true, verificationStatus: 'verified', notes: 'checked by hand' });
     expect(patched.lastVerified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -66,11 +67,12 @@ describe('admin area', () => {
     expect(reseed).toEqual({ created: 0, updated: 7 });
     const after = (await ctx.http().get('/api/v1/brokers/not-yet').expect(200)).body;
     expect(after).toMatchObject({ sendEnabled: true, verificationStatus: 'verified', notes: 'checked by hand' });
+    expect((await ctx.connection.collection('brokers').findOne({ slug: 'not-yet' }))?.markets).toEqual(['IT']); // admin classification survives the reseed
     const adminList = (await api.get('/admin/brokers?status=verified&limit=2&page=1').expect(200)).body;
     expect(adminList.limit).toBe(2);
     expect(adminList.items.length).toBeLessThanOrEqual(2);
     // Restore the shared fixture so later tests in this file see the original catalogue.
-    await api.patch('/admin/brokers/not-yet').send({ sendEnabled: false, verificationStatus: 'third_party' }).expect(200);
+    await api.patch('/admin/brokers/not-yet').send({ sendEnabled: false, verificationStatus: 'third_party', markets: [] }).expect(200);
   });
 
   it('auto-verifies unverified brokers with valid MX records via admin endpoint', async () => {
