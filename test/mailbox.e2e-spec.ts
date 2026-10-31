@@ -38,8 +38,9 @@ const smtpBody = (port: number) => ({
 async function inMailboxMode(redirect: string | undefined, run: (ctx: TestCtx, port: number, sent: Received[]) => Promise<void>) {
   const sent: Received[] = [];
   const { server, port } = await startSmtp(sent);
-  const saved = { MAIL_MODE: process.env.MAIL_MODE, MAIL_REDIRECT_TO: process.env.MAIL_REDIRECT_TO };
+  const saved = { MAIL_MODE: process.env.MAIL_MODE, MAIL_REDIRECT_TO: process.env.MAIL_REDIRECT_TO, SEND_SELECTION: process.env.SEND_SELECTION };
   process.env.MAIL_MODE = 'mailbox';
+  process.env.SEND_SELECTION = 'auto'; // these tests are about where emails go, not about choosing which to send
   if (redirect) process.env.MAIL_REDIRECT_TO = redirect;
   else delete process.env.MAIL_REDIRECT_TO;
   const ctx = await createTestApp();

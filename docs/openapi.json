@@ -976,6 +976,7 @@
             "schema": {
               "type": "string",
               "enum": [
+                "to_send",
                 "in_progress",
                 "action_required",
                 "completed",
@@ -990,6 +991,7 @@
             "schema": {
               "type": "string",
               "enum": [
+                "draft",
                 "queued",
                 "sent",
                 "replied",
@@ -1100,6 +1102,30 @@
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "Requests"
+        ]
+      }
+    },
+    "/api/v1/requests/send": {
+      "post": {
+        "operationId": "RequestsController_send",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendRequestsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -2774,6 +2800,23 @@
         "required": [
           "profileId",
           "name"
+        ]
+      },
+      "SendRequestsDto": {
+        "type": "object",
+        "properties": {
+          "requestIds": {
+            "uniqueItems": true,
+            "minItems": 1,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "requestIds"
         ]
       },
       "CreateAccessRequestsDto": {

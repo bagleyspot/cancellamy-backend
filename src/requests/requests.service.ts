@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
-import { APP_CONFIG, AppConfig } from '../config/app-config';
+import { APP_CONFIG, AppConfig, SEND_SELECTION_MAX } from '../config/app-config';
 import { AttachmentFile, AttachmentFileDoc, Message, MessageDoc, ProfileDoc, RemovalRequest, RequestDoc } from '../db/schemas';
 import { addDays } from '../common/clock';
 import { CryptoService } from '../common/crypto.service';
@@ -29,7 +29,7 @@ import {
   emptyCounts,
   groupOf,
 } from './status';
-import { AccessFindingsDto, CreateAccessRequestsDto, CustomRequestDto, ListRequestsQuery, OutcomeDto, SimulateReplyDto } from './requests.dto';
+import { AccessFindingsDto, CreateAccessRequestsDto, CustomRequestDto, ListRequestsQuery, OutcomeDto, SendRequestsDto, SimulateReplyDto } from './requests.dto';
 
 const GARANTE_RECLAMO_URL = 'https://www.garanteprivacy.it/diritti/come-agire-per-tutelare-i-tuoi-dati-personali/reclamo';
 const GARANTE_PORTAL_URL = 'https://servizi.gpdp.it';
@@ -132,7 +132,7 @@ export class RequestsService {
   ) {}
 
   // ------------------------------------------------------------------ profile lifecycle hooks
-  async createForProfile(profile: ProfileDoc): Promise<{ emailRequests: number; manualActions: number; dailyEmailBatchSize: number }> {
+  async createForProfile(profile: ProfileDoc): Promise<{ emailRequests: number; manualActions: number; dailyEmailBatchSize: number; awaitingSelection: boolean }> {
     const countries = profileCountries(this.data.pii(profile).addresses);
     const { brokers, counts } = selectBrokersForProfile(await this.brokers.sendableBrokers(), countries, this.config.brokerRelevance);
     this.logger.log(
@@ -145,11 +145,12 @@ export class RequestsService {
     const now = this.engine.clock.now();
     const createdForQueue: Array<{ id: string; userId: string; profileId: string; brokerKey: string; cycle: number }> = [];
 
+    const manual = this.config.sendSelection === 'manual';
     for (const b of brokers) {
       const plan = planChannel(b);
       if (!plan) continue;
-      // Stagger email requests in daily batches of userDailyRequestLimit (default 5)
-      const dayOffset = plan.channel === 'email' ? Math.floor(emailRequests / this.config.userDailyRequestLimit) : 0;
+      // Automatic mode staggers email requests in daily batches of userDailyRequestLimit (default 5); manual mode creates drafts
+      const dayOffset = plan.channel === 'email' && !manual ? Math.floor(emailRequests / this.config.userDailyRequestLimit) : 0;
       const scheduledAt = dayOffset === 0 ? now : addDays(now, dayOffset);
       const doc = await this.engine.createRequest(profile, {
         brokerKey: b.slug,
@@ -159,10 +160,12 @@ export class RequestsService {
         plan,
         cycle: 1,
         scheduledAt,
+        draft: manual,
       });
       if (!doc) continue;
       if (plan.channel === 'email') {
         emailRequests += 1;
+        if (manual) continue; // a draft is queued only when the user chooses it
         createdForQueue.push({
           id: String(doc._id),
           userId: String(profile.userId),
@@ -179,7 +182,60 @@ export class RequestsService {
       await this.dispatchQueue.enqueueBatch(createdForQueue);
     }
 
-    return { emailRequests, manualActions, dailyEmailBatchSize: this.config.userDailyRequestLimit };
+    return { emailRequests, manualActions, dailyEmailBatchSize: this.config.userDailyRequestLimit, awaitingSelection: manual };
+  }
+
+  /**
+   * Manual selection: turns the chosen drafts into queued requests, due right away. At most SEND_SELECTION_MAX per call;
+   * ids that are not the user's drafts (or whose profile is not active) are reported back, never silently ignored.
+   */
+  async sendSelected(userId: string, dto: SendRequestsDto): Promise<{ queued: number; skipped: { id: string; reason: 'not_found' | 'not_draft' | 'profile_not_active' }[] }> {
+    const ids = [...new Set(dto.requestIds)].slice(0, SEND_SELECTION_MAX);
+    const now = this.engine.clock.now();
+    const skipped: { id: string; reason: 'not_found' | 'not_draft' | 'profile_not_active' }[] = [];
+    let queued = 0;
+    const activeProfiles = new Map<string, boolean>();
+    for (const id of ids) {
+      const req = await this.requests.findOne({ _id: id, userId: new Types.ObjectId(userId) });
+      if (!req) {
+        skipped.push({ id, reason: 'not_found' });
+        continue;
+      }
+      if (req.status !== 'draft' || req.channel !== 'email') {
+        skipped.push({ id, reason: 'not_draft' });
+        continue;
+      }
+      const key = String(req.profileId);
+      if (!activeProfiles.has(key)) activeProfiles.set(key, (await this.engine.profiles.exists({ _id: req.profileId, status: 'active' })) !== null);
+      if (!activeProfiles.get(key)) {
+        skipped.push({ id, reason: 'profile_not_active' });
+        continue;
+      }
+      // Atomic: two clicks on the same draft queue it once.
+      const claimed = await this.requests.findOneAndUpdate(
+        { _id: req._id, status: 'draft' },
+        {
+          $set: { status: 'queued', nextAttemptAt: now, lastActivityAt: now },
+          $push: { timeline: { at: now, type: 'status_changed', status: 'queued', note: 'Scelta dall\'utente per l\'invio' } },
+        },
+        { new: true },
+      );
+      if (!claimed) {
+        skipped.push({ id, reason: 'not_draft' });
+        continue;
+      }
+      queued += 1;
+      if (this.dispatchQueue.isReady) {
+        await this.dispatchQueue.enqueueRequest({
+          id: String(claimed._id),
+          userId: String(claimed.userId),
+          profileId: String(claimed.profileId),
+          brokerKey: claimed.brokerKey,
+          cycle: claimed.cycle,
+        });
+      }
+    }
+    return { queued, skipped };
   }
 
   cancelQueuedForProfile(profileId: Types.ObjectId): Promise<void> {

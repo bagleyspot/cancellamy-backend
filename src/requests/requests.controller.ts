@@ -17,7 +17,7 @@ import { memoryStorage } from 'multer';
 import { AuthUser } from '../auth/auth.types';
 import { CurrentUser } from '../auth/decorators';
 import { ObjectIdPipe } from '../common/object-id.pipe';
-import { AccessFindingsDto, CreateAccessRequestsDto, CustomRequestDto, ListRequestsQuery, OutcomeDto, ProvideIdDto, SimulateReplyDto, SummaryQuery } from './requests.dto';
+import { AccessFindingsDto, CreateAccessRequestsDto, CustomRequestDto, ListRequestsQuery, OutcomeDto, ProvideIdDto, SendRequestsDto, SimulateReplyDto, SummaryQuery } from './requests.dto';
 import { Feature } from '../common/feature.guard';
 import { DossierService } from '../dossier/dossier.service';
 import { RequestsService } from './requests.service';
@@ -42,6 +42,13 @@ export class RequestsController {
   @Post('custom')
   custom(@CurrentUser() user: AuthUser, @Body() dto: CustomRequestDto) {
     return this.requests.createCustom(user, dto);
+  }
+
+  /** Manual selection: queues the chosen drafts (at most 10 per call). */
+  @HttpCode(200)
+  @Post('send')
+  send(@CurrentUser() user: AuthUser, @Body() dto: SendRequestsDto) {
+    return this.requests.sendSelected(user.id, dto);
   }
 
   @Feature('access')

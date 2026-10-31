@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Param, Patch, Post, Query } from '@nestj
 import { IsIn, IsOptional } from 'class-validator';
 import { Feature } from '../common/feature.guard';
 import { LeaderboardService, LeaderboardSort } from '../leaderboard/leaderboard.service';
-import { APP_CONFIG, AppConfig, computeFeatures } from '../config/app-config';
+import { APP_CONFIG, AppConfig, SEND_SELECTION_MAX, computeFeatures } from '../config/app-config';
 import { Public, Roles } from '../auth/decorators';
 import { BrokersService } from './brokers.service';
 import { BrokerVerifierService } from './broker-verifier.service';
@@ -31,6 +31,8 @@ export class BrokersController {
     return {
       mailMode: this.config.mailMode,
       mailRedirect: !!this.config.mailRedirectTo, // mailbox mode: emails are diverted to a test address
+      sendSelection: this.config.sendSelection,
+      sendSelectionMax: SEND_SELECTION_MAX,
       features: computeFeatures(this.config),
       leaderboardMinUsers: this.config.leaderboardMinUsers,
       attachmentRetentionDays: this.config.attachmentRetentionDays,

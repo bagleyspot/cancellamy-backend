@@ -16,6 +16,10 @@ describe('status machine', () => {
     expect(canTransition('completed', 'sent')).toBe(false);
     expect(canTransition('cancelled', 'queued')).toBe(false);
     expect(canTransition('queued', 'completed')).toBe(false);
+    expect(canTransition('draft', 'queued')).toBe(true);
+    expect(canTransition('draft', 'cancelled')).toBe(true);
+    expect(canTransition('draft', 'sent')).toBe(false);
+    expect(canTransition('queued', 'draft')).toBe(false);
   });
   it('counts by group', () => {
     const c = emptyCounts();
@@ -23,6 +27,7 @@ describe('status machine', () => {
     addToCounts(c, 'completed', 1);
     addToCounts(c, 'refused', 1);
     addToCounts(c, 'action_required', 3);
-    expect(c).toEqual({ total: 7, inProgress: 2, actionRequired: 3, completed: 1, notRemovable: 1 });
+    addToCounts(c, 'draft', 1);
+    expect(c).toEqual({ total: 8, toSend: 1, inProgress: 2, actionRequired: 3, completed: 1, notRemovable: 1 });
   });
 });

@@ -160,6 +160,7 @@ risultare **same-site**: la soluzione più semplice è servirli dallo stesso dom
 | Variabile | Predefinito | Descrizione |
 |---|---|---|
 | `MAIL_MODE` | `dry-run` | `dry-run`: registra senza inviare. `resend`: invio reale con Resend. `mailbox`: invio reale **solo dalla casella dell'utente** (SMTP o Gmail), senza Resend: pensata per l'uso in locale, vedi [Uso in locale senza Resend](#uso-in-locale-senza-resend) |
+| `SEND_SELECTION` | `manual` con `mailbox`, `auto` altrimenti | `manual`: le richieste email nascono come bozze "Da inviare" e le scegli tu (al massimo 10 per volta). `auto`: in coda e scaglionate automaticamente. Vedi [ciclo di vita](./03-ciclo-di-vita-delle-richieste.md#scegliere-quali-richieste-inviare-send_selection) |
 | `MAIL_REDIRECT_TO` | vuoto | Solo con `MAIL_MODE=mailbox`: ogni email destinata a un broker viene invece mandata a questo indirizzo (oggetto `[TEST -> destinatario reale] ...`) |
 | `MAIL_FROM` | `Cancellamy <richieste@example.org>` | Mittente (deve appartenere a un dominio verificato su Resend) |
 | `SUPPORT_EMAIL` | `supporto@example.org` | Indirizzo di supporto mostrato nell'app |

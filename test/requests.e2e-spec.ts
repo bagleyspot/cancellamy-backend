@@ -84,7 +84,7 @@ describe('sending requests', () => {
     await api.post(`/requests/${rpo.id}/mark-done`).expect(200);
 
     const sum = (await api.get('/requests/summary').expect(200)).body;
-    expect(sum.counts).toEqual({ total: 4, inProgress: 2, actionRequired: 1, completed: 1, notRemovable: 0 });
+    expect(sum.counts).toEqual({ total: 4, toSend: 0, inProgress: 2, actionRequired: 1, completed: 1, notRemovable: 0 });
     expect(sum.coverage).toEqual({ brokersTracked: 7, brokersCovered: 4, brokersNotYetCovered: 3 });
     expect(sum.completionRate).toBeCloseTo(0.25, 2);
     expect(sum.completedByMonth).toHaveLength(12);

@@ -36,10 +36,19 @@ la scelta dipende dai **paesi degli indirizzi del profilo** (in mancanza, l'Ital
 Con `strict` partono solo i pertinenti; con `off` partono tutti, nell'ordine del registry (comportamento precedente). Le
 richieste già create, i rinnovi e le richieste personalizzate non cambiano.
 
+### Scegliere quali richieste inviare (`SEND_SELECTION`)
+
+Con `SEND_SELECTION=manual` (predefinito in modalità `mailbox`) l'attivazione del profilo **non invia nulla**: le richieste email
+nascono in stato `draft` ("Da inviare") e restano ferme, anche quelle aggiunte dopo dallo scheduler e i rinnovi. Dalla pagina
+*Richieste* scegli quali inviare, **al massimo 10 per volta** (`POST /requests/send`): partono subito e la quota giornaliera per
+utente non si applica a ciò che scegli tu. Le azioni manuali (moduli web, telefono) non cambiano. Con `auto` si torna al
+comportamento di prima: tutte in coda e scaglionate (5 al giorno per utente).
+
 ## Stati
 
 | Stato | Gruppo in app | Significato |
 |---|---|---|
+| `draft` | Da inviare | Preparata: aspetta che sia **tu** a sceglierla (`SEND_SELECTION=manual`); non è in coda e non parte da sola |
 | `queued` | In corso | In coda per l'invio automatico |
 | `sent` | In corso | Inviata, in attesa di risposta (30 giorni) |
 | `replied` | In corso | Risposta ricevuta ma non classificabile: decide l'utente |
@@ -58,6 +67,8 @@ automatico fallito), `id_required` (il broker chiede un documento), `more_info` 
 stateDiagram-v2
     [*] --> queued: profilo attivato (canale email)
     [*] --> action_required: profilo attivato (canale manuale)
+    draft --> queued: scelta dall'utente (al massimo 10 per volta)
+    draft --> cancelled: annullata
     queued --> sent: email inviata
     queued --> action_required: 5 invii falliti o errore permanente
     queued --> cancelled: annullata / delega revocata

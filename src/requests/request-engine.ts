@@ -56,6 +56,8 @@ export interface NewRequestSpec {
   cycle: number;
   custom?: { name: string; website?: string; contactEmail?: string; notes?: string };
   scheduledAt?: Date;
+  /** Email request that waits for the user to choose it (SEND_SELECTION=manual): no schedule, no queue. */
+  draft?: boolean;
 }
 
 export interface InboundMessageInput {
@@ -191,6 +193,8 @@ export class RequestEngine {
   async createRequest(profile: ProfileDoc, spec: NewRequestSpec): Promise<RequestDoc | null> {
     const now = this.clock.now();
     const isEmail = spec.plan.channel === 'email';
+    const isDraft = isEmail && !!spec.draft;
+    const initialStatus = isEmail ? (isDraft ? 'draft' : 'queued') : 'action_required';
     for (let attempt = 0; attempt < 4; attempt++) {
       try {
         const doc = new this.requests({
@@ -203,14 +207,14 @@ export class RequestEngine {
           shortRef: newShortRef(),
           kind: spec.kind ?? 'erasure',
           channel: spec.plan.channel,
-          status: isEmail ? 'queued' : 'action_required',
+          status: initialStatus,
           actionReason: isEmail ? undefined : spec.plan.actionReason,
           cycle: spec.cycle,
           custom: spec.custom,
           manual: spec.plan.manual,
-          nextAttemptAt: isEmail ? (spec.scheduledAt ?? now) : undefined,
+          nextAttemptAt: isEmail && !isDraft ? (spec.scheduledAt ?? now) : undefined,
           lastActivityAt: now,
-          timeline: [{ at: now, type: 'created', status: isEmail ? 'queued' : 'action_required' }],
+          timeline: [{ at: now, type: 'created', status: initialStatus }],
         });
         if (isEmail && !spec.custom) {
           // Keep the recipient on the document so later broker edits cannot redirect an in-flight request.
@@ -541,7 +545,8 @@ export class RequestEngine {
       const userSentToday = await this.mailQuota.getUserDailySent(doc.userId);
       const userInBatch = claimedPerUser.get(userIdStr) ?? 0;
 
-      if (userSentToday + userInBatch >= this.config.userDailyRequestLimit) {
+      // With manual selection the user decides how many go out, so the daily cap does not apply.
+      if (this.config.sendSelection !== 'manual' && userSentToday + userInBatch >= this.config.userDailyRequestLimit) {
         // User quota for today reached. Postpone this request to tomorrow so it doesn't starve other users in queue.
         const tomorrow = this.mailQuota.getStartOfTomorrow(now);
         await this.requests.updateOne(
@@ -693,6 +698,7 @@ export class RequestEngine {
         plan,
         cycle: old.cycle + 1,
         custom: websiteSpec,
+        draft: this.config.sendSelection === 'manual',
       });
       if (next) {
         created += 1;
@@ -740,6 +746,7 @@ export class RequestEngine {
           plan,
           cycle: 1,
           scheduledAt,
+          draft: this.config.sendSelection === 'manual',
         });
         if (doc) {
           created += 1;
@@ -752,7 +759,7 @@ export class RequestEngine {
 
   /** Delega revoked: pending requests are cancelled but remembered so they can be revived on re-activation. */
   async cancelQueuedForProfile(profileId: Types.ObjectId): Promise<void> {
-    const pending = await this.requests.find({ profileId, status: { $in: ['queued', 'action_required'] } });
+    const pending = await this.requests.find({ profileId, status: { $in: ['draft', 'queued', 'action_required'] } });
     for (const r of pending) {
       r.status = 'cancelled';
       r.actionReason = undefined;
@@ -772,9 +779,10 @@ export class RequestEngine {
     for (const r of suspended) {
       const isEmail = r.channel === 'email';
       const dayOffset = isEmail ? Math.floor(email / this.config.userDailyRequestLimit) : 0;
-      r.status = isEmail ? 'queued' : 'action_required';
+      const draft = isEmail && this.config.sendSelection === 'manual';
+      r.status = isEmail ? (draft ? 'draft' : 'queued') : 'action_required';
       r.actionReason = isEmail ? undefined : (r.actionReason ?? 'manual_steps');
-      r.nextAttemptAt = isEmail ? (dayOffset === 0 ? now : addDays(now, dayOffset)) : undefined;
+      r.nextAttemptAt = isEmail && !draft ? (dayOffset === 0 ? now : addDays(now, dayOffset)) : undefined;
       r.suspendedAt = undefined;
       this.timeline(r, 'status_changed', r.status, 'Profilo riattivato');
       await r.save();

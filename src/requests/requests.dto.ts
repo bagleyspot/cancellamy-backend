@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsIn, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsEmail, IsIn, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
 import { PaginationQuery } from '../common/pagination';
 import { BROKER_CATEGORIES } from '../brokers/brokers.dto';
 import { ALL_STATUSES, GROUP_STATUSES } from './status';
@@ -45,6 +45,11 @@ export const DATA_CATEGORIES = ['identifiers', 'contacts', 'addresses', 'profess
 export class CreateAccessRequestsDto {
   @IsMongoId() profileId!: string;
   @IsArray() @ArrayMinSize(1) @ArrayMaxSize(20) @IsString({ each: true }) @MaxLength(200, { each: true }) brokerIds!: string[];
+}
+
+export class SendRequestsDto {
+  /** The drafts the user chose to send now (SEND_SELECTION=manual). At most 10 per call. */
+  @IsArray() @ArrayMinSize(1) @ArrayMaxSize(10) @ArrayUnique() @IsMongoId({ each: true }) requestIds!: string[];
 }
 
 export class AccessFindingsDto {

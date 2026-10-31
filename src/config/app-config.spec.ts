@@ -44,6 +44,14 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'carrier-pigeon' })).toThrow(/MAIL_MODE/);
   });
 
+  it('chooses between manual selection and automatic sending, manual by default only in mailbox mode', () => {
+    expect(loadConfig({ NODE_ENV: 'development' }).sendSelection).toBe('auto');
+    expect(loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'mailbox' }).sendSelection).toBe('manual');
+    expect(loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'mailbox', SEND_SELECTION: 'AUTO' }).sendSelection).toBe('auto');
+    expect(loadConfig({ NODE_ENV: 'development', SEND_SELECTION: 'manual' }).sendSelection).toBe('manual');
+    expect(() => loadConfig({ NODE_ENV: 'development', SEND_SELECTION: 'sometimes' })).toThrow(/SEND_SELECTION/);
+  });
+
   it('requires an API key and inbound domain for real sending', () => {
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'resend' })).toThrow(/RESEND_API_KEY/);
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'resend', RESEND_API_KEY: 're_x' })).toThrow(/INBOUND_DOMAIN/);
