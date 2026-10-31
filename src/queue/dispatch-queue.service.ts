@@ -217,8 +217,8 @@ export class DispatchQueueService implements OnApplicationBootstrap, OnApplicati
       return;
     }
 
-    // 2. User fair-share check (max 5 requests/day)
-    const userCheck = await this.mailQuota.canUserSendToday(req.userId);
+    // 2. User fair-share check (max 5 requests/day). With manual selection the user decides how many go out.
+    const userCheck = this.config.sendSelection === 'manual' ? { allowed: true, reason: undefined } : await this.mailQuota.canUserSendToday(req.userId);
     if (!userCheck.allowed) {
       this.logger.warn(`BullMQ worker: ${userCheck.reason}. Postponing request ${req.shortRef} to tomorrow.`);
       const tomorrow = this.mailQuota.getStartOfTomorrow(this.clock.now());

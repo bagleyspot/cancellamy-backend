@@ -10,6 +10,9 @@ export const APP_CONFIG = Symbol('APP_CONFIG');
  * - `mailbox`: broker emails leave only from the user's own mailbox (SMTP or Gmail); system emails are only logged. Meant for
  *   running locally without Resend: replies land in the user's inbox.
  */
+/** Most requests the user can choose to send in one go when SEND_SELECTION=manual. */
+export const SEND_SELECTION_MAX = 10;
+
 export type MailMode = 'dry-run' | 'resend' | 'mailbox';
 
 export interface AppConfig {
@@ -27,6 +30,11 @@ export interface AppConfig {
   mailMode: MailMode;
   /** mailbox mode only: every broker email is sent to this address instead, to try the flow without writing to anyone. */
   mailRedirectTo: string;
+  /**
+   * `manual`: email requests are created as drafts and the user chooses which ones to send (up to SEND_SELECTION_MAX at a time);
+   * `auto`: they are queued and staggered automatically. Default: manual in mailbox mode, auto otherwise.
+   */
+  sendSelection: 'manual' | 'auto';
   mailFrom: string;
   supportEmail: string;
   inboundDomain: string;
@@ -153,6 +161,8 @@ export function loadConfig(env: Env = process.env): AppConfig {
 
   const mailMode = (env.MAIL_MODE ?? 'dry-run') as MailMode;
   if (!['dry-run', 'resend', 'mailbox'].includes(mailMode)) throw new Error('MAIL_MODE must be dry-run, resend or mailbox');
+  const sendSelection = (env.SEND_SELECTION ?? (mailMode === 'mailbox' ? 'manual' : 'auto')).toLowerCase() as 'manual' | 'auto';
+  if (!['manual', 'auto'].includes(sendSelection)) throw new Error('SEND_SELECTION must be manual or auto');
   const mailRedirectTo = (env.MAIL_REDIRECT_TO ?? '').trim().toLowerCase();
   if (mailRedirectTo && mailMode !== 'mailbox') throw new Error('MAIL_REDIRECT_TO is only used with MAIL_MODE=mailbox');
   if (mailRedirectTo && !/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(mailRedirectTo)) throw new Error('MAIL_REDIRECT_TO must be an email address');
@@ -209,6 +219,7 @@ export function loadConfig(env: Env = process.env): AppConfig {
     trustProxy: bool(env, 'TRUST_PROXY', false),
     mailMode,
     mailRedirectTo,
+    sendSelection,
     mailFrom: env.MAIL_FROM ?? 'Cancellamy <richieste@example.org>',
     supportEmail: env.SUPPORT_EMAIL ?? 'supporto@example.org',
     inboundDomain,

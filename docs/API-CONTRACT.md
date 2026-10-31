@@ -51,6 +51,7 @@ Editing the profile after activation is allowed; it does not re-send past reques
 | GET | /requests | ListRequestsQuery (query string) → Paginated<RequestListItem> |
 | GET | /requests/summary?profileId= | → SummaryDto |
 | GET | /requests/:id | → RequestDetail |
+| POST | /requests/send | SendRequestsRequest → SendRequestsResponse. Manual selection (`config.sendSelection = 'manual'`): queues the chosen drafts, due right away, at most 10 per call (400 above that); the per-user daily cap does not apply. Ids that are not the user's drafts, or whose profile is not active, come back in `skipped` |
 | POST | /requests/custom | CustomRequestInput → 201 RequestListItem (409 `CUSTOM_LIMIT_REACHED`) |
 | POST | /requests/:id/mark-done | → RequestDetail. Manual action done by the user: status `action_required`→`sent`, dueAt = now+30d |
 | POST | /requests/:id/outcome | OutcomeRequest → RequestDetail. Manual outcome decided by the user after reading a reply |
