@@ -85,7 +85,9 @@ Il progetto software non raccoglie dati: li raccoglie chi lo esegue.
 
 ## Se offri il servizio a terzi: da fare prima
 
-- [ ] **Informativa privacy e termini di servizio** reali, rivisti da un legale (le pagine incluse sono segnaposto).
+- [ ] **Informativa privacy e termini di servizio** rivisti da un legale. Le pagine incluse sono **bozze complete** (non più segnaposto): il
+      titolare e i contatti vengono da `OPERATOR_NAME`, `OPERATOR_ADDRESS` e `SUPPORT_EMAIL`, ma vanno comunque verificate da un
+      professionista prima di offrire il servizio a terzi. Lo stesso vale per il testo della delega (`templates/authorization-text.ts`, versione `2026-10-v2`).
 - [ ] **Registro dei trattamenti** (art. 30) e, se necessario, nomina di un **DPO**.
 - [ ] **DPIA** (valutazione d'impatto, art. 35): trattamento su scala di dati personali di molti interessati,
       conservazione di firme e comunicazioni, uso di un fornitore terzo. Punti da coprire: finalità, necessità,

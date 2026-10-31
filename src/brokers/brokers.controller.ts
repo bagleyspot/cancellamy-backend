@@ -38,6 +38,8 @@ export class BrokersController {
       customRequestsPerMonth: this.config.customRequestsPerMonth,
       appVersion: this.config.appVersion,
       supportEmail: this.config.supportEmail,
+      operatorName: this.config.operatorName,
+      operatorAddress: this.config.operatorAddress,
       registryEntries: counts.total,
       sendableBrokers: counts.sendable,
     };

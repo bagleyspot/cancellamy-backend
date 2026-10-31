@@ -77,7 +77,7 @@ describe('profiles and authorization', () => {
     const text = (await api.get(`/profiles/${p.id}/authorization/text`).expect(200)).body;
     expect(text.version).toMatch(/^\d{4}-\d{2}-v\d+$/);
     expect(text.text).toContain('Mario Rossi');
-    expect(text.text).toContain('art. 17 GDPR');
+    expect(text.text).toContain('art. 17, par. 1');
     expect((await api.get(`/profiles/${p.id}/authorization/pdf`).expect(400)).body.code).toBe('AUTHORIZATION_REQUIRED');
     await api.post(`/profiles/${p.id}/authorization`).send({ signatureName: 'Luigi Verdi', accepted: true }).expect(400);
     await api.post(`/profiles/${p.id}/authorization`).send({ signatureName: 'Mario Rossi', accepted: false }).expect(400);

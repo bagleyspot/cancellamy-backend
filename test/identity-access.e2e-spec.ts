@@ -220,10 +220,10 @@ describe('right of access ("Cosa sai di me")', () => {
     const ita = (await listRequests(ctx, s, 'kind=access')).items.find((r) => r.broker.id === 'infoitalia') as { id: string; shortRef: string };
     const mail = mailsForRef(ctx, acme.shortRef);
     expect(mail).toHaveLength(1);
-    expect(mail[0]!.subject).toContain('GDPR access request (Art. 15)');
+    expect(mail[0]!.subject).toContain('GDPR data access request (Art. 15 GDPR)');
     expect(mail[0]!.text).toContain('Article 15 GDPR');
     expect(mail[0]!.idempotencyKey).toBe(`req-${acme.id}-access`);
-    expect(mailsForRef(ctx, ita.shortRef)[0]!.subject).toContain('Richiesta di accesso ai dati personali (art. 15 GDPR)');
+    expect(mailsForRef(ctx, ita.shortRef)[0]!.subject).toContain('Istanza di accesso ai dati personali (art. 15 GDPR)');
     expect(mailsForRef(ctx, ita.shortRef)[0]!.text).not.toContain('cancellazione');
 
     const form = (await listRequests(ctx, s, 'kind=access')).items.find((r) => r.broker.id === 'form-only') as { id: string };
