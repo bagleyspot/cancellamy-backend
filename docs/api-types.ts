@@ -33,6 +33,8 @@ export type ApiErrorCode =
   | 'SIMULATION_DISABLED'
   | 'VALIDATION_ERROR'
   | 'SMTP_CONNECTION_FAILED'
+  | 'GMAIL_AUTH_FAILED'
+  | 'GMAIL_ADDRESS_NOT_IN_PROFILE'
   | 'SMTP_HOST_NOT_ALLOWED'
   | 'IDENTITY_REQUIRED'
   | 'VERIFICATION_CODE_INVALID'
@@ -45,6 +47,7 @@ export type MailMode = 'dry-run' | 'resend';
 /** Optional capabilities: the UI hides everything whose flag is false (self-hosters enable what they need). */
 export interface FeatureFlags {
   senderSmtp: boolean; // send from the user's own mailbox
+  senderGmail: boolean; // "Collega con Google": Google OAuth client configured and sender feature on
   dossier: boolean; // evidence dossier ZIP
   dossierTimestamp: boolean; // RFC 3161 timestamp authority configured
   accessRequests: boolean; // "Cosa sai di me" (art. 15)
@@ -339,7 +342,7 @@ export interface MessageDto {
   text: string;
   classification: ReplyLabel | null;
   dryRun: boolean;
-  via: 'resend' | 'smtp' | 'dry-run' | 'inbound';
+  via: 'resend' | 'smtp' | 'gmail' | 'dry-run' | 'inbound';
   attachments: MessageAttachmentDto[];
 }
 
@@ -498,7 +501,7 @@ export interface OutboxItemDto {
 // ================================================================== v2 features
 
 // ------------------------------------------------------------------ 1. send from the user's own mailbox (SMTP)
-export type SenderMode = 'cancellamy' | 'smtp';
+export type SenderMode = 'cancellamy' | 'smtp' | 'gmail';
 
 export interface SmtpSettingsDto {
   host: string;
@@ -515,7 +518,8 @@ export interface SmtpSettingsInput extends SmtpSettingsDto {
 export interface SenderDto {
   mode: SenderMode;
   smtp: SmtpSettingsDto | null;
-  verifiedAt: string | null; // last successful connection test
+  gmail: { email: string } | null; // the connected Google account (mode = 'gmail'); the token is never returned
+  verifiedAt: string | null; // last successful connection test or Google authorization
   lastError: string | null; // set when sending failed; requests of the profile wait until fixed
   /** Replies from brokers are directed here (so Cancellamy can track them). Shown for transparency. */
   replyAddress: string;
@@ -523,7 +527,21 @@ export interface SenderDto {
 
 export interface SetSenderRequest {
   mode: SenderMode;
-  smtp?: SmtpSettingsInput; // required when mode = 'smtp'
+  smtp?: SmtpSettingsInput; // required when mode = 'smtp'. 'gmail' is not accepted here: use the OAuth endpoints
+}
+
+export interface GmailStartResponse {
+  url: string; // Google consent URL: send the browser there
+}
+
+export interface CompleteGmailRequest {
+  code: string; // authorization code from Google's redirect to /app/collega-google
+  state: string; // the `state` query parameter of the same redirect, unchanged
+}
+
+export interface CompleteGmailResponse {
+  profileId: string;
+  sender: SenderDto;
 }
 
 // ------------------------------------------------------------------ 3a. identity (contact ownership)

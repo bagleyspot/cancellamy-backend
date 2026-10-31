@@ -51,6 +51,7 @@ describe('loadConfig', () => {
     expect(c.identityRequirePhone).toBe(true);
     expect(computeFeatures(c)).toEqual({
       senderSmtp: false,
+      senderGmail: false,
       dossier: true,
       dossierTimestamp: true,
       accessRequests: true,
@@ -61,6 +62,9 @@ describe('loadConfig', () => {
       nuisance: true,
     });
     const bare = computeFeatures(loadConfig({ NODE_ENV: 'development' }));
-    expect(bare).toMatchObject({ dossierTimestamp: false, identityPhone: false, breachCheck: false, senderSmtp: true });
+    expect(bare).toMatchObject({ dossierTimestamp: false, identityPhone: false, breachCheck: false, senderSmtp: true, senderGmail: false });
+    const google = { NODE_ENV: 'development', GOOGLE_OAUTH_CLIENT_ID: 'id', GOOGLE_OAUTH_CLIENT_SECRET: 'secret' };
+    expect(computeFeatures(loadConfig(google))).toMatchObject({ senderGmail: true });
+    expect(computeFeatures(loadConfig({ ...google, FEATURES_DISABLED: 'sender' }))).toMatchObject({ senderGmail: false });
   });
 });

@@ -68,6 +68,15 @@ export interface AppConfig {
   maxAttachmentBytes: number;
   /** Development/test only: allow SMTP hosts on private networks and any port. */
   smtpAllowPrivateHosts: boolean;
+  // --- "Collega con Google": OAuth client of the operator (both empty = feature off)
+  googleClientId: string;
+  googleClientSecret: string;
+  googleRedirectUri: string;
+  /** Google endpoints; overridable only so tests can point them at a local fake. */
+  googleAuthUrl: string;
+  googleTokenUrl: string;
+  googleRevokeUrl: string;
+  gmailSendUrl: string;
 }
 
 export const FEATURE_NAMES = ['sender', 'dossier', 'access', 'delisting', 'leaderboard', 'nuisance', 'breach'] as const;
@@ -75,6 +84,7 @@ export type FeatureName = (typeof FEATURE_NAMES)[number];
 
 export interface FeatureFlags {
   senderSmtp: boolean;
+  senderGmail: boolean;
   dossier: boolean;
   dossierTimestamp: boolean;
   accessRequests: boolean;
@@ -89,6 +99,7 @@ export function computeFeatures(c: AppConfig): FeatureFlags {
   const on = (f: FeatureName) => !c.featuresDisabled.includes(f);
   return {
     senderSmtp: on('sender'),
+    senderGmail: on('sender') && !!c.googleClientId && !!c.googleClientSecret,
     dossier: on('dossier'),
     dossierTimestamp: on('dossier') && !!c.tsaUrl,
     accessRequests: on('access'),
@@ -158,6 +169,11 @@ export function loadConfig(env: Env = process.env): AppConfig {
   const tsaUrl = env.TSA_URL ?? '';
   if (tsaUrl && !/^https?:\/\//.test(tsaUrl)) throw new Error('TSA_URL must be an http(s) URL');
 
+  const googleClientId = env.GOOGLE_OAUTH_CLIENT_ID ?? '';
+  const googleClientSecret = env.GOOGLE_OAUTH_CLIENT_SECRET ?? '';
+  if (!!googleClientId !== !!googleClientSecret) {
+    throw new Error('GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET must be set together');
+  }
   const appUrl = (env.APP_URL ?? 'http://localhost:5173').replace(/\/+$/, '');
   const inboundDomain = env.INBOUND_DOMAIN ?? 'in.example.org';
 
@@ -222,6 +238,13 @@ export function loadConfig(env: Env = process.env): AppConfig {
     attachmentRetentionDays: int(env, 'ATTACHMENT_RETENTION_DAYS', 30, 1),
     maxAttachmentBytes: int(env, 'MAX_ATTACHMENT_BYTES', 10 * 1024 * 1024, 1),
     smtpAllowPrivateHosts: bool(env, 'SMTP_ALLOW_PRIVATE_HOSTS', false),
+    googleClientId,
+    googleClientSecret,
+    googleRedirectUri: env.GOOGLE_OAUTH_REDIRECT_URI ?? `${appUrl}/app/collega-google`,
+    googleAuthUrl: env.GOOGLE_AUTH_URL ?? 'https://accounts.google.com/o/oauth2/v2/auth',
+    googleTokenUrl: env.GOOGLE_TOKEN_URL ?? 'https://oauth2.googleapis.com/token',
+    googleRevokeUrl: env.GOOGLE_REVOKE_URL ?? 'https://oauth2.googleapis.com/revoke',
+    gmailSendUrl: env.GMAIL_SEND_URL ?? 'https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send',
   };
 }
 

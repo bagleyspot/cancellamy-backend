@@ -227,6 +227,8 @@ Tutte spente finché non le configuri; l'interfaccia nasconde da sola ciò che n
 | `ATTACHMENT_RETENTION_DAYS` | `30` | Per quanto si conservano (cifrati) gli allegati ricevuti dai broker |
 | `MAX_ATTACHMENT_BYTES` | `10485760` | Dimensione massima di un allegato ricevuto da conservare |
 | `SMTP_ALLOW_PRIVATE_HOSTS` | `false` | Solo sviluppo e test: consente server SMTP in rete privata e qualsiasi porta |
+| `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` | vuoti | Client OAuth Google per "Collega con Google" (vanno impostati insieme; vuoti = funzione spenta). Vedi [12 · Funzionalità avanzate](./12-funzionalita-avanzate.md#collegare-gmail-con-google-oauth) |
+| `GOOGLE_OAUTH_REDIRECT_URI` | `<APP_URL>/app/collega-google` | URI di reindirizzamento registrato nel client OAuth Google |
 
 ## Variabili del frontend
 

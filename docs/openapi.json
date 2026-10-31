@@ -589,6 +589,37 @@
         ]
       }
     },
+    "/api/v1/admin/brokers/auto-verify": {
+      "post": {
+        "operationId": "BrokersController_autoVerify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoVerifyBrokersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
     "/api/v1/profiles": {
       "get": {
         "operationId": "ProfilesController_list",
@@ -1795,6 +1826,53 @@
         ]
       }
     },
+    "/api/v1/profiles/{id}/sender/gmail/start": {
+      "post": {
+        "operationId": "SenderController_startGmail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Sender"
+        ]
+      }
+    },
+    "/api/v1/sender/gmail/complete": {
+      "post": {
+        "operationId": "GmailAuthController_complete",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteGmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "GmailAuth"
+        ]
+      }
+    },
     "/api/v1/profiles/{id}/identity": {
       "get": {
         "operationId": "IdentityController_get",
@@ -2495,6 +2573,14 @@
           }
         }
       },
+      "AutoVerifyBrokersDto": {
+        "type": "object",
+        "properties": {
+          "crawlWebsites": {
+            "type": "boolean"
+          }
+        }
+      },
       "AddressInputDto": {
         "type": "object",
         "properties": {
@@ -2867,6 +2953,23 @@
             "$ref": "#/components/schemas/SmtpInputDto"
           }
         }
+      },
+      "CompleteGmailDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "state": {
+            "type": "string",
+            "maxLength": 4096
+          }
+        },
+        "required": [
+          "code",
+          "state"
+        ]
       },
       "SendCodeDto": {
         "type": "object",

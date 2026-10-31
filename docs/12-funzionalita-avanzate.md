@@ -6,7 +6,7 @@ scelte di privacy.
 
 | # | Funzione | Dove si trova | Si attiva con |
 |---|---|---|---|
-| 1 | [Invio dalla propria casella](#1--invio-dalla-propria-casella-smtp) | Profilo → *Mittente delle email* | Sempre disponibile (`FEATURES_DISABLED=sender` per spegnerla) |
+| 1 | [Invio dalla propria casella](#1--invio-dalla-propria-casella-smtp) (SMTP, con preset Gmail, oppure [Collega con Google](#collegare-gmail-con-google-oauth)) | Profilo → *Mittente delle email* | SMTP sempre disponibile (`FEATURES_DISABLED=sender` per spegnerla); *Collega con Google* richiede `GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET` |
 | 2 | [Dossier probatorio](#2--dossier-probatorio) | Dettaglio richiesta → *Scarica il dossier* | Sempre; la marca temporale richiede `TSA_URL` |
 | 3 | [Verifica dei contatti e "Cosa sai di me"](#3--verifica-dei-contatti-e-cosa-sai-di-me-art-15) | Profilo → *Identità*; menu *Cosa sai di me* | Sempre; SMS opzionali con `SMS_PROVIDER` |
 | 4 | [Controllo violazioni dei dati](#4--controllo-violazioni-dei-dati-have-i-been-pwned) | Profilo → *Violazioni dei dati* | `HAVEIBEENPWNED_API_KEY` |
@@ -26,8 +26,9 @@ non configurata: chi fa self-hosting accende solo ciò che gli serve. Per spegne
 **A cosa serve.** Molti broker controllano che la richiesta arrivi dall'indirizzo con cui sei registrato. Se le email
 partono dalla tua casella (il tuo indirizzo come mittente) hanno più probabilità di essere accolte.
 
-**Come si usa.** Nella pagina del profilo, scheda *Mittente delle email*: inserisci server SMTP, porta, utente e
-**password per le app** (quella dedicata, non la password principale), scegli quale indirizzo del profilo usare come
+**Come si usa.** Nella pagina del profilo, scheda *Mittente delle email*. Scegli il provider (*Gmail*, *iCloud Mail*,
+*Yahoo Mail*, *Libero Mail*, *Aruba*): server, porta, cifratura e nome utente si compilano da soli e la scheda spiega come
+ottenere la password per le app. Per gli altri provider inserisci server SMTP, porta, utente e **password per le app** (quella dedicata, non la password principale), scegli quale indirizzo del profilo usare come
 mittente e premi **Prova la connessione**, poi **Salva**. Per tornare a Cancellamy usa **Torna a Cancellamy**.
 
 **Cosa cambia.**
@@ -53,6 +54,40 @@ mittente e premi **Prova la connessione**, poi **Salva**. Per tornare a Cancella
 interrompe dopo l'invio ma prima di salvarlo, un nuovo tentativo potrebbe duplicare un'email (caso raro).
 
 **API.** `GET/PUT/DELETE /profiles/:id/sender`, `POST /profiles/:id/sender/test`.
+
+### Collegare Gmail con Google (OAuth)
+
+**A cosa serve.** Con un account Google non serve creare né incollare nessuna password: nella scheda *Mittente delle email*
+si preme **Collega con Google**, si autorizza e le richieste partono dal proprio Gmail (compaiono anche nella cartella
+*Posta inviata*). Il permesso richiesto è solo quello di **inviare** email (`gmail.send`): Cancellamy non legge la casella.
+
+**Come funziona.** L'app chiede l'indirizzo di consenso a `POST /profiles/:id/sender/gmail/start` e manda il browser a Google;
+Google torna a `<APP_URL>/app/collega-google?code=…&state=…` e l'app completa il collegamento con
+`POST /sender/gmail/complete`.
+- Il flusso usa PKCE. Lo `state` è cifrato (AES-256-GCM), legato all'utente e al profilo e vale 10 minuti: nessuna sessione sul server.
+- L'indirizzo Google deve essere uno di quelli del profilo, altrimenti il collegamento è rifiutato e il permesso revocato.
+- Il token di aggiornamento è **cifrato** con `DATA_ENCRYPTION_KEY` e non viene mai restituito dall'API.
+- Come per SMTP, **From** = indirizzo Gmail dell'utente e **Reply-To** = indirizzo di Cancellamy del profilo.
+- Se Google revoca l'accesso (l'utente lo toglie dal proprio account) le richieste del profilo restano in attesa, l'utente riceve
+  una sola notifica e basta ricollegare per far ripartire l'invio.
+- *Scollega*, l'eliminazione del profilo e quella dell'account revocano il permesso anche presso Google.
+- In modalità prova non viene contattato nessun server Google per inviare.
+
+**Come la configura chi gestisce l'istanza.**
+1. In Google Cloud Console crea un progetto e abilita la **Gmail API**.
+2. *Schermata di consenso OAuth*: tipo *Esterno*, nome dell'app, email di supporto, link a informativa privacy e termini;
+   aggiungi gli ambiti `openid`, `email` e `https://www.googleapis.com/auth/gmail.send`.
+3. *Credenziali* → *ID client OAuth* di tipo **Applicazione web**, con URI di reindirizzamento autorizzato
+   `<APP_URL>/app/collega-google` (o il valore di `GOOGLE_OAUTH_REDIRECT_URI`).
+4. Imposta `GOOGLE_OAUTH_CLIENT_ID` e `GOOGLE_OAUTH_CLIENT_SECRET` (il segreto da Secret Manager). Con entrambe vuote la
+   funzione è spenta e la scheda non la mostra; impostarne una sola è un errore di configurazione.
+
+**Limiti noti.**
+- Finché l'app Google è in stato *Testing* funziona solo per gli utenti di prova che aggiungi a mano (massimo 100) e Google fa
+  scadere il token di aggiornamento dopo 7 giorni: l'utente deve ricollegare. Per aprirla al pubblico bisogna **pubblicare l'app**:
+  `gmail.send` è un ambito sensibile e richiede la verifica di Google (descrizione dell'uso, informativa privacy, dominio verificato).
+- Gmail applica i propri limiti giornalieri di invio: se li raggiunge le richieste restano in coda e ripartono più tardi.
+- Gli allegati di un'email (delega, documento d'identità) sono limitati dalle dimensioni massime di Gmail.
 
 ---
 
