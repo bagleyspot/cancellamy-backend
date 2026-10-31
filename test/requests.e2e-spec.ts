@@ -32,7 +32,7 @@ describe('sending requests', () => {
     expect(m.attachments?.[0]?.content.subarray(0, 5).toString()).toBe('%PDF-');
     expect(m.text).toContain('mario.rossi@example.it');
     expect(m.idempotencyKey).toBe(`req-${acme.id}-erasure`);
-    expect(itaMail[0]!.subject).toContain('Richiesta di cancellazione');
+    expect(itaMail[0]!.subject).toContain('Istanza di cancellazione');
     expect(itaMail[0]!.to).toEqual(['privacy@infoitalia.it']);
 
     const d = await detail(ctx, s, acme.id);
@@ -56,7 +56,7 @@ describe('sending requests', () => {
     const d = await detail(ctx, s, form.id);
     expect(d.manual).toMatchObject({ url: 'https://www.solomodulo.it/privacy/modulo' });
     expect(d.manual.steps.length).toBeGreaterThanOrEqual(3);
-    expect(d.manual.prefillText).toContain('io sottoscritto/a Mario Rossi');
+    expect(d.manual.prefillText).toContain('Io sottoscritto/a Mario Rossi');
     expect(d.manual.prefillText).toContain(form.shortRef);
     const api = authed(ctx, s);
     const done = await api.post(`/requests/${form.id}/mark-done`).expect(200);

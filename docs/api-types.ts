@@ -68,6 +68,8 @@ export interface PublicConfigDto {
   customRequestsPerMonth: number;
   appVersion: string;
   supportEmail: string;
+  operatorName: string; // who runs this instance: data controller named in the privacy notice and the delega
+  operatorAddress: string; // postal address of the operator; empty when not configured
   registryEntries: number;
   sendableBrokers: number;
 }

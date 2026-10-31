@@ -193,7 +193,7 @@ describe('telemarketing defence', () => {
     expect(c.text).toContain('+39 02 1234567');
     expect(c.text).toContain('Energia Facile');
     expect(c.text).toContain('Telco Offerte');
-    expect(c.text).toContain('Registro Pubblico delle Opposizioni dal');
+    expect(c.text).toContain('Registro Pubblico delle Opposizioni (RPO) dal');
     expect(c.text).toContain('[iscrizione al RPO già efficace]');
     expect(c.pdfUrl).toBe(`/api/v1/nuisance/complaint.pdf?profileId=${id}`);
     expect(c.steps.length).toBeGreaterThanOrEqual(4);
@@ -203,7 +203,7 @@ describe('telemarketing defence', () => {
 
     const subset = (await api.get(`/nuisance?profileId=${id}`).expect(200)).body.reports[0];
     const only = (await api.post('/nuisance/complaint').send({ profileId: id, reportIds: [subset.id] }).expect(200)).body;
-    expect(only.text).toContain('1 comunicazione commerciale non richiesta');
+    expect(only.text).toMatch(/di aver ricevuto 1 comunicazion[ei] promozional/);
     await authed(ctx, await register(ctx)).post('/nuisance/complaint').send({ profileId: id }).expect(404);
   });
 

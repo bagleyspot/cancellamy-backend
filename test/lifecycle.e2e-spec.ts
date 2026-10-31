@@ -173,7 +173,7 @@ describe('custom removals', () => {
     const mails = mailsForRef(ctx, email.shortRef);
     expect(mails).toHaveLength(1);
     expect(mails[0]!.to).toEqual(['privacy@esempio.it']);
-    expect(mails[0]!.subject).toContain('Richiesta di cancellazione');
+    expect(mails[0]!.subject).toContain('Istanza di cancellazione');
     const d = await detail(ctx, s, email.id);
     expect(d).toMatchObject({ status: 'sent', custom: true });
     expect(d.broker).toMatchObject({ category: 'other', channelTypes: ['email'] });
@@ -228,8 +228,8 @@ describe('deadlines, reminders, escalation and renewals (time travel)', () => {
     const t1 = await ctx.scheduler.tick();
     expect(t1.overdue).toBeGreaterThanOrEqual(3);
     for (const r of [acme, ita, form]) expect((await detail(ctx, s, r.id)).status).toBe('overdue');
-    expect(mailsForRef(ctx, acme.shortRef).map((m) => m.subject)[1]).toMatch(/^Reminder no\. 1: /);
-    expect(mailsForRef(ctx, ita.shortRef).map((m) => m.subject)[1]).toMatch(/^Sollecito n\. 1: /);
+    expect(mailsForRef(ctx, acme.shortRef).map((m) => m.subject)[1]).toMatch(/^Reminder no\. 1 - /);
+    expect(mailsForRef(ctx, ita.shortRef).map((m) => m.subject)[1]).toMatch(/^Sollecito n\. 1 e diffida/);
     expect(mailsForRef(ctx, form.shortRef)).toHaveLength(0);
     const itaD = await detail(ctx, s, ita.id);
     expect(itaD).toMatchObject({ canEscalate: true, canRemind: false });
@@ -263,7 +263,7 @@ describe('deadlines, reminders, escalation and renewals (time travel)', () => {
     ctx.clock.advance(16 * DAY);
     await ctx.scheduler.tick();
     expect(mailsForRef(ctx, ita.shortRef)).toHaveLength(3);
-    expect(mailsForRef(ctx, ita.shortRef)[2]!.subject).toMatch(/^Sollecito n\. 2: /);
+    expect(mailsForRef(ctx, ita.shortRef)[2]!.subject).toMatch(/^Sollecito n\. 2 e diffida/);
     ctx.clock.advance(16 * DAY);
     await ctx.scheduler.tick();
     expect(mailsForRef(ctx, ita.shortRef)).toHaveLength(3);
