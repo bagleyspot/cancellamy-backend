@@ -34,6 +34,8 @@ Cancellamy include un motore automatico (`BrokerVerifierService` e CLI `npm run 
 
 1. **Valida i canali email via DNS/MX e coerenza di dominio**: controlla sintassi, assenza di caselle `noreply`, corrispondenza del dominio/brand o appartenenza a rappresentanti GDPR riconosciuti (VeraSafe, EDPO, DP-Dock, PrivacyLab, ecc.) e verifica l'esistenza di record DNS MX/A attivi.
 2. **Scansiona le pagine privacy ufficiali (Crawler GDPR)**: per le voci prive di email, ispeziona il sito ufficiale e le pagine `/privacy`, `/privacy-policy`, `/informativa-privacy`, `/gdpr`, `/datenschutz`, decodificando anche le email offuscate da Cloudflare (`data-cfemail`) e validandone il record MX.
+   Il crawler segue solo link `http(s)` sulle porte 80/443, verso indirizzi pubblici (nessun host interno, nessun indirizzo
+   privato, anche dopo un redirect) e al massimo 3 redirect.
 3. **Espone il comando in Area Admin**: tramite `POST /api/v1/admin/brokers/auto-verify` (pulsante **«Verifica automatica contatti»** in Admin → Broker) l'amministratore può lanciare in qualsiasi momento la verifica automatica sui broker presenti nel database.
 
 ## Quando una voce è contattata in automatico

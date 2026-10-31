@@ -1,7 +1,7 @@
-import { IsArray, IsIn, IsISO8601, IsOptional, IsString, MaxLength, ArrayMaxSize } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsIn, IsISO8601, IsMongoId, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class NuisanceReportDto {
-  @IsString() @MaxLength(24) profileId!: string;
+  @IsMongoId() profileId!: string;
   @IsIn(['call', 'sms', 'messaging', 'email', 'post']) channel!: string;
   @IsOptional() @IsString() @MaxLength(60) callerNumber?: string;
   @IsOptional() @IsString() @MaxLength(120) company?: string;
@@ -11,10 +11,10 @@ export class NuisanceReportDto {
 }
 
 export class NuisanceQuery {
-  @IsString() @MaxLength(24) profileId!: string;
+  @IsMongoId() profileId!: string;
 }
 
 export class NuisanceComplaintDto {
-  @IsString() @MaxLength(24) profileId!: string;
+  @IsMongoId() profileId!: string;
   @IsOptional() @IsArray() @ArrayMaxSize(500) @IsString({ each: true }) @MaxLength(24, { each: true }) reportIds?: string[];
 }
