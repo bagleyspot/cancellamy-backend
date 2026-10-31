@@ -22,6 +22,7 @@ import { RequestsService } from '../requests/requests.service';
 import { RequestCounts, addToCounts, emptyCounts } from '../requests/status';
 import { AuthUser } from '../auth/auth.types';
 import { IdentityService } from '../identity/identity.service';
+import { GmailSettings, revokeGoogleToken } from '../sender/gmail-sender.service';
 import { ProfileDataService } from './profile-data.service';
 import { ProfileInputDto, UpdateProfileDto } from './profile.dto';
 import { ProfilePii, fullName } from './profile.types';
@@ -30,7 +31,7 @@ export interface ProfileDtoShape extends ProfilePii {
   id: string;
   status: string;
   identityVerified: boolean;
-  senderMode: 'cancellamy' | 'smtp';
+  senderMode: 'cancellamy' | 'smtp' | 'gmail';
   authorization: { id: string; signedAt: string; signatureName: string; textVersion: string; revokedAt: string | null } | null;
   requestCounts: RequestCounts;
   createdAt: string;
@@ -124,6 +125,7 @@ export class ProfilesService {
 
   async remove(userId: string, id: string): Promise<void> {
     const doc = await this.data.getOwned(userId, id);
+    if (doc.gmailEnc) await revokeGoogleToken(this.config.googleRevokeUrl, this.crypto.decryptJson<GmailSettings>(doc.gmailEnc).refreshToken);
     await Promise.all([
       this.messages.deleteMany({ requestId: { $in: await this.requests.find({ profileId: doc._id }).distinct('_id') } }),
       this.requests.deleteMany({ profileId: doc._id }),

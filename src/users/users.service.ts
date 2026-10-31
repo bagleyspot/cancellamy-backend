@@ -23,6 +23,7 @@ import {
 } from '../db/schemas';
 import { CryptoService } from '../common/crypto.service';
 import { badRequest } from '../common/errors';
+import { GmailSettings, revokeGoogleToken } from '../sender/gmail-sender.service';
 import type { ProfilePii } from '../profiles/profile.types';
 
 export interface UserDto {
@@ -149,6 +150,9 @@ export class UsersService {
     const u = await this.users.findById(userId);
     if (!u || !(await argon2.verify(u.passwordHash, password))) throw badRequest('Password is wrong', 'INVALID_CREDENTIALS');
     const uid = u._id;
+    for (const p of await this.profiles.find({ userId: uid, gmailEnc: { $exists: true } }).select('gmailEnc').lean()) {
+      if (p.gmailEnc) await revokeGoogleToken(this.config.googleRevokeUrl, this.crypto.decryptJson<GmailSettings>(p.gmailEnc).refreshToken);
+    }
     await Promise.all([
       this.profiles.deleteMany({ userId: uid }),
       this.authorizations.deleteMany({ userId: uid }),

@@ -143,7 +143,7 @@ export class RequestEngine {
       text: string;
       providerId?: string;
       dryRun: boolean;
-      via?: 'resend' | 'smtp' | 'dry-run' | 'inbound';
+      via?: 'resend' | 'smtp' | 'gmail' | 'dry-run' | 'inbound';
       classification?: ReplyLabel;
       attachments?: IncomingAttachment[];
     },
