@@ -32,6 +32,10 @@ diritti di cancellazione e opposizione. Per firmare scrivi **esattamente** il tu
 l'accettazione. Puoi scaricare il PDF firmato (contiene data, identificativo e impronta del testo) e **revocare**
 la delega in ogni momento.
 
+> Se le richieste partono dalla **tua casella** (modalità `mailbox` dell'istanza, oppure dopo aver collegato SMTP o
+> Gmail al profilo), il passo della delega non serve: sei tu l'interessato che scrive, quindi i messaggi sono in prima
+> persona e non c'è nessun allegato. La delega resta necessaria solo se le email partono da Cancellamy.
+
 **Passo 4 · Riepilogo e attivazione.** Controlla i dati e premi **Attiva il profilo**. Da quel momento le richieste
 vengono create e inviate.
 

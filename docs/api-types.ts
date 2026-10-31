@@ -176,6 +176,7 @@ export interface ProfileDto extends ProfileInput {
   id: string;
   identityVerified: boolean;
   senderMode: SenderMode;
+  authorizationRequired: boolean; // false when the profile sends from its own mailbox (SMTP/Gmail) or the instance runs in mailbox mode: no delega to sign
   status: ProfileStatus;
   authorization: AuthorizationDto | null;
   requestCounts: RequestCounts;
