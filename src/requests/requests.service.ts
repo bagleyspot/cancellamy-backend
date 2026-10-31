@@ -10,6 +10,7 @@ import { IdentityService } from '../identity/identity.service';
 import { Paginated, escapeRegex, pageParams } from '../common/pagination';
 import { BrokerDtoShape, BrokersService, toBrokerDto } from '../brokers/brokers.service';
 import { profileCountries, selectBrokersForProfile } from '../brokers/relevance';
+import { sendsAsDataSubject } from '../profiles/delega';
 import { MailError } from '../mail/mail.types';
 import { PdfService } from '../pdf/pdf.service';
 import { ProfileDataService } from '../profiles/profile-data.service';
@@ -532,6 +533,7 @@ export class RequestsService {
       reminders,
       operatorName: this.config.operatorName,
       generatedOn: this.engine.clock.now().toISOString().slice(0, 10),
+      self: sendsAsDataSubject(profile),
     });
   }
 

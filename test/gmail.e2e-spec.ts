@@ -173,7 +173,8 @@ describe('send from the user Gmail (OAuth)', () => {
     expect(mine[0]!.raw).toMatch(/^To: privacy@acmeleads\.com/mi);
     expect(mine[0]!.raw).toMatch(/^Reply-To: r-[a-z0-9]+@in\.example\.org/mi);
     expect(mine[0]!.raw).toMatch(/^X-Cancellamy-Ref: CNC-/m);
-    expect(mine[0]!.raw).toContain('delega.pdf');
+    expect(mine[0]!.raw).not.toContain('delega.pdf'); // sent as the data subject: no delega
+    expect(mine[0]!.raw.replace(/=\r?\n/g, '')).toContain('am the data subject'); // quoted-printable soft breaks removed; full text checked in own-mailbox.e2e-spec
 
     const d = await detail(ctx, s, acme.id);
     expect(d.status).toBe('sent');

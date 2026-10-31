@@ -42,6 +42,10 @@ OpenAPI UI: `/api/docs`, JSON: `/api/docs-json`.
 | POST | /profiles/:id/pause | → ProfileDto |
 | POST | /profiles/:id/resume | → ProfileDto |
 
+`ProfileDto.authorizationRequired` is `false` when the profile sends from its own mailbox (SMTP/Gmail, or
+`MAIL_MODE=mailbox`): no delega is needed, new profiles start as `ready`, emails are written in the first person and carry
+no attachment. Going back to Cancellamy-sent mail needs an active delega (`AUTHORIZATION_REQUIRED`).
+
 Editing the profile after activation is allowed; it does not re-send past requests.
 
 ## Requests

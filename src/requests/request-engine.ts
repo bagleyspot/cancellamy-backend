@@ -13,6 +13,7 @@ import { ProfileDataService } from '../profiles/profile-data.service';
 import { ProfilePii, fullName } from '../profiles/profile.types';
 import { BrokersService } from '../brokers/brokers.service';
 import { profileCountries, selectBrokersForProfile } from '../brokers/relevance';
+import { sendsAsDataSubject } from '../profiles/delega';
 import { Lang, RequestEmailContext, accessEmail, erasureEmail, idProvidedEmail, reminderEmail } from '../templates/request-templates';
 import { OutboundService } from '../sender/outbound.service';
 import { SenderAuthError } from '../sender/smtp-sender.service';
@@ -127,6 +128,7 @@ export class RequestEngine {
       kind: req.kind,
       firstSentOn: req.sentAt?.toISOString().slice(0, 10),
       dueOn: req.dueAt?.toISOString().slice(0, 10),
+      self: sendsAsDataSubject(profile),
     };
     return { ctx, pii, broker };
   }
@@ -239,14 +241,15 @@ export class RequestEngine {
   async sendInitial(req: RequestDoc): Promise<void> {
     const profile = await this.profiles.findById(req.profileId);
     if (!profile) throw new MailError('Profile no longer exists', false);
-    const auth = await this.data.activeAuthorization(profile._id);
-    if (!auth) throw new MailError('No active authorization', false);
+    const self = sendsAsDataSubject(profile);
+    const auth = self ? null : await this.data.activeAuthorization(profile._id);
+    if (!self && !auth) throw new MailError('No active authorization', false);
     const to = this.recipient(req);
     if (!to) throw new MailError('Request has no recipient', false);
     const { ctx, pii } = await this.context(req, profile);
     const content = req.kind === 'access' ? accessEmail(ctx) : erasureEmail(ctx);
-    const delega = await this.data.renderDelegaPdf(profile, auth);
-    const attachments: MailAttachment[] = [{ filename: 'delega.pdf', content: delega, contentType: 'application/pdf' }];
+    const delega = auth ? await this.data.renderDelegaPdf(profile, auth) : null;
+    const attachments: MailAttachment[] = delega ? [{ filename: 'delega.pdf', content: delega, contentType: 'application/pdf' }] : [];
     const now = this.clock.now();
     const from = this.outbound.from(profile, fullName(pii));
     const res = await this.outbound.send(profile, {
@@ -270,7 +273,7 @@ export class RequestEngine {
       providerId: res.id,
       dryRun: res.dryRun,
       via: res.via,
-      attachments: [{ filename: 'delega.pdf', contentType: 'application/pdf', size: delega.length }],
+      attachments: delega ? [{ filename: 'delega.pdf', contentType: 'application/pdf', size: delega.length }] : [],
     });
     req.dryRun = res.dryRun;
     req.sentAt = now;
@@ -288,12 +291,13 @@ export class RequestEngine {
     const profile = await this.profiles.findById(req.profileId);
     const to = this.recipient(req);
     if (!profile || !to) throw new MailError('Cannot send reminder', false);
-    const auth = await this.data.activeAuthorization(profile._id);
-    if (!auth) throw new MailError('No active authorization', false);
+    const self = sendsAsDataSubject(profile);
+    const auth = self ? null : await this.data.activeAuthorization(profile._id);
+    if (!self && !auth) throw new MailError('No active authorization', false);
     const { ctx, pii } = await this.context(req, profile);
     const number = req.reminderCount + 1;
     const content = reminderEmail({ ...ctx, reminderNumber: number });
-    const delega = await this.data.renderDelegaPdf(profile, auth);
+    const delega = auth ? await this.data.renderDelegaPdf(profile, auth) : null;
     const now = this.clock.now();
     const from = this.outbound.from(profile, fullName(pii));
     const res = await this.outbound.send(profile, {
@@ -303,7 +307,7 @@ export class RequestEngine {
       text: content.text,
       replyTo: this.data.replyAddress(profile),
       headers: { 'X-Cancellamy-Ref': req.shortRef },
-      attachments: [{ filename: 'delega.pdf', content: delega, contentType: 'application/pdf' }],
+      attachments: delega ? [{ filename: 'delega.pdf', content: delega, contentType: 'application/pdf' }] : undefined,
       idempotencyKey: `req-${String(req._id)}-reminder-${number}`,
       tags: [{ name: 'request', value: req.shortRef }],
     });
@@ -317,7 +321,7 @@ export class RequestEngine {
       providerId: res.id,
       dryRun: res.dryRun,
       via: res.via,
-      attachments: [{ filename: 'delega.pdf', contentType: 'application/pdf', size: delega.length }],
+      attachments: delega ? [{ filename: 'delega.pdf', contentType: 'application/pdf', size: delega.length }] : [],
     });
     req.reminderCount = number;
     req.lastOutgoingAt = now;
