@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { join } from 'path';
+import { RELEVANCE_MODES, RelevanceMode } from '../brokers/relevance';
 
 export const APP_CONFIG = Symbol('APP_CONFIG');
 
@@ -48,6 +49,8 @@ export interface AppConfig {
   redisPassword?: string;
   redisTls: boolean;
   queueEnabled: boolean;
+  /** How brokers are chosen and ordered for a new profile (see brokers/relevance.ts). */
+  brokerRelevance: RelevanceMode;
   seedOnBoot: boolean;
   registryPath: string;
   appVersion: string;
@@ -158,6 +161,10 @@ export function loadConfig(env: Env = process.env): AppConfig {
   const tsaUrl = env.TSA_URL ?? '';
   if (tsaUrl && !/^https?:\/\//.test(tsaUrl)) throw new Error('TSA_URL must be an http(s) URL');
 
+  const brokerRelevance = (env.BROKER_RELEVANCE ?? 'prioritize').toLowerCase() as RelevanceMode;
+  if (!RELEVANCE_MODES.includes(brokerRelevance)) {
+    throw new Error(`Invalid BROKER_RELEVANCE: expected one of ${RELEVANCE_MODES.join(', ')}`);
+  }
   const appUrl = (env.APP_URL ?? 'http://localhost:5173').replace(/\/+$/, '');
   const inboundDomain = env.INBOUND_DOMAIN ?? 'in.example.org';
 
@@ -204,6 +211,7 @@ export function loadConfig(env: Env = process.env): AppConfig {
     redisPassword: env.REDIS_PASSWORD ?? '',
     redisTls: bool(env, 'REDIS_TLS', false),
     queueEnabled: bool(env, 'QUEUE_ENABLED', nodeEnv !== 'test'),
+    brokerRelevance,
     seedOnBoot: bool(env, 'SEED_ON_BOOT', true),
     registryPath: env.REGISTRY_PATH ?? join(process.cwd(), 'registry', 'brokers.yaml'),
     appVersion: env.npm_package_version ?? '0.1.0',

@@ -1,0 +1,63 @@
+version: 1
+entries:
+  - id: it-official
+    name: Italiano Verificato SRL
+    website: https://www.italiano-verificato.example
+    domain: italiano-verificato.example
+    category: business_info
+    markets: [IT]
+    channels:
+      - { type: email, value: privacy@italiano-verificato.example, verified: true }
+    verification: { status: verified, last_verified: '2026-10-31' }
+    provenance:
+      - { stream: G, ref: 'https://www.italiano-verificato.example/privacy', license: own-research, verified_on_official_site: true }
+    stream_origin: [G]
+  - id: it-auto
+    name: Italiano Automatico SRL
+    website: https://www.italiano-automatico.example
+    domain: italiano-automatico.example
+    category: business_info
+    markets: [IT]
+    channels:
+      - { type: email, value: privacy@italiano-automatico.example, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [C]
+  - id: global-adtech
+    name: Globale Adtech Inc.
+    website: https://www.globale-adtech.example
+    domain: globale-adtech.example
+    category: marketing_adtech
+    markets: [ALL]
+    channels:
+      - { type: email, value: privacy@globale-adtech.example, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [B]
+  - id: de-only
+    name: Nur Deutschland GmbH
+    website: https://www.nur-deutschland.example
+    domain: nur-deutschland.example
+    category: address_data
+    markets: [DE, AT]
+    channels:
+      - { type: email, value: datenschutz@nur-deutschland.example, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [B]
+  - id: us-hq
+    name: American Lists Inc.
+    website: https://www.american-lists.example
+    domain: american-lists.example
+    category: b2b_enrichment
+    hq_country: US
+    channels:
+      - { type: email, value: privacy@american-lists.example, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [D]
+  - id: unclassified
+    name: Mercato Ignoto SRL
+    website: https://www.mercato-ignoto.example
+    domain: mercato-ignoto.example
+    category: b2b_enrichment
+    channels:
+      - { type: email, value: privacy@mercato-ignoto.example, verified: true }
+    verification: { status: verified, last_verified: '2026-10-23' }
+    stream_origin: [D]

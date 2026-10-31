@@ -25,6 +25,7 @@ entries:
     website: https://www.solomodulo.it
     domain: solomodulo.it
     category: people_search
+    markets: [IT]
     channels:
       - { type: web_form, value: 'https://www.solomodulo.it/privacy/modulo', verified: true }
     verification: { status: verified, last_verified: '2026-10-23' }
@@ -34,6 +35,7 @@ entries:
     website: https://www.registrodelleopposizioni.it
     domain: registrodelleopposizioni.it
     category: opposition_register
+    markets: [IT]
     channels:
       - { type: web_form, value: 'https://www.registrodelleopposizioni.it', verified: true }
       - { type: phone, value: '800 957 766', verified: true }

@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { APP_CONFIG, AppConfig } from '../config/app-config';
@@ -9,6 +9,7 @@ import { badRequest, conflict, forbidden } from '../common/errors';
 import { IdentityService } from '../identity/identity.service';
 import { Paginated, escapeRegex, pageParams } from '../common/pagination';
 import { BrokerDtoShape, BrokersService, toBrokerDto } from '../brokers/brokers.service';
+import { profileCountries, selectBrokersForProfile } from '../brokers/relevance';
 import { MailError } from '../mail/mail.types';
 import { PdfService } from '../pdf/pdf.service';
 import { ProfileDataService } from '../profiles/profile-data.service';
@@ -113,6 +114,8 @@ function toListItem(r: RequestDoc | (RemovalRequest & { _id: Types.ObjectId }), 
 
 @Injectable()
 export class RequestsService {
+  private readonly logger = new Logger(RequestsService.name);
+
   constructor(
     @InjectModel(RemovalRequest.name) private readonly requests: Model<RequestDoc>,
     @InjectModel(Message.name) private readonly messages: Model<MessageDoc>,
@@ -130,7 +133,12 @@ export class RequestsService {
 
   // ------------------------------------------------------------------ profile lifecycle hooks
   async createForProfile(profile: ProfileDoc): Promise<{ emailRequests: number; manualActions: number; dailyEmailBatchSize: number }> {
-    const brokers = await this.brokers.sendableBrokers();
+    const countries = profileCountries(this.data.pii(profile).addresses);
+    const { brokers, counts } = selectBrokersForProfile(await this.brokers.sendableBrokers(), countries, this.config.brokerRelevance);
+    this.logger.log(
+      `activation ${String(profile._id)} [${countries.join(',')}] mode=${this.config.brokerRelevance}: ${counts.contacted} brokers ` +
+        `(${counts.match} relevant, ${counts.otherMarket} other markets, ${counts.unknown} market unknown)`,
+    );
     const revived = await this.engine.reviveSuspended(profile._id);
     let emailRequests = revived.email;
     let manualActions = revived.manual;

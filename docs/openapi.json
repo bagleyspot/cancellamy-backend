@@ -589,6 +589,37 @@
         ]
       }
     },
+    "/api/v1/admin/brokers/auto-verify": {
+      "post": {
+        "operationId": "BrokersController_autoVerify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoVerifyBrokersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Brokers"
+        ]
+      }
+    },
     "/api/v1/profiles": {
       "get": {
         "operationId": "ProfilesController_list",
@@ -2492,6 +2523,22 @@
             "type": "string",
             "nullable": true,
             "maxLength": 2000
+          },
+          "markets": {
+            "maxItems": 60,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^([A-Za-z]{2}|ALL|EU|EEA|GLOBAL)$"
+            }
+          }
+        }
+      },
+      "AutoVerifyBrokersDto": {
+        "type": "object",
+        "properties": {
+          "crawlWebsites": {
+            "type": "boolean"
           }
         }
       },

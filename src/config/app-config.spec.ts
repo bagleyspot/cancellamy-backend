@@ -29,6 +29,13 @@ describe('loadConfig', () => {
     expect(c.mailMode).toBe('dry-run');
   });
 
+  it('chooses how brokers are matched with a profile, prioritizing by default', () => {
+    expect(loadConfig({ NODE_ENV: 'development' }).brokerRelevance).toBe('prioritize');
+    expect(loadConfig({ NODE_ENV: 'development', BROKER_RELEVANCE: 'Strict' }).brokerRelevance).toBe('strict');
+    expect(loadConfig({ NODE_ENV: 'development', BROKER_RELEVANCE: 'off' }).brokerRelevance).toBe('off');
+    expect(() => loadConfig({ NODE_ENV: 'development', BROKER_RELEVANCE: 'everyone' })).toThrow(/BROKER_RELEVANCE/);
+  });
+
   it('requires an API key and inbound domain for real sending', () => {
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'resend' })).toThrow(/RESEND_API_KEY/);
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'resend', RESEND_API_KEY: 're_x' })).toThrow(/INBOUND_DOMAIN/);
