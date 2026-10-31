@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsIn, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
 import { PaginationQuery } from '../common/pagination';
 import { BROKER_CATEGORIES } from '../brokers/brokers.dto';
 import { ALL_STATUSES, GROUP_STATUSES } from './status';
@@ -8,7 +8,7 @@ const trim = ({ value }: { value: unknown }) => (typeof value === 'string' ? val
 
 export class ListRequestsQuery extends PaginationQuery {
   @IsOptional() @IsIn(['erasure', 'access']) kind?: 'erasure' | 'access';
-  @IsOptional() @IsString() @MaxLength(24) profileId?: string;
+  @IsOptional() @IsMongoId() profileId?: string;
   @IsOptional() @IsIn(Object.keys(GROUP_STATUSES)) group?: 'in_progress' | 'action_required' | 'completed' | 'not_removable';
   @IsOptional() @IsIn(ALL_STATUSES) status?: string;
   @IsOptional() @IsIn(BROKER_CATEGORIES as readonly string[]) category?: string;
@@ -21,7 +21,7 @@ export class OutcomeDto {
 }
 
 export class CustomRequestDto {
-  @IsString() @MaxLength(24) profileId!: string;
+  @IsMongoId() profileId!: string;
   @Transform(trim) @IsString() @IsNotEmpty() @MaxLength(120) name!: string;
   @IsOptional() @IsUrl({ require_protocol: true, protocols: ['http', 'https'] }) @MaxLength(300) website?: string;
   @IsOptional() @IsEmail() @MaxLength(254) contactEmail?: string;
@@ -37,13 +37,13 @@ export class ProvideIdDto {
 }
 
 export class SummaryQuery {
-  @IsOptional() @IsString() @MaxLength(24) profileId?: string;
+  @IsOptional() @IsMongoId() profileId?: string;
 }
 
 export const DATA_CATEGORIES = ['identifiers', 'contacts', 'addresses', 'professional', 'financial', 'online_activity', 'location', 'demographics', 'other'] as const;
 
 export class CreateAccessRequestsDto {
-  @IsString() @MaxLength(24) profileId!: string;
+  @IsMongoId() profileId!: string;
   @IsArray() @ArrayMinSize(1) @ArrayMaxSize(20) @IsString({ each: true }) @MaxLength(200, { each: true }) brokerIds!: string[];
 }
 

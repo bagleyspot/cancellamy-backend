@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { promises as dns } from 'dns';
 import { Model } from 'mongoose';
 import { Broker, BrokerChannel, BrokerDoc } from '../db/schemas';
+import { resolvePublicHost } from '../sender/net-guard';
 import { DEFAULT_EXCLUDED_CATEGORIES, defaultSendEnabled } from './registry';
 
 export interface AutoVerifyOptions {
@@ -238,10 +239,10 @@ export function extractPrivacyLinks(html: string, baseUrl: string): string[] {
   let match: RegExpExecArray | null;
   while ((match = hrefRe.exec(html)) !== null) {
     const rawHref = match[1].trim();
-    if (!rawHref || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:') || rawHref.startsWith('javascript:')) continue;
-    if (!linkKeywordRe.test(rawHref)) continue;
+    if (!rawHref || !linkKeywordRe.test(rawHref)) continue;
     try {
       const resolved = new URL(rawHref, base);
+      // Allowlist, not blocklist: mailto:, tel:, javascript:, data:, vbscript: and anything else is dropped here.
       if (!['http:', 'https:'].includes(resolved.protocol)) continue;
       out.add(resolved.toString());
     } catch {
@@ -277,26 +278,50 @@ export async function defaultMxResolver(domain: string): Promise<boolean> {
   }
 }
 
+const MAX_REDIRECTS = 3;
+
+/** Only plain web ports: the crawler must not be usable to probe other services. */
+function isWebPort(u: URL): boolean {
+  return u.port === '' || u.port === '80' || u.port === '443';
+}
+
+/**
+ * Downloads a page of a broker's own site. Every hop (the first URL and each redirect) must be http(s) on a standard
+ * port and resolve to a public address, so a hostile site cannot steer the crawler to internal services.
+ */
 export async function defaultHtmlFetcher(url: string, timeoutMs = 4500): Promise<string | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      redirect: 'follow',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; CancellamyVerifier/1.0; +https://github.com/cancellamy)',
-        Accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'it-IT,it;q=0.9,en-GB;q=0.8,en;q=0.7',
-      },
-    });
-    if (!res.ok) return null;
-    const contentType = res.headers.get('content-type') ?? '';
-    if (contentType && !/text\/html|text\/plain|application\/xhtml/i.test(contentType)) return null;
-    const text = await res.text();
-    return text.slice(0, 350_000);
+    let current = url;
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+      const target = new URL(current);
+      if (!['http:', 'https:'].includes(target.protocol) || !isWebPort(target)) return null;
+      await resolvePublicHost(target.hostname.replace(/^\[|\]$/g, ''));
+      const res = await fetch(current, {
+        signal: controller.signal,
+        redirect: 'manual',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; CancellamyVerifier/1.0; +https://github.com/cancellamy)',
+          Accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'it-IT,it;q=0.9,en-GB;q=0.8,en;q=0.7',
+        },
+      });
+      if (res.status >= 300 && res.status < 400) {
+        const location = res.headers.get('location');
+        if (!location) return null;
+        current = new URL(location, current).toString();
+        continue;
+      }
+      if (!res.ok) return null;
+      const contentType = res.headers.get('content-type') ?? '';
+      if (contentType && !/text\/html|text\/plain|application\/xhtml/i.test(contentType)) return null;
+      const text = await res.text();
+      return text.slice(0, 350_000);
+    }
+    return null; // too many redirects
   } catch {
-    return null;
+    return null; // includes HostNotAllowedError and invalid URLs
   } finally {
     clearTimeout(timer);
   }

@@ -83,6 +83,9 @@
   "overrides": {
     "@nestjs/platform-express": {
       "multer": "$multer"
+    },
+    "@nestjs/swagger": {
+      "js-yaml": "$js-yaml"
     }
   },
   "private": true,
