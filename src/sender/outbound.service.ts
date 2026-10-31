@@ -6,7 +6,7 @@ import { CryptoService } from '../common/crypto.service';
 import { MailService } from '../mail/mail.service';
 import { MailMessage, SendResult } from '../mail/mail.types';
 import { GmailSenderService, GmailSettings } from './gmail-sender.service';
-import { SmtpSenderService, SmtpSettings } from './smtp-sender.service';
+import { SenderAuthError, SmtpSenderService, SmtpSettings } from './smtp-sender.service';
 
 export type Via = 'resend' | 'smtp' | 'gmail' | 'dry-run';
 type SenderProfile = Pick<Profile, 'senderMode' | 'smtpEnc' | 'gmailEnc'>;
@@ -43,19 +43,40 @@ export class OutboundService {
     return `Cancellamy per conto di ${clean(fullName)} <${m?.[1] ?? this.config.mailFrom}>`;
   }
 
+  /**
+   * In mailbox mode replies must reach the user directly (there is no inbound domain), and, while trying the flow, the
+   * email goes to MAIL_REDIRECT_TO instead of the broker, with the real recipients written in the subject and a header.
+   */
+  private forMailbox(message: MailMessage): MailMessage {
+    const { replyTo: _alias, ...rest } = message;
+    const redirect = this.config.mailRedirectTo;
+    if (!redirect) return rest;
+    const original = message.to.join(', ');
+    return {
+      ...rest,
+      to: [redirect],
+      subject: `[TEST -> ${original}] ${message.subject}`,
+      headers: { ...message.headers, 'X-Original-To': original },
+    };
+  }
+
   async send(profile: SenderProfile, message: MailMessage): Promise<SendResult & { via: Via }> {
     const gmail = this.gmail(profile);
-    if (gmail) {
-      // Dry-run never talks to Google.
-      if (this.config.mailMode === 'dry-run') return { id: `dry_${randomUUID()}`, dryRun: true, via: 'dry-run' };
-      return { ...(await this.gmailSender.send(gmail, message)), via: 'gmail' };
+    const smtp = gmail ? null : this.settings(profile);
+    if ((gmail || smtp) && this.config.mailMode === 'dry-run') {
+      // Dry-run never talks to Google or to anyone's mail server.
+      return { id: `dry_${randomUUID()}`, dryRun: true, via: 'dry-run' };
     }
-    const smtp = this.settings(profile);
-    if (smtp) {
-      // Dry-run never talks to anyone's mail server.
-      if (this.config.mailMode === 'dry-run') return { id: `dry_${randomUUID()}`, dryRun: true, via: 'dry-run' };
-      return { ...(await this.smtp.send(smtp, message)), via: 'smtp' };
+    if (this.config.mailMode === 'mailbox') {
+      if (!gmail && !smtp) {
+        // Nothing is sent "from Cancellamy" here: the requests wait until the user connects a mailbox.
+        throw new SenderAuthError('This instance only sends from your own mailbox: connect SMTP or Gmail in the profile settings');
+      }
+      const out = this.forMailbox(message);
+      return gmail ? { ...(await this.gmailSender.send(gmail, out)), via: 'gmail' } : { ...(await this.smtp.send(smtp as SmtpSettings, out)), via: 'smtp' };
     }
+    if (gmail) return { ...(await this.gmailSender.send(gmail, message)), via: 'gmail' };
+    if (smtp) return { ...(await this.smtp.send(smtp, message)), via: 'smtp' };
     const res = await this.mail.send(message);
     return { ...res, via: res.dryRun ? 'dry-run' : 'resend' };
   }

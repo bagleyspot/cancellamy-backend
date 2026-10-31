@@ -4,7 +4,13 @@ import { RELEVANCE_MODES, RelevanceMode } from '../brokers/relevance';
 
 export const APP_CONFIG = Symbol('APP_CONFIG');
 
-export type MailMode = 'dry-run' | 'resend';
+/**
+ * - `dry-run`: nothing leaves the machine; emails are recorded (and replies can be simulated);
+ * - `resend`: Cancellamy's provider sends (needs RESEND_API_KEY and the inbound domain);
+ * - `mailbox`: broker emails leave only from the user's own mailbox (SMTP or Gmail); system emails are only logged. Meant for
+ *   running locally without Resend: replies land in the user's inbox.
+ */
+export type MailMode = 'dry-run' | 'resend' | 'mailbox';
 
 export interface AppConfig {
   nodeEnv: 'development' | 'test' | 'production';
@@ -19,6 +25,8 @@ export interface AppConfig {
   cookieSameSite: 'lax' | 'strict' | 'none';
   trustProxy: boolean;
   mailMode: MailMode;
+  /** mailbox mode only: every broker email is sent to this address instead, to try the flow without writing to anyone. */
+  mailRedirectTo: string;
   mailFrom: string;
   supportEmail: string;
   inboundDomain: string;
@@ -144,7 +152,10 @@ export function loadConfig(env: Env = process.env): AppConfig {
   const prod = nodeEnv === 'production';
 
   const mailMode = (env.MAIL_MODE ?? 'dry-run') as MailMode;
-  if (!['dry-run', 'resend'].includes(mailMode)) throw new Error('MAIL_MODE must be dry-run or resend');
+  if (!['dry-run', 'resend', 'mailbox'].includes(mailMode)) throw new Error('MAIL_MODE must be dry-run, resend or mailbox');
+  const mailRedirectTo = (env.MAIL_REDIRECT_TO ?? '').trim().toLowerCase();
+  if (mailRedirectTo && mailMode !== 'mailbox') throw new Error('MAIL_REDIRECT_TO is only used with MAIL_MODE=mailbox');
+  if (mailRedirectTo && !/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(mailRedirectTo)) throw new Error('MAIL_REDIRECT_TO must be an email address');
   if (mailMode === 'resend' && !env.RESEND_API_KEY) throw new Error('RESEND_API_KEY is required when MAIL_MODE=resend');
   if (mailMode === 'resend' && !env.INBOUND_DOMAIN) throw new Error('INBOUND_DOMAIN is required when MAIL_MODE=resend');
 
@@ -197,6 +208,7 @@ export function loadConfig(env: Env = process.env): AppConfig {
     cookieSameSite: sameSite,
     trustProxy: bool(env, 'TRUST_PROXY', false),
     mailMode,
+    mailRedirectTo,
     mailFrom: env.MAIL_FROM ?? 'Cancellamy <richieste@example.org>',
     supportEmail: env.SUPPORT_EMAIL ?? 'supporto@example.org',
     inboundDomain,

@@ -966,7 +966,6 @@
             "required": false,
             "in": "query",
             "schema": {
-              "maxLength": 24,
               "type": "string"
             }
           },
@@ -1063,7 +1062,6 @@
             "required": false,
             "in": "query",
             "schema": {
-              "maxLength": 24,
               "type": "string"
             }
           }
@@ -2031,7 +2029,6 @@
             "required": false,
             "in": "query",
             "schema": {
-              "maxLength": 24,
               "type": "string"
             }
           },
@@ -2220,7 +2217,6 @@
             "required": true,
             "in": "query",
             "schema": {
-              "maxLength": 24,
               "type": "string"
             }
           }
@@ -2297,7 +2293,6 @@
             "required": true,
             "in": "query",
             "schema": {
-              "maxLength": 24,
               "type": "string"
             }
           }
@@ -2755,8 +2750,7 @@
         "type": "object",
         "properties": {
           "profileId": {
-            "type": "string",
-            "maxLength": 24
+            "type": "string"
           },
           "name": {
             "type": "string",
@@ -2786,8 +2780,7 @@
         "type": "object",
         "properties": {
           "profileId": {
-            "type": "string",
-            "maxLength": 24
+            "type": "string"
           },
           "brokerIds": {
             "minItems": 1,
@@ -3028,8 +3021,7 @@
         "type": "object",
         "properties": {
           "profileId": {
-            "type": "string",
-            "maxLength": 24
+            "type": "string"
           },
           "engine": {
             "type": "string",
@@ -3100,8 +3092,7 @@
         "type": "object",
         "properties": {
           "profileId": {
-            "type": "string",
-            "maxLength": 24
+            "type": "string"
           },
           "channel": {
             "type": "string",
@@ -3146,8 +3137,7 @@
         "type": "object",
         "properties": {
           "profileId": {
-            "type": "string",
-            "maxLength": 24
+            "type": "string"
           },
           "reportIds": {
             "maxItems": 500,

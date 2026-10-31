@@ -42,7 +42,7 @@ export type ApiErrorCode =
   | 'FEATURE_DISABLED'
   | 'TIMESTAMP_UNAVAILABLE';
 
-export type MailMode = 'dry-run' | 'resend';
+export type MailMode = 'dry-run' | 'resend' | 'mailbox'; // mailbox: emails leave only from the user's own mailbox (local use, no Resend)
 
 /** Optional capabilities: the UI hides everything whose flag is false (self-hosters enable what they need). */
 export interface FeatureFlags {
@@ -63,6 +63,7 @@ export interface PublicConfigDto {
   leaderboardMinUsers: number;
   attachmentRetentionDays: number;
   mailMode: MailMode; // dry-run => UI must show a banner "Modalità prova: nessuna email reale viene inviata"
+  mailRedirect: boolean; // mailbox mode with MAIL_REDIRECT_TO: emails go to a test address instead of the brokers (UI banner)
   maxProfiles: number;
   customRequestsPerMonth: number;
   appVersion: string;

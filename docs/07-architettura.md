@@ -170,7 +170,7 @@ Test dedicati lo verificano con due applicazioni sullo stesso database.
 
 ## Email
 
-Il trasporto è scelto da `MAIL_MODE`:
+Il trasporto è scelto da `MAIL_MODE` (con `mailbox` le email di sistema vanno al trasporto di prova e quelle ai broker escono solo da `OutboundService` tramite la casella dell'utente):
 
 - `dry-run`: non spedisce, restituisce un id sintetico (`dry_…`) e, a livello `debug`, scrive il corpo nel log;
 - `resend`: usa la libreria ufficiale di Resend, con chiave di idempotenza, `reply-to`, intestazione

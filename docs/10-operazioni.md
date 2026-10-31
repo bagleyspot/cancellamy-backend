@@ -76,6 +76,7 @@ perché i dati sono cifrati con una chiave che deve restare riservata.
 | Sintomo | Causa probabile | Cosa fare |
 |---|---|---|
 | L'API non parte: "JWT_ACCESS_SECRET must be at least 32 characters" (o simili) | Configurazione mancante o non valida | Leggi il messaggio: la validazione dice quale variabile correggere |
+| Le richieste restano in attesa con "only sends from your own mailbox" | Istanza in `MAIL_MODE=mailbox` e profilo senza casella collegata | Collega SMTP o Gmail nelle impostazioni del profilo |
 | `RESEND_API_KEY is required when MAIL_MODE=resend` | Modalità reale senza chiave o senza `INBOUND_DOMAIN` | Imposta le variabili o torna a `dry-run` |
 | Nessuna email di verifica | Modalità prova (non si spedisce) o dominio non verificato | In prova usa `LOG_LEVEL=debug` per leggere il link; in reale controlla Resend |
 | L'utente non vede il menu admin | L'email non era in `ADMIN_EMAILS` alla registrazione | Aggiungila e fai registrare un nuovo account, oppure imposta `role: "admin"` sul documento utente |

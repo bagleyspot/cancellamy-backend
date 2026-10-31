@@ -159,7 +159,8 @@ risultare **same-site**: la soluzione più semplice è servirli dallo stesso dom
 
 | Variabile | Predefinito | Descrizione |
 |---|---|---|
-| `MAIL_MODE` | `dry-run` | `dry-run`: registra senza inviare. `resend`: invio reale |
+| `MAIL_MODE` | `dry-run` | `dry-run`: registra senza inviare. `resend`: invio reale con Resend. `mailbox`: invio reale **solo dalla casella dell'utente** (SMTP o Gmail), senza Resend: pensata per l'uso in locale, vedi [Uso in locale senza Resend](#uso-in-locale-senza-resend) |
+| `MAIL_REDIRECT_TO` | vuoto | Solo con `MAIL_MODE=mailbox`: ogni email destinata a un broker viene invece mandata a questo indirizzo (oggetto `[TEST -> destinatario reale] ...`) |
 | `MAIL_FROM` | `Cancellamy <richieste@example.org>` | Mittente (deve appartenere a un dominio verificato su Resend) |
 | `SUPPORT_EMAIL` | `supporto@example.org` | Indirizzo di supporto mostrato nell'app |
 | `INBOUND_DOMAIN` | `in.example.org` | Dominio che riceve le risposte; obbligatorio con `resend` |
@@ -254,6 +255,24 @@ Tutte spente finché non le configuri; l'interfaccia nasconde da sola ciò che n
    registry.
 
 Con `MAIL_MODE=resend` il pulsante di simulazione delle risposte è disattivato (`SIMULATION_DISABLED`).
+
+## Uso in locale senza Resend
+
+Per provare l'invio vero sul proprio computer non serve Resend né un dominio: usa `MAIL_MODE=mailbox`.
+
+- **Chi invia:** solo la casella dell'utente, collegata dalla scheda *Mittente delle email* del profilo (SMTP con password per
+  le app, oppure *Collega con Google*). Un profilo senza casella collegata non invia: le sue richieste restano in attesa e
+  l'app mostra "This instance only sends from your own mailbox".
+- **Risposte:** non c'è alias né webhook. Senza `Reply-To`, i broker rispondono all'indirizzo dell'utente, nella sua casella;
+  l'esito di ogni richiesta si segna dall'app (*Segna l'esito*). Resta l'intestazione `X-Cancellamy-Ref` e il codice `CNC-…`
+  nell'oggetto per riconoscerle.
+- **Email di sistema** (conferma account, notifiche): non vengono inviate; il link o il codice compare nel log del backend
+  (con `LOG_LEVEL=debug`).
+- **Provare senza scrivere a nessuno:** imposta `MAIL_REDIRECT_TO=tuo@indirizzo`. Ogni email "ai broker" arriva a quell'indirizzo
+  con oggetto `[TEST -> privacy@broker.example] ...` e intestazione `X-Original-To`. Per l'invio reale togli la variabile.
+- **Attenzione:** attivando un profilo si pianificano centinaia di richieste (5 al giorno per utente, la prima subito). Con
+  `MAIL_REDIRECT_TO` vuoto partono davvero verso i broker.
+
 
 Limiti del fornitore: l'API di Resend consente circa 2 richieste al secondo; lo scheduler rallenta di 600 ms tra un
 invio e l'altro in modalità reale.
