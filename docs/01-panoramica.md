@@ -69,10 +69,10 @@ Tutto è visibile in un'area personale con avanzamento, cronologia, messaggi e n
 | | |
 |---|---|
 | Soggetti nel registry | 492 |
-| Con canale verificato (`verified`, a mano o con il controllo automatico DNS/MX) | 369 (368 contattati in automatico) |
-| Con contatto da ricontrollare (`verified_needs_review`) | 12 |
-| Con recapito da fonte aperta, non ancora controllato (`third_party`) | 51 |
-| Senza recapito utilizzabile (`needs_research`) | 60 |
+| Con canale verificato (`verified`, a mano o con il controllo automatico DNS/MX) | 381 (379 contattati in automatico) |
+| Con contatto da ricontrollare (`verified_needs_review`) | 20 |
+| Con recapito da fonte aperta, non ancora controllato (`third_party`) | 50 |
+| Senza recapito utilizzabile (`needs_research`) | 41 |
 | Specifici dell'Italia (dominio `.it`, sede IT o ricerca italiana) | 84 |
 
 Contare i soggetti non basta: conta quanti hanno un recapito verificato. Per questo il registry è la parte più

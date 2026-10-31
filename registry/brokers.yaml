@@ -3119,9 +3119,14 @@ entries:
     name: A-Zeta SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: dpo@azinvestigation.it
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3129,19 +3134,38 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: A-Zeta s.r.l. (sede legale Napoli). L'informativa letta riguarda le investigazioni
+      difensive, non necessariamente l'informazione commerciale: da ricontrollare quale informativa si applica.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.azinvestigation.it/informativa-1/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.azinvestigation.it
+    domain: azinvestigation.it
   - id: ancic-a-m-analisi-e-marketing-srl
     name: A&M Analisi e Marketing SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: info@analisiemarketing.com
+        verified: true
+        label: rights
+      - type: email
+        value: dpo@analisiemarketing.com
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3149,19 +3173,34 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Titolare: A & M Analisi & Marketing S.R.L. Gli indirizzi email usano il dominio .com
+      mentre il sito è .it (entrambi letti sul sito ufficiale).
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://analisiemarketing.it/privacy/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://analisiemarketing.it
+    domain: analisiemarketing.com
   - id: ancic-aletheia-srl
     name: Aletheia SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: privacy@aletheiagroup.it
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3169,12 +3208,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Aletheia srl (P.IVA 01534480361 nel footer). Indirizzo letto nel footer del sito
+      ufficiale come "DPO".
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://aletheiagroup.eu/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://aletheiagroup.eu
+    domain: aletheiagroup.it
   - provenance:
       - stream: C
         ref: https://www.informativaprivacyancic.it/imprese-iscritte.aspx
@@ -3183,23 +3232,37 @@ entries:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.allianz-trade.com/it_IT/informativa-privacy.html
+        license: own-research
+        verified_on_official_site: true
     id: allianz-trade
     name: Allianz Trade (formerly Euler Hermes Services Italia)
-    website: https://www.allianz-trade.it
-    domain: allianz-trade.it
+    website: https://www.allianz-trade.com/it_IT.html
+    domain: allianz-trade.com
     category: business_info
     owner: Euler Hermes Services Italia S.r.l. (name as on ANCIC list)
     legal_basis_note: art21(1), ANCIC Code
     obstacles: 403 to fetchers.
     id_requested: maybe
     contact_hint: EH_Services_privacy@eulerhermes.com (ANCIC list, not read on own site; site 403)
-    notes: Credit insurer; B2B.
+    notes: >-
+      Credit insurer; B2B.
+
+      Verifica del 2026-10-31: Titolari indicati nell'informativa: Euler Hermes SA/NV, Euler Hermes Services Italia Srl,
+      Euler Hermes Intermediary Agency Srl. Il sito allianz-trade.it reindirizza a allianz-trade.com/it_IT.
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     stream_origin:
       - C
       - F
-    channels: []
+      - G
+    channels:
+      - type: email
+        value: privacy.IT@allianz-trade.com
+        verified: true
+        label: privacy
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -3266,9 +3329,22 @@ entries:
     name: Anticipay S.R.L.
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: ufficio.privacy@zucchetti.it
+        verified: true
+        label: privacy
+      - type: email
+        value: dpo@zucchetti.it
+        verified: true
+        label: dpo
+      - type: pec
+        value: dpogruppozucchetti@gruppozucchetti.it
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3276,19 +3352,38 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Il sito pubblica l'informativa generale del Gruppo Zucchetti (titolari: Zucchetti SpA e
+      le società controllate o collegate); il footer indica Anticipay SRL come società del gruppo.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://anticipay.it/privacy-policy/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://anticipay.it
+    domain: zucchetti.it
   - id: ancic-arc-real-estate-spa
     name: ARC Real Estate SpA
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: segreteria.re@arcgroup.it
+        verified: true
+        label: rights
+      - type: email
+        value: dpo@arcgroup.it
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3296,12 +3391,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Dal modulo PDF di esercizio dei diritti pubblicato sul sito ufficiale; letto da un agente
+      di ricerca, non riverificato (testo del PDF non estraibile in automatico).
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.arcgroup.it/images/2024/2025/Esercizio_diritti_in_materia_di_protezione_dei_dati_personali.pdf
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.arcgroup.it
+    domain: arcgroup.it
   - channels:
       - type: email
         value: privacy@atoka.io
@@ -3399,9 +3504,14 @@ entries:
     name: C.B. SRL - Sintesi
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: dpo@sintesisrl.info
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3409,12 +3519,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: L'informativa chiede richieste scritte "anche in copia" a dpo@sintesisrl.info e non
+      indica un indirizzo diretto del titolare; nella stessa sezione compaiono altri indirizzi di consulenti esterni.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: http://www.sintesisrl.info/privacy.php
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: http://www.sintesisrl.info
+    domain: sintesisrl.info
   - provenance:
       - stream: C
         ref: https://www.informativaprivacyancic.it/imprese-iscritte.aspx
@@ -3451,9 +3571,14 @@ entries:
     name: Cheope Risk Management SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: pec
+        value: cheopesrl@legalmail.it
+        verified: true
+        label: rights
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3461,12 +3586,23 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Informativa PDF sull'informazione commerciale sul sito ufficiale: l'indirizzo
+      cheopesrl@legalmail.it è un collegamento mailto del documento (PEC: serve un mittente PEC). Il PDF non è
+      completamente leggibile in modo automatico.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.cheopeonline.it/uploads/generic_file/informativa_sul_trattamento_dei_dati_personali_per_finalit%C3%A0_di_informazione_commerciale.pdf
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.cheopeonline.it
+    domain: cheopeonline.it
   - channels:
       - type: email
         value: cofaceItalydpo@coface.com
@@ -3508,9 +3644,14 @@ entries:
     name: Comas SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: mail@infocomas.it
+        verified: true
+        label: rights
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3518,12 +3659,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Titolare: Comas S.r.l. (Arezzo). L'informativa indica come DPO i recapiti di CRIF
+      (dirprivacy@crif.com, PEC crif@pec.crif.com).
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.infocomas.it/popup/Privacy_policy.asp
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.infocomas.it
+    domain: infocomas.it
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -3702,9 +3853,18 @@ entries:
     name: Datasinc SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: privacy@datasinc.it
+        verified: true
+        label: dpo
+      - type: pec
+        value: datasinc@legalmail.it
+        verified: true
+        label: rights
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3712,12 +3872,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Titolare: Datasinc S.r.l. (Milano). La pagina non etichetta datasinc@legalmail.it come
+      PEC: lo è per il dominio legalmail.it.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.datasinc.it/privacy
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.datasinc.it
+    domain: datasinc.it
   - provenance:
       - stream: B
         ref: OPT:id=27242
@@ -3738,9 +3908,22 @@ entries:
     name: Differens S.R.L.
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: privacy@differens.it
+        verified: true
+        label: dpo
+      - type: web_form
+        value: https://www.differens.it/wp-content/uploads/2026/06/Modulo-Esercizio-Diritti_differens.pdf
+        verified: true
+        label: modulo diritti GDPR (PDF)
+      - type: pec
+        value: differens@pec.it
+        verified: true
+        label: general
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3748,12 +3931,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: La pagina GDPR chiede di inviare l'istanza con l'apposito modulo (PDF). DPO: Soluzioni
+      Società Benefit SRL.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.differens.it/gdpr/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.differens.it
+    domain: differens.it
   - id: ancic-dodata-srl
     name: Dodata SRL
     category: business_info
@@ -3813,28 +4006,56 @@ entries:
         ref: https://www.europages.it/
         license: own-research
         verified_on_official_site: false
+      - stream: G
+        ref: https://www.europages.co.uk/company/legal-notice/privacy-notice
+        license: own-research
+        verified_on_official_site: true
     id: europages
     name: Europages
     website: https://www.europages.it
-    domain: europages.it
+    domain: europages.com
     category: business_info
     owner: unstated
     legal_basis_note: art21 + art17 (assumed)
     obstacles: Homepage fetched but no footer/privacy link was extracted; guessed policy URLs 404.
     id_requested: not-stated
-    notes: B2B directory listing companies and contact persons.
+    notes: >-
+      B2B directory listing companies and contact persons.
+
+      Verifica del 2026-10-31: Titolare secondo l'informativa di europages.co.uk: Visable S.A. (Levallois-Perret,
+      Francia). La pagina privacy di europages.it non era leggibile: la voce si basa sull'informativa internazionale
+      dello stesso marchio.
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     stream_origin:
       - C
-    channels: []
+      - G
+    channels:
+      - type: email
+        value: customercare@europages.com
+        verified: true
+        label: rights
   - id: ancic-fashion-business-solutions-srl
     name: Fashion Business Solutions SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: dpo@fashionbank.it
+        verified: true
+        label: rights
+      - type: email
+        value: dpo@fb-solutions.it
+        verified: true
+        label: dpo
+      - type: pec
+        value: amministrazione@pec.fb-solutions.it
+        verified: true
+        label: general
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3842,12 +4063,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: La stessa informativa riporta due indirizzi DPO: dpo@fashionbank.it (sezione diritti
+      degli interessati) e dpo@fb-solutions.it (sezione RPD). La PEC è quella del titolare.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.fashionbank.it/informativa-privacy-e-cookie-policy/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.fashionbank.it
+    domain: fashionbank.it
   - channels:
       - type: email
         value: dpo@adcapital.it
@@ -3882,9 +4113,18 @@ entries:
     name: Fox & Patton Co.K. SRL
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: privacy@foxpatton.com
+        verified: true
+        label: rights
+      - type: email
+        value: dpo@spazio88.com
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3892,12 +4132,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Titolare: FOX & PATTON S.R.L. L'informativa è ospitata su areautenti.foxpatton.com. DPO
+      esterno: Spaziottantotto S.r.l. (PEC spaziottantottosrl@pec.aruba.it).
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://areautenti.foxpatton.com/privacy_utenti.php
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.foxpatton.com
+    domain: foxpatton.com
   - provenance:
       - stream: C
         ref: https://www.impresaitalia.info/privacy.asp
@@ -3981,9 +4231,18 @@ entries:
     name: L'Imprenditore S.R.L.
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: privacy@leanus.it
+        verified: true
+        label: rights
+      - type: email
+        value: dpo@leanus.it
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -3991,12 +4250,21 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Titolare: L'imprenditore s.r.l. (Seregno, MB); il marchio del sito è Leanus.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.leanus.it/privacy-policy/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.leanus.it
+    domain: leanus.it
   - channels:
       - type: email
         value: privacy@modefinance.com
@@ -4217,9 +4485,22 @@ entries:
     name: Regold S.R.L.
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: email
+        value: privacy@regold.it
+        verified: true
+        label: rights
+      - type: email
+        value: dpo@regold.it
+        verified: true
+        label: dpo
+      - type: pec
+        value: regold@pec.it
+        verified: true
+        label: general
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -4227,12 +4508,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Letto sul sito ufficiale tramite browser da un agente di ricerca (informativa PDF
+      sull'informazione commerciale); non riverificato perché il sito risponde 403 agli accessi automatici.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.regold.it/privacy_policy.php
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.regold.it
+    domain: regold.it
   - channels:
       - type: email
         value: dpo@mediaasset.it
@@ -4307,9 +4598,14 @@ entries:
     name: Resquon S.R.L.
     category: business_info
     hq_country: IT
-    channels: []
+    channels:
+      - type: pec
+        value: resquon@legalmail.it
+        verified: true
+        label: dpo
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     legal_basis_note: art21 (ditta individuale/professionista); Codice di condotta ANCIC sulle informazioni commerciali
     obstacles: >-
       Dati da fonti pubbliche e registro imprese: la cancellazione alla fonte non è possibile, funziona di più
@@ -4317,12 +4613,22 @@ entries:
     notes: >-
       Member of ANCIC (Italian commercial-information association). Use the ANCIC first-step form
       (informativaprivacyancic.it) or find the DPO on the company's own site; no contact verified yet.
+
+      Verifica del 2026-10-31: Titolare: RESQUON S.R.L. (Roma). L'informativa indica come contatto per i diritti il DPO
+      all'indirizzo resquon@legalmail.it, che è una PEC: serve un mittente PEC.
     provenance:
       - stream: F
         ref: informativaprivacyancic.it (elenco aziende aderenti ANCIC, 2026-10-23)
         license: public-facts (name only)
+      - stream: G
+        ref: https://www.resquon.com/privacy-policy/
+        license: own-research
+        verified_on_official_site: true
     stream_origin:
       - F
+      - G
+    website: https://www.resquon.com
+    domain: resquon.com
   - id: ancic-sace-srv-srl
     name: SACE SRV SRL
     category: business_info
@@ -4554,13 +4860,26 @@ entries:
       - F
   - channels:
       - type: email
+        value: privacy@staff.aruba.it
+        verified: true
+        label: privacy
+      - type: email
+        value: dpo@staff.aruba.it
+        verified: true
+        label: dpo
+      - type: email
         value: info@pratiche.it
         verified: true
+        label: general
     provenance:
       - stream: C
         ref: https://www.visure.it/contatti
         license: own-research
         verified_on_official_site: false
+      - stream: G
+        ref: https://www.pratiche.it/privacy
+        license: own-research
+        verified_on_official_site: true
     contact_raw:
       - >-
         email (general; the page says the 'Servizio Privacy' handles integration/modification/deletion):
@@ -4576,12 +4895,17 @@ entries:
       Name collision with the Tinexta domain; fetch results mixed - treat carefully (the www.visure.it root redirect
       pointed to a different notice, see tinexta-visura).
     id_requested: not-stated
-    notes: 'Doubtful entry: confirm which company really operates visure.it before sending anything.'
+    notes: >-
+      Doubtful entry: confirm which company really operates visure.it before sending anything.
+
+      Verifica del 2026-10-31: L'informativa privacy (PDF, linkata dal footer di visure.it) indica come contatti privacy
+      e DPO gli indirizzi @staff.aruba.it; info@pratiche.it resta l'indirizzo generale di assistenza.
     verification:
       status: verified
-      last_verified: '2026-10-23'
+      last_verified: '2026-10-31'
     stream_origin:
       - C
+      - G
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -5236,8 +5560,17 @@ entries:
       - B
   - channels:
       - type: email
-        value: dpo@crif.com
-        verified: false
+        value: consensoprivacy@crif.com
+        verified: true
+        label: rights
+      - type: email
+        value: dirprivacy@crif.com
+        verified: true
+        label: dpo
+      - type: pec
+        value: crif@pec.crif.com
+        verified: true
+        label: dpo
     provenance:
       - stream: B
         ref: SAL:brokers/crif.yaml
@@ -5245,18 +5578,29 @@ entries:
       - stream: B
         ref: ERA:data/brokers.yaml#crif
         license: MIT (drumandbytes/eraser)
+      - stream: G
+        ref: https://www.crif.it/informativa-sul-trattamento-dei-dati-personali-crif-spa/
+        license: own-research
+        verified_on_official_site: true
     name: CRIF
-    website: https://crif.com
+    website: https://www.crif.it
     domain: crif.com
     category: credit_bureau
     markets:
       - IT
-    notes: open dataset marks gdpr_applies=true, removal via email
+    notes: >-
+      open dataset marks gdpr_applies=true, removal via email
+
+      Verifica del 2026-10-31: Titolare: CRIF S.p.A. (Bologna). L'indirizzo dpo@crif.com preso da un dataset terzo non
+      compare nell'informativa ufficiale: il DPO è dirprivacy@crif.com. Centrale rischi: categoria esclusa dall'invio
+      automatico.
     id: crif-4
     verification:
-      status: third_party
+      status: verified
+      last_verified: '2026-10-31'
     stream_origin:
       - B
+      - G
   - channels:
       - type: email
         value: info.ch@crif.com
@@ -9519,6 +9863,10 @@ entries:
       - stream: B
         ref: DAT:companies/liveramp-it.json
         license: CC0-1.0 (datenanfragen/data)
+      - stream: G
+        ref: https://liveramp.com/privacy
+        license: own-research
+        verified_on_official_site: true
     name: LiveRamp France SAS
     website: https://liveramp.it/
     domain: liveramp.it
@@ -9529,9 +9877,10 @@ entries:
     id: liveramp-2
     verification:
       status: verified
-      last_verified: '2026-10-23'
+      last_verified: '2026-10-31'
     stream_origin:
       - B
+      - G
   - channels:
       - type: web_form
         value: https://loopme.com
@@ -13135,6 +13484,10 @@ entries:
         ref: https://www.chistachiamando.it/privacy-policy
         license: own-research
         verified_on_official_site: false
+      - stream: G
+        ref: https://www.chistachiamando.it/privacy-policy
+        license: own-research
+        verified_on_official_site: true
     id: chistachiamando
     name: chistachiamando.it (and Should I Answer, shouldianswer.net)
     website: https://www.chistachiamando.it
@@ -13149,14 +13502,28 @@ entries:
     notes: >-
       Recommended by Aranzulla as the Italian equivalent; site footer says 2013-2023 and has a /contatti page (not
       read). shouldianswer.net redirects Italian numbers here.
+
+      Verifica del 2026-10-31: L'informativa dice di scrivere al supporto per cancellare le recensioni sul proprio
+      numero e per anonimizzare o cancellare i propri dati; non indica il titolare. L'indirizzo è offuscato da
+      Cloudflare ed è stato decodificato da un agente di ricerca: da ricontrollare.
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     stream_origin:
       - C
-    channels: []
+      - G
+    channels:
+      - type: email
+        value: support@shouldianswer.net
+        verified: true
+        label: privacy
   - provenance:
       - stream: C
         ref: https://www.gruppotim.it/content/dam/telecomitalia/documents/privacy/Informativa-servizio-ricerca-inversa.pdf
+        license: own-research
+        verified_on_official_site: true
+      - stream: G
+        ref: https://www.gruppotim.it/it/footer/privacy.html
         license: own-research
         verified_on_official_site: true
     contact_raw:
@@ -13170,12 +13537,39 @@ entries:
     legal_basis_note: opposition to reverse search / withdrawal of consent (art21, art7(3)); Garante provv. 8/4/2010 cited in the notice
     obstacles: Notice is dated May 2010; current procedure/form for DBU removal on gruppotim.it not read.
     id_requested: maybe
-    notes: Example operator. Same logic applies to Vodafone, WindTre, Iliad, Fastweb, Poste Mobile etc. (not researched).
+    notes: >-
+      Example operator. Same logic applies to Vodafone, WindTre, Iliad, Fastweb, Poste Mobile etc. (not researched).
+
+      Verifica del 2026-10-31: L'informativa indica di esercitare i diritti chiamando gratuitamente 187, 119 o 191; i
+      DPO sono per i clienti consumer e business. La procedura per togliere un numero dall'elenco telefonico non è stata
+      verificata.
     verification:
-      status: needs_research
+      status: verified_needs_review
+      last_verified: '2026-10-31'
     stream_origin:
       - C
-    channels: []
+      - G
+    channels:
+      - type: email
+        value: dpo.clienticonsumer.tim@telecomitalia.it
+        verified: true
+        label: dpo
+      - type: email
+        value: dpo.clientibusiness.tim@telecomitalia.it
+        verified: true
+        label: dpo
+      - type: phone
+        value: '187'
+        verified: true
+        label: diritti privacy, clienti consumer rete fissa (numero verde)
+      - type: phone
+        value: '119'
+        verified: true
+        label: diritti privacy, Servizio Clienti Consumer
+      - type: phone
+        value: '191'
+        verified: true
+        label: diritti privacy, Servizio Clienti Business
   - provenance:
       - stream: C
         ref: https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9903191
