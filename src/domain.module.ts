@@ -12,7 +12,8 @@ import { SmsService } from './identity/sms.service';
 import { NuisanceController } from './nuisance/nuisance.controller';
 import { NuisanceService } from './nuisance/nuisance.service';
 import { OutboundService } from './sender/outbound.service';
-import { SenderController } from './sender/sender.controller';
+import { GmailSenderService } from './sender/gmail-sender.service';
+import { GmailAuthController, SenderController } from './sender/sender.controller';
 import { SenderService } from './sender/sender.service';
 import { SmtpSenderService } from './sender/smtp-sender.service';
 import { InboundController } from './inbound/inbound.controller';
@@ -43,6 +44,7 @@ import { SchedulerService } from './scheduler/scheduler.service';
     InboundController,
     InternalController,
     SenderController,
+    GmailAuthController,
     IdentityController,
     BreachesController,
     DelistingsController,
@@ -61,6 +63,7 @@ import { SchedulerService } from './scheduler/scheduler.service';
     InboundService,
     SchedulerService,
     SmtpSenderService,
+    GmailSenderService,
     OutboundService,
     SenderService,
     SmsService,

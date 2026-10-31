@@ -18,3 +18,8 @@ export class SetSenderDto {
 export class TestSenderDto {
   @IsOptional() @ValidateNested() @Type(() => SmtpInputDto) smtp?: SmtpInputDto;
 }
+
+export class CompleteGmailDto {
+  @IsString() @IsNotEmpty() @MaxLength(2048) code!: string;
+  @IsString() @IsNotEmpty() @MaxLength(4096) state!: string;
+}

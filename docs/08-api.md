@@ -138,8 +138,10 @@ Descritte nel capitolo [Funzionalità avanzate](./12-funzionalita-avanzate.md); 
 
 | Metodo | Percorso | Note |
 |---|---|---|
-| GET, PUT, DELETE | `/profiles/:id/sender` | Mittente delle email (`cancellamy` o `smtp`); la password non è mai restituita |
+| GET, PUT, DELETE | `/profiles/:id/sender` | Mittente delle email (`cancellamy`, `smtp` o `gmail`); la password non è mai restituita |
 | POST | `/profiles/:id/sender/test` | Prova la connessione senza inviare nulla |
+| POST | `/profiles/:id/sender/gmail/start` | Avvia "Collega con Google": restituisce l'URL di consenso Google |
+| POST | `/sender/gmail/complete` | Completa il collegamento con `code` e `state` ricevuti da Google |
 | GET | `/profiles/:id/identity` | Stato di verifica dei contatti |
 | POST | `/profiles/:id/identity/send-code` | Invia il codice (email o SMS); `204` |
 | POST | `/profiles/:id/identity/confirm` | Conferma il codice |

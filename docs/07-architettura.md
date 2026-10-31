@@ -52,7 +52,7 @@ Principi di progetto:
 | `inbound/` | Webhook di Resend, abbinamento delle risposte, posta non abbinata |
 | `scheduler/` | Giri periodici con lease, endpoint `/internal/cron/tick` |
 | `notifications/`, `reports/` | Notifiche in app e per email, report mensili |
-| `sender/` | Invio dalla casella dell'utente: SMTP, protezione SSRF, instradamento (`OutboundService`), errori di mittente |
+| `sender/` | Invio dalla casella dell'utente: SMTP e Gmail (OAuth), protezione SSRF, instradamento (`OutboundService`), errori di mittente |
 | `identity/` | Verifica del possesso di email e telefoni (codici), SMS (`dry-run`, Twilio) |
 | `dossier/` | Dossier probatorio (ZIP con manifest SHA-256) e client RFC 3161 |
 | `breaches/` | Controllo violazioni (Have I Been Pwned) |
@@ -118,8 +118,8 @@ dei database creati prima e crea quello nuovo.
 ### Instradamento dell'invio
 
 `OutboundService` decide come parte un'email di un profilo: con `senderMode: 'smtp'` usa le impostazioni cifrate del
-profilo (`SmtpSenderService`, nodemailer), altrimenti il fornitore di Cancellamy. In modalità prova non apre nessuna
-connessione. Gli errori di autenticazione del mittente (`SenderAuthError`) non consumano tentativi: la richiesta resta in
+profilo (`SmtpSenderService`, nodemailer); con `senderMode: 'gmail'` usa il token di aggiornamento cifrato e l'API Gmail
+(`GmailSenderService`); altrimenti il fornitore di Cancellamy. In modalità prova non apre nessuna connessione. Gli errori di autenticazione del mittente (`SenderAuthError`) non consumano tentativi: la richiesta resta in
 coda, il profilo riceve un `senderError`, l'utente una sola notifica e i giri dello scheduler saltano il profilo finché
 le impostazioni non vengono salvate di nuovo.
 

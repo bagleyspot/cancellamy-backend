@@ -24,7 +24,9 @@ del progetto: un elenco lungo ma non verificato è pericoloso (scrivere a indiri
 | `third_party` | Recapito preso da un dataset aperto (ad esempio datenanfragen, CC0), non ancora controllato | No |
 | `needs_research` | Nessun recapito utilizzabile | No |
 
-Stato attuale: 369 `verified` (368 contattati automaticamente), 12 `verified_needs_review`, 51 `third_party`, 60 `needs_research` (totale 492).
+Stato attuale: 381 `verified` (379 contattati automaticamente), 20 `verified_needs_review`, 50 `third_party`, 41 `needs_research` (totale 492).
+Dei 381 `verified`, 129 hanno almeno una fonte letta sul sito ufficiale (`verified_on_official_site`); gli altri sono validati solo
+da dataset aperti o dal controllo automatico.
 
 ## Automazione della verifica e scoperta contatti
 
@@ -111,7 +113,7 @@ log: l'API continua a funzionare con i dati già presenti).
 
 ## Origine dei dati e licenze
 
-Il registry è la fusione di sei filoni di ricerca (23 ottobre 2026):
+Il registry è la fusione di sei filoni di ricerca (23 ottobre 2026) più la verifica G del 31 ottobre 2026:
 
 | Flusso | Contenuto | Licenza dei dati |
 |---|---|---|
@@ -120,6 +122,7 @@ Il registry è la fusione di sei filoni di ricerca (23 ottobre 2026):
 | **C** | Ricerca originale su soggetti italiani ed europei (elenchi, aggregatori, centrali rischi, strumenti del Garante) | `own-research` |
 | **D** | Ricerca originale su fornitori B2B | `own-research` |
 | **F** | Elenco pubblico delle 36 aziende aderenti ad **ANCIC** (informazioni commerciali) dal portale `informativaprivacyancic.it`: 18 nuove voci italiane `needs_research` e il riferimento ANCIC su 18 voci già presenti | Fatti pubblici (solo nomi) |
+| **G** | Verifica manuale dei soggetti italiani sui loro siti ufficiali (31 ottobre 2026): 22 voci, ognuna con l'URL della pagina letta | `own-research` |
 | **E** | Elenco di [DataBrokersWatch.org](https://databrokerswatch.org) (export CSV del 23 ottobre 2026): 47 soggetti UE/UK/CH o con contatto DPO/GDPR non ancora nel registry, più recapiti privacy aggiunti a 26 voci esistenti | **CC BY-SA 4.0**: attribuzione obbligatoria (`registry/ATTRIBUTION.md`); i dati derivati restano CC BY-SA 4.0 |
 
 Fonti **non riutilizzabili** per i recapiti (CC BY-NC-SA 4.0: BADBOOL, Optery, markramm, Privacy Rights

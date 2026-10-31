@@ -64,10 +64,12 @@ export class Profile {
   @Prop({ required: true }) pii!: string;
   @Prop({ required: true, unique: true }) replyToken!: string;
   @Prop() activatedAt?: Date;
-  /** Who sends the emails: Cancellamy's own domain or the user's mailbox (SMTP). */
-  @Prop({ required: true, enum: ['cancellamy', 'smtp'], default: 'cancellamy' }) senderMode!: 'cancellamy' | 'smtp';
+  /** Who sends the emails: Cancellamy's own domain, the user's mailbox (SMTP) or the user's Gmail (OAuth). */
+  @Prop({ required: true, enum: ['cancellamy', 'smtp', 'gmail'], default: 'cancellamy' }) senderMode!: 'cancellamy' | 'smtp' | 'gmail';
   /** AES-GCM encrypted JSON of the SMTP settings (including the password). */
   @Prop() smtpEnc?: string;
+  /** AES-GCM encrypted JSON of the Gmail OAuth grant (address + refresh token). */
+  @Prop() gmailEnc?: string;
   @Prop() smtpVerifiedAt?: Date;
   @Prop() senderError?: string;
   @Prop({ type: [VerifiedContactModel], default: [] }) verifiedContacts!: VerifiedContact[];
@@ -232,7 +234,7 @@ export class Message {
   @Prop() providerId?: string;
   @Prop({ default: false }) dryRun!: boolean;
   @Prop() classification?: string;
-  @Prop({ enum: ['resend', 'smtp', 'dry-run', 'inbound'] }) via?: 'resend' | 'smtp' | 'dry-run' | 'inbound';
+  @Prop({ enum: ['resend', 'smtp', 'gmail', 'dry-run', 'inbound'] }) via?: 'resend' | 'smtp' | 'gmail' | 'dry-run' | 'inbound';
   @Prop({ type: [MessageAttachmentModel], default: [] }) attachments!: MessageAttachment[];
 }
 export type MessageDoc = HydratedDocument<Message>;

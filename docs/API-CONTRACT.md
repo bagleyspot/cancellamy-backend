@@ -130,11 +130,17 @@ Endpoints of a disabled feature answer `404` with `code: FEATURE_DISABLED`.
 | GET | /profiles/:id/sender | → SenderDto |
 | PUT | /profiles/:id/sender | SetSenderRequest → SenderDto. With `mode: 'smtp'` the connection is tested first; 400 `SMTP_CONNECTION_FAILED` (message explains) or `SMTP_HOST_NOT_ALLOWED` (private/loopback hosts and ports other than 25/465/587/2525 are refused); `fromAddress` must be one of the profile emails |
 | POST | /profiles/:id/sender/test | SmtpSettingsInput (optional; default = saved) → `{ ok: true }` or the same 400 errors. Connection test only, nothing is sent |
-| DELETE | /profiles/:id/sender | → SenderDto (mode back to `cancellamy`) |
+| DELETE | /profiles/:id/sender | → SenderDto (mode back to `cancellamy`; a connected Google grant is revoked at Google) |
+| POST | /profiles/:id/sender/gmail/start | → GmailStartResponse. Only when `features.senderGmail`; otherwise 404 `FEATURE_DISABLED`. The app sends the browser to `url` (Google consent, scope `gmail.send` only) |
+| POST | /sender/gmail/complete | CompleteGmailRequest → CompleteGmailResponse. Called by the route `/app/collega-google` after Google redirects back with `code` and `state`. 400 `GMAIL_AUTH_FAILED` (bad, foreign or expired state, permission refused, Google rejected the code) or `GMAIL_ADDRESS_NOT_IN_PROFILE` (the Google account must be one of the profile emails; the grant is revoked) |
 
 Emails then leave with `From` = the user's address, `Reply-To` = Cancellamy's alias. If the mailbox rejects the
 credentials, `lastError` is set, the user is notified and the profile's queued requests wait until the sender is saved again.
-`MessageDto.via` tells how each message was delivered.
+`MessageDto.via` tells how each message was delivered (`gmail` when it went through the connected Google account).
+
+With `mode: 'gmail'` the flow is: `start` → browser to Google → Google redirects to `<APP_URL>/app/collega-google?code=…&state=…`
+→ the app calls `complete` with the user's Bearer token. The `state` is opaque, bound to the user and profile, and valid 10 minutes.
+If Google revokes the access, `lastError` is set and the queued requests wait until the user connects again.
 
 ## 2 · Evidence dossier
 

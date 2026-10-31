@@ -108,6 +108,7 @@ modulo `inbound`: serve un webhook equivalente che chiami `InboundService.proces
 | `inbound.e2e-spec.ts` | Webhook: firme, abbinamento, citazioni, posta non abbinata |
 | `admin-account.e2e-spec.ts` | Admin, export/cancellazione account, due istanze, cron, modalità `resend` |
 | `sender.e2e-spec.ts` | Invio dalla propria casella con un server SMTP vero, SSRF, modalità prova |
+| `gmail.e2e-spec.ts` | "Collega con Google" contro un finto Google (token, PKCE, invio, revoca), richieste in attesa se l'accesso è revocato |
 | `dossier.e2e-spec.ts` | Dossier, impronte, marca temporale RFC 3161 |
 | `identity-access.e2e-spec.ts` | Verifica dei contatti, richieste di accesso, esiti, mappa, allegati |
 | `breaches.e2e-spec.ts` | Controllo violazioni con API simulata |
