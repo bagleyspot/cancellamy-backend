@@ -1933,12 +1933,16 @@ entries:
     domain: findymail.com
     category: b2b_enrichment
     id_requested: maybe
-    notes: Policy last updated 2023-01-06.
+    notes: |-
+      Policy last updated 2023-01-06.
+      Mercati classificati il 2026-10-31: ALL - servizio globale (app o strumento B2B senza limite di paese).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - D
+    markets:
+      - ALL
   - channels:
       - type: email
         value: privacy@hubspot.com
@@ -2500,11 +2504,15 @@ entries:
       Policy covers only data of PhantomBuster users/visitors. Leads scraped by customers are handled by the customer
       (processor role per DPA), so Art. 15/17 requests about scraped profiles must go to the customer, not
       PhantomBuster.
+
+      Mercati classificati il 2026-10-31: ALL - servizio globale (app o strumento B2B senza limite di paese).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - D
+    markets:
+      - ALL
   - channels:
       - type: email
         value: privacy@pipl.com
@@ -2879,11 +2887,15 @@ entries:
     notes: >-
       Opt-out form asks for first/last name, email, phone, company, LinkedIn URL (all required). Policy updated
       2026-02-17.
+
+      Mercati classificati il 2026-10-31: ALL - servizio globale (app o strumento B2B senza limite di paese).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - D
+    markets:
+      - ALL
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -3251,6 +3263,9 @@ entries:
 
       Verifica del 2026-10-31: Titolari indicati nell'informativa: Euler Hermes SA/NV, Euler Hermes Services Italia Srl,
       Euler Hermes Intermediary Agency Srl. Il sito allianz-trade.it reindirizza a allianz-trade.com/it_IT.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-31'
@@ -3263,6 +3278,8 @@ entries:
         value: privacy.IT@allianz-trade.com
         verified: true
         label: privacy
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -3320,11 +3337,16 @@ entries:
       covered here: A&M Analisi e Marketing, Arc Real Estate, Datasinc, Fox & Patton, Quinservizi, Resquon, Aletheia,
       A-Zeta, Comas, Differens, Regold, SACE SRV, Anticipay, Sintesi (C.B. srl), Cheope, Dodata, Fashion Business
       Solutions, L'Imprenditore (Leanus).
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - id: ancic-anticipay-s-r-l
     name: Anticipay S.R.L.
     category: business_info
@@ -3433,12 +3455,18 @@ entries:
       B2B database built from public sources; sole traders' contacts treated as business data. Separate BI notice:
       https://design-system.atoka.io/media/informativa_bi_spaziodati.pdf
     id_requested: maybe
-    notes: The URL atoka.io/privacy-policy/ is 404; use /pages/it/data-privacy/.
+    notes: >-
+      The URL atoka.io/privacy-policy/ is 404; use /pages/it/data-privacy/.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: aziende@adintend.com
@@ -3461,12 +3489,18 @@ entries:
       Policy says data used 'anche per finalita di marketing, vendita diretta' by partners: strong art21(2)-(3)
       objection.
     id_requested: not-stated
-    notes: Policy cites outdated d.lgs 196/2003 art.7 wording but also GDPR arts 15/17.
+    notes: >-
+      Policy cites outdated d.lgs 196/2003 art.7 wording but also GDPR arts 15/17.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -3556,7 +3590,11 @@ entries:
     contact_hint: >-
       privacy@cervedratingagency.com (listed on ANCIC portal
       https://www.informativaprivacyancic.it/imprese-iscritte.aspx, not read on own site)
-    notes: Low priority.
+    notes: >-
+      Low priority.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
@@ -3567,6 +3605,8 @@ entries:
         value: privacy@cervedratingagency.com
         label: privacy
         verified: true
+    markets:
+      - IT
   - id: ancic-cheope-risk-management-srl
     name: Cheope Risk Management SRL
     category: business_info
@@ -3633,13 +3673,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member per ANCIC list)
     obstacles: Trade-credit insurer; B2B.
     id_requested: maybe
-    notes: PEC read on https://www.coface.it/note-legali. ANCIC list gives privacy@coface.it (not read on own site).
+    notes: >-
+      PEC read on https://www.coface.it/note-legali. ANCIC list gives privacy@coface.it (not read on own site).
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - id: ancic-comas-srl
     name: Comas SRL
     category: business_info
@@ -3721,12 +3767,18 @@ entries:
     legal_basis_note: art21 + art17(1)(c)
     obstacles: As fatturatoitalia.
     id_requested: not-stated
-    notes: Same owner as fatturatoitalia.
+    notes: >-
+      Same owner as fatturatoitalia.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: dirprivacy@cribis.com
@@ -3762,13 +3814,19 @@ entries:
       Operates under ANCIC Code (Garante deliberation 12/06/2019 n.127) with prefectural licence art.134 TULPS; rights
       also via https://www.informativaprivacyancic.it
     id_requested: maybe
-    notes: Same contacts valid for informazione-aziende.it.
+    notes: >-
+      Same contacts valid for informazione-aziende.it.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - channels:
       - type: email
         value: dirprivacy@crif.com
@@ -3989,7 +4047,11 @@ entries:
     obstacles: Own site shows no privacy link in fetched HTML.
     id_requested: maybe
     contact_hint: eurocredit@eurocredit.it (ANCIC list, not read on own site)
-    notes: Low priority.
+    notes: >-
+      Low priority.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
@@ -4001,6 +4063,8 @@ entries:
         value: eurocredit@eurocredit.it
         label: privacy
         verified: true
+    markets:
+      - IT
   - provenance:
       - stream: C
         ref: https://www.europages.it/
@@ -4025,6 +4089,9 @@ entries:
       Verifica del 2026-10-31: Titolare secondo l'informativa di europages.co.uk: Visable S.A. (Levallois-Perret,
       Francia). La pagina privacy di europages.it non era leggibile: la voce si basa sull'informativa internazionale
       dello stesso marchio.
+
+      Mercati classificati il 2026-10-31: EU - servizio europeo (modulo europeo sul diritto all'oblio, o directory/ente
+      con richieste UE).
     verification:
       status: verified
       last_verified: '2026-10-31'
@@ -4036,6 +4103,8 @@ entries:
         value: customercare@europages.com
         verified: true
         label: rights
+    markets:
+      - EU
   - id: ancic-fashion-business-solutions-srl
     name: Fashion Business Solutions SRL
     category: business_info
@@ -4103,12 +4172,18 @@ entries:
     legal_basis_note: art21 + art17(1)(c)
     obstacles: Republishes Registro Imprese / bilanci; claims commercial-information basis (assumed).
     id_requested: not-stated
-    notes: Policy read is the site policy, not a dedicated commercial-information notice.
+    notes: >-
+      Policy read is the site policy, not a dedicated commercial-information notice.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - id: ancic-fox-patton-co-k-srl
     name: Fox & Patton Co.K. SRL
     category: business_info
@@ -4191,12 +4266,18 @@ entries:
     legal_basis_note: art21(1) as cribis
     obstacles: As cribis.
     id_requested: maybe
-    notes: Owner read on the site footer; contact line read on cribis.com, not on this domain.
+    notes: >-
+      Owner read on the site footer; contact line read on cribis.com, not on this domain.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: dpo@kompass.com
@@ -4292,13 +4373,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member)
     obstacles: Mostly company ratings.
     id_requested: maybe
-    notes: 'Business-information notice: https://www.modefinance.com/it/informativa-privacy-business-information'
+    notes: >-
+      Business-information notice: https://www.modefinance.com/it/informativa-privacy-business-information
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: OPT:id=26656
@@ -4368,13 +4455,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member); art17
     obstacles: API aggregator of company/person data (codice fiscale, visure); downstream customers hold copies.
     id_requested: maybe
-    notes: Site links GDPR notice PDFs (privacy-ancic, info-commerciali) not read.
+    notes: >-
+      Site links GDPR notice PDFs (privacy-ancic, info-commerciali) not read.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -4449,7 +4542,11 @@ entries:
     obstacles: Site blocks automated fetching.
     id_requested: maybe
     contact_hint: garante@ponzi.com (ANCIC list, not read on own site; site returns 403 to fetchers)
-    notes: ANCIC member; commercial information and credit recovery.
+    notes: >-
+      ANCIC member; commercial information and credit recovery.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
@@ -4461,6 +4558,8 @@ entries:
         value: garante@ponzi.com
         label: privacy
         verified: true
+    markets:
+      - IT
   - id: ancic-quinservizi-spa
     name: Quinservizi SpA
     category: business_info
@@ -4553,11 +4652,16 @@ entries:
     notes: >-
       Site also exposes emails and PEC addresses of companies. abbonamenti@reportaziende.it is subscription support, not
       privacy.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@reportingsystem.it
@@ -4587,13 +4691,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member)
     obstacles: Site policy only; business-info notice not read.
     id_requested: maybe
-    notes: Hosted by iubenda as linked from the site.
+    notes: >-
+      Hosted by iubenda as linked from the site.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - id: ancic-resquon-s-r-l
     name: Resquon S.R.L.
     category: business_info
@@ -4676,13 +4786,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member); art17
     obstacles: Dedicated commercial-information notice exists.
     id_requested: maybe
-    notes: Contacts page https://www.sevendata.it/contatti/.
+    notes: >-
+      Contacts page https://www.sevendata.it/contatti/.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - channels:
       - type: email
         value: dpo@telematicaitalia.it
@@ -4714,13 +4830,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member)
     obstacles: Notice read is the website one.
     id_requested: maybe
-    notes: Low volume.
+    notes: >-
+      Low volume.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -4768,13 +4890,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member); art17
     obstacles: Visura reseller.
     id_requested: maybe
-    notes: comunicazioni@tuttovisure.it is the generic customer address.
+    notes: >-
+      comunicazioni@tuttovisure.it is the generic customer address.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - provenance:
       - stream: C
         ref: https://www.ufficiocamerale.it/privacy
@@ -4793,7 +4921,11 @@ entries:
     legal_basis_note: art21 + art17 (assumed, no policy read)
     obstacles: Site returns 403 to automated fetchers (WebFetch and curl).
     id_requested: not-stated
-    notes: Must be opened manually in a browser.
+    notes: >-
+      Must be opened manually in a browser.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
@@ -4804,6 +4936,8 @@ entries:
         value: info@ufficiocamerale.com
         label: privacy
         verified: true
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: OPT:id=26296
@@ -4851,13 +4985,19 @@ entries:
     legal_basis_note: art21(1), ANCIC Code (member); art17
     obstacles: Sells visure/reports on individuals as well as companies.
     id_requested: maybe
-    notes: Notice hosted by privacylab.it as linked from the entity's own site.
+    notes: >-
+      Notice hosted by privacylab.it as linked from the entity's own site.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
       - F
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@staff.aruba.it
@@ -4900,12 +5040,17 @@ entries:
 
       Verifica del 2026-10-31: L'informativa privacy (PDF, linkata dal footer di visure.it) indica come contatti privacy
       e DPO gli indirizzi @staff.aruba.it; info@pratiche.it resta l'indirizzo generale di assistenza.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-31'
     stream_origin:
       - C
       - G
+    markets:
+      - IT
   - provenance:
       - stream: B
         ref: EDP:Data Brokers Market Study 2026 (sec. 3.1)
@@ -4945,7 +5090,11 @@ entries:
     obstacles: 'Product name says ''persone'': individuals'' reports.'
     id_requested: maybe
     contact_hint: ufficio.privacy@zucchetti.it (ANCIC list, not read on own site)
-    notes: Product page https://www.zucchetti.it/store/cms/report-aziende-e-persone-visure.html (redirected).
+    notes: >-
+      Product page https://www.zucchetti.it/store/cms/report-aziende-e-persone-visure.html (redirected).
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
@@ -4957,6 +5106,8 @@ entries:
         value: ufficio.privacy@zucchetti.it
         label: privacy
         verified: true
+    markets:
+      - IT
   - channels:
       - type: pec
         value: rpd@pec.infocamere.it
@@ -5074,12 +5225,16 @@ entries:
     legal_basis_note: art17/art21; policy retains data up to 5 years after unregister
     obstacles: Opt-out described as uninstalling the app; contact info of non-users stored 'as contacts'.
     id_requested: not-stated
-    notes: Active in Italy as an Android/iOS caller-ID app (assumed, not verified).
+    notes: |-
+      Active in Italy as an Android/iOS caller-ID app (assumed, not verified).
+      Mercati classificati il 2026-10-31: ALL - servizio globale (app o strumento B2B senza limite di paese).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - ALL
   - channels:
       - type: email
         value: privacy@instabridge.com
@@ -5104,12 +5259,16 @@ entries:
     legal_basis_note: art17(1)(a)/(c) + art21; Swedish controller so IMY is lead authority, but data subject can complain to Garante
     obstacles: Policy lists inconsistent addresses (privacy@eyecon-app.com vs privacy@instabridge.com); confirm before sending.
     id_requested: not-stated
-    notes: App deletes accounts in-app; data about non-users built from contacts.
+    notes: |-
+      App deletes accounts in-app; data about non-users built from contacts.
+      Mercati classificati il 2026-10-31: ALL - servizio globale (app o strumento B2B senza limite di paese).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - ALL
   - channels:
       - type: email
         value: dpo@hiya.com
@@ -5131,12 +5290,16 @@ entries:
     legal_basis_note: art17(1)(c) + art21; EEA residents may request erasure 'under certain circumstances' (policy wording)
     obstacles: Spam-score data about numbers; B2B numbers may be refused.
     id_requested: maybe
-    notes: Direct URL hiya.com/privacy-policy returned 404; /privacy works.
+    notes: |-
+      Direct URL hiya.com/privacy-policy returned 404; /privacy works.
+      Mercati classificati il 2026-10-31: ALL - servizio globale (app o strumento B2B senza limite di paese).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - ALL
   - channels:
       - type: email
         value: privacy@sync.me
@@ -5213,12 +5376,18 @@ entries:
       Number-score pages are community data about phone numbers; the operator may treat numbers of businesses as
       non-personal.
     id_requested: not-stated
-    notes: DPO named on page as Christian Anton. 'AT' obfuscation decoded per the page's own instruction.
+    notes: >-
+      DPO named on page as Christian Anton. 'AT' obfuscation decoded per the page's own instruction.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@truecaller.com
@@ -8285,12 +8454,18 @@ entries:
       23 Feb 2023, docweb 9870014): Ediscom is an autonomous controller of the managed databases
     obstacles: Database of ~21M people fed by foreign list editors; masked in decision.
     id_requested: not-stated
-    notes: Rents telemarketing lists and runs SMS/email/robocall campaigns. Postal alternative on the page.
+    notes: >-
+      Rents telemarketing lists and runs SMS/email/robocall campaigns. Postal alternative on the page.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - provenance:
       - stream: A
         ref: public-data-broker-directory
@@ -11807,12 +11982,18 @@ entries:
       Freedom of information and journalistic archive; Garante/Cassazione case law balances time elapsed and public
       interest.
     id_requested: maybe
-    notes: Notice is general, not specific to archive deletion.
+    notes: >-
+      Notice is general, not specific to archive deletion.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@gedidigital.it
@@ -11840,12 +12021,18 @@ entries:
     legal_basis_note: as above
     obstacles: Ownership of the GEDI titles may have changed since 2025 (sale reported); re-check which entity is controller.
     id_requested: maybe
-    notes: Notice is a DOCX read via unzip.
+    notes: >-
+      Notice is a DOCX read via unzip.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@ilmessaggero.it
@@ -11866,12 +12053,18 @@ entries:
     legal_basis_note: as above
     obstacles: As above.
     id_requested: maybe
-    notes: Notice also lists dpo@cedsdigital.it / privacy@cedsdigital.it (digital services, separate PDF).
+    notes: >-
+      Notice also lists dpo@cedsdigital.it / privacy@cedsdigital.it (digital services, separate PDF).
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@info.ilsole24ore.com
@@ -11892,12 +12085,18 @@ entries:
     legal_basis_note: as above
     obstacles: Policy may cover website users, not journalistic content; confirm channel.
     id_requested: maybe
-    notes: Also publishes professional/legal databases.
+    notes: >-
+      Also publishes professional/legal databases.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: privacy@gedidigital.it
@@ -11921,12 +12120,18 @@ entries:
     legal_basis_note: as above
     obstacles: As gedi.
     id_requested: maybe
-    notes: lastampa.it homepage exposed only lettere@ and publiceditor@ (editorial); policy not read on this domain.
+    notes: >-
+      lastampa.it homepage exposed only lettere@ and publiceditor@ (editorial); policy not read on this domain.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: info.abbonati@registrodelleopposizioni.it
@@ -11981,11 +12186,16 @@ entries:
       The citizen-contact email/PEC are for service requests. GDPR requests to the ministry go to the DPO contacts
       listed in the privacy-per-il-cittadino notice (access/rectification/erasure-restriction/objection are listed
       there).
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: info@boliga.dk
@@ -12974,6 +13184,9 @@ entries:
     notes: >-
       agcom.it/dbu returned 404; AGCOM page for the DBU not located. Key operational insight: one request to the
       operator (not to each directory) is the effective route.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
@@ -12984,6 +13197,8 @@ entries:
         value: rpd@agcom.it
         label: privacy
         verified: true
+    markets:
+      - IT
   - channels:
       - type: email
         value: info@italiaonline.it
@@ -13052,12 +13267,18 @@ entries:
       Same DBU dependency as PagineBianche; commercial-customer listings also paid, so cancel through Area Clienti if
       customer.
     id_requested: not-stated
-    notes: Phone 800 011411 on the site is customer care, not privacy.
+    notes: >-
+      Phone 800 011411 on the site is customer care, not privacy.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - channels:
       - type: email
         value: info@italiaonline.it
@@ -13084,11 +13305,16 @@ entries:
     notes: >-
       The page states that every data subject in the DBU can exercise arts. 15 ss.; contact line read on italiaonline
       pages, not repeated on tuttocitta page.
+
+      Mercati classificati il 2026-10-31: IT - ente italiano (dominio .it o ricerca italiana: aderenti ANCIC, testate,
+      elenchi, registri).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - IT
   - provenance:
       - stream: C
         ref: https://www.odg.it/la-privacy-policy-di-questo-sito
@@ -13684,6 +13910,11 @@ entries:
       - type: email
         value: euprivacy@ekata.com
         verified: true
+    markets:
+      - EU
+    notes: >-
+      Mercati classificati il 2026-10-31: EU - servizio europeo (modulo europeo sul diritto all'oblio, o directory/ente
+      con richieste UE).
   - provenance:
       - stream: A
         ref: public-data-broker-directory
@@ -13751,12 +13982,18 @@ entries:
       Page says processing can take up to 30 days for repeated requests on the same URLs; details may be shared with
       data protection authorities.
     id_requested: maybe
-    notes: Italian-language form.
+    notes: >-
+      Italian-language form.
+
+      Mercati classificati il 2026-10-31: EU - servizio europeo (modulo europeo sul diritto all'oblio, o directory/ente
+      con richieste UE).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - EU
   - channels:
       - type: web_form
         value: https://reportcontent.google.com/forms/rtbf
@@ -13781,9 +14018,15 @@ entries:
       Public-interest balancing (news, professional conduct, crimes); one URL per request; Google may ask for ID when
       needed (assumed).
     id_requested: maybe
-    notes: Form page loaded in Italian; its fields were not read (login-gated rendering).
+    notes: >-
+      Form page loaded in Italian; its fields were not read (login-gated rendering).
+
+      Mercati classificati il 2026-10-31: EU - servizio europeo (modulo europeo sul diritto all'oblio, o directory/ente
+      con richieste UE).
     verification:
       status: verified
       last_verified: '2026-10-23'
     stream_origin:
       - C
+    markets:
+      - EU
