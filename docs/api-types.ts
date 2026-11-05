@@ -394,12 +394,16 @@ export interface RequestDetail extends RequestListItem {
   canSimulateReply: boolean; // true only in dry-run mode
 }
 
+/** Geographic area of the broker seen from Italy: covers Italy (IT, EU/EEA or worldwide markets), other markets only, or not classified (includes custom requests). */
+export type RequestArea = 'italy' | 'other' | 'unknown';
+
 export interface ListRequestsQuery {
   kind?: RequestKind;
   profileId?: string;
   group?: RequestGroup;
   status?: RequestStatus;
   category?: BrokerCategory;
+  area?: RequestArea;
   q?: string; // matches broker name
   page?: number;
   limit?: number; // default 20, max 100
