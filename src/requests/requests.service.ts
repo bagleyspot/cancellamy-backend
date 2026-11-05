@@ -30,7 +30,7 @@ import {
   emptyCounts,
   groupOf,
 } from './status';
-import { AccessFindingsDto, CreateAccessRequestsDto, CustomRequestDto, ListRequestsQuery, OutcomeDto, SendRequestsDto, SimulateReplyDto } from './requests.dto';
+import { AccessFindingsDto, CreateAccessRequestsDto, CustomRequestDto, ListRequestsQuery, OutcomeDto, RequestArea, SendRequestsDto, SimulateReplyDto } from './requests.dto';
 
 const GARANTE_RECLAMO_URL = 'https://www.garanteprivacy.it/diritti/come-agire-per-tutelare-i-tuoi-dati-personali/reclamo';
 const GARANTE_PORTAL_URL = 'https://servizi.gpdp.it';
@@ -257,6 +257,7 @@ export class RequestsService {
     if (q.group) filter.status = { $in: GROUP_STATUSES[q.group] };
     if (q.status) filter.status = q.status;
     if (q.category) filter.brokerCategory = q.category;
+    if (q.area) filter.brokerKey = await this.areaFilter(q.area);
     if (q.q) filter.brokerName = { $regex: escapeRegex(q.q), $options: 'i' };
     const { page, limit, skip } = pageParams(q);
     const [items, total] = await Promise.all([
@@ -264,6 +265,14 @@ export class RequestsService {
       this.requests.countDocuments(filter),
     ]);
     return { items: items.map((r) => toListItem(r, r.createdAt)), total, page, limit };
+  }
+
+  /** Narrows requests to brokers of an area. Custom requests have no registry entry, so they count as "unknown". */
+  private async areaFilter(area: RequestArea): Promise<{ $in: string[] } | { $nin: string[] }> {
+    const slugs = await this.brokers.slugsByRelevance(['IT']);
+    if (area === 'italy') return { $in: slugs.match };
+    if (area === 'other') return { $in: slugs.other_market };
+    return { $nin: [...slugs.match, ...slugs.other_market] };
   }
 
   async summary(userId: string, profileId?: string) {

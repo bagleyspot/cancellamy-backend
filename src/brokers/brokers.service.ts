@@ -4,6 +4,7 @@ import { Model, FilterQuery } from 'mongoose';
 import { Broker, BrokerDoc } from '../db/schemas';
 import { Paginated, escapeRegex, pageParams } from '../common/pagination';
 import { RegistryEntry, defaultSendEnabled, parseMarkets } from './registry';
+import { Relevance, classifyBroker } from './relevance';
 import { BrokersQuery, AdminBrokerPatchDto } from './brokers.dto';
 
 export interface BrokerDtoShape {
@@ -158,6 +159,14 @@ export class BrokersService {
   async count(): Promise<{ total: number; sendable: number }> {
     const [total, sendable] = await Promise.all([this.brokers.countDocuments(), this.brokers.countDocuments({ sendEnabled: true })]);
     return { total, sendable };
+  }
+
+  /** Registry slugs grouped by how they relate to a market (see `classifyBroker`): the basis of the area filter. */
+  async slugsByRelevance(countries: readonly string[]): Promise<Record<Relevance, string[]>> {
+    const all = await this.brokers.find({}, { slug: 1, markets: 1, hqCountry: 1 }).lean();
+    const out: Record<Relevance, string[]> = { match: [], other_market: [], unknown: [] };
+    for (const b of all) out[classifyBroker(b, countries)].push(b.slug);
+    return out;
   }
 
   getRaw(slug: string): Promise<Broker | null> {

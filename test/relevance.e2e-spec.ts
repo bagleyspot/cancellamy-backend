@@ -93,4 +93,18 @@ describe('matching brokers with a profile', () => {
       expect(before['unclassified']).toEqual([[], false]);
     });
   });
+
+  it('the requests list filters by geographic area, seen from Italy', async () => {
+    await withMode('off', async (ctx) => {
+      const s = await register(ctx);
+      await activeProfile(ctx, s);
+      const ids = async (area: string) => (await listRequests(ctx, s, `area=${area}`)).items.map((r) => r.broker.id).sort();
+
+      expect(await ids('italy')).toEqual(['global-adtech', 'it-auto', 'it-official']); // IT and worldwide markets
+      expect(await ids('other')).toEqual(['de-only', 'us-hq']);
+      expect(await ids('unknown')).toEqual(['unclassified']);
+      expect((await listRequests(ctx, s, 'area=italy&q=verificato')).items.map((r) => r.broker.id)).toEqual(['it-official']); // combines with the other filters
+      await authed(ctx, s).get('/requests?area=mars').expect(400);
+    });
+  });
 });
