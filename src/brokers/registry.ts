@@ -9,6 +9,7 @@ export const OBSERVATION_OUTCOMES = [
   'bounce_no_mailbox', // the address does not exist
   'bounce_blocked', // the recipient server rejected the message
   'no_reply', // nothing after the legal deadline
+  'no_data_held', // says it holds nothing about the requester
   'out_of_office', // automatic absence message
   'acknowledged', // receipt only (ticket, auto reply)
   'acknowledged_will_delete', // says it will delete, or treats the request as done

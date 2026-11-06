@@ -1092,6 +1092,11 @@ entries:
         reachable: true
         channel: datenschutz@yourdata.de
         note: 'Auto reply from the external DPO consultancy: office closed until Monday.'
+      - date: '2026-11-06'
+        outcome: no_data_held
+        reachable: true
+        channel: datenschutz@yourdata.de
+        note: The managing director confirms no personal data found in suppliers, customers, marketing lists or applicants.
   - channels:
       - type: email
         value: privacy@6sense.com
@@ -1771,6 +1776,14 @@ entries:
       - D
       - B
       - E
+    observed:
+      - date: '2026-11-06'
+        outcome: needs_portal
+        reachable: true
+        channel: privacy@demandbase.com
+        requires:
+          - portal
+        note: Requests go through its Privacy Center; as a B2B company it asks for a business email address.
   - channels:
       - type: email
         value: data@dropcontact.io
@@ -8519,6 +8532,13 @@ entries:
         reachable: true
         channel: responsabileprivacy@ediscom.com
         note: Says deletion completes in 5-10 working days; further information within 30 days.
+      - date: '2026-11-06'
+        outcome: needs_extra_info
+        reachable: true
+        channel: responsabileprivacy@ediscom.com
+        note: >-
+          A human reply says the sender email is not in its archives and asks for another email or a phone number the
+          data may be under (after an automatic reply promising deletion in 5-10 working days).
   - provenance:
       - stream: A
         ref: public-data-broker-directory
@@ -10314,6 +10334,14 @@ entries:
     stream_origin:
       - B
       - E
+    observed:
+      - date: '2026-11-06'
+        outcome: no_data_held
+        reachable: true
+        channel: privacy@media.net
+        note: >-
+          Preliminary review found no account under the Media.net brand for that email; ad cookies only through its
+          opt-out page. It answered twice (the request was sent twice).
   - provenance:
       - stream: A
         ref: public-data-broker-directory
@@ -13255,6 +13283,12 @@ entries:
       last_verified: '2026-10-23'
     stream_origin:
       - B
+    observed:
+      - date: '2026-11-06'
+        outcome: no_data_held
+        reachable: true
+        channel: privacy@youvia.nl
+        note: Youvia (operator) says it keeps no database of private individuals and found nothing.
   - channels:
       - type: email
         value: privacy@telemovel.com
@@ -13351,6 +13385,12 @@ entries:
     stream_origin:
       - B
       - A
+    observed:
+      - date: '2026-11-06'
+        outcome: no_data_held
+        reachable: true
+        channel: datenschutz@yasni.de
+        note: Answered from info@yasni.de that it holds no data for the name or email provided.
   - provenance:
       - stream: C
         ref: >-

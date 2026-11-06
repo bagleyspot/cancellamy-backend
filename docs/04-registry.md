@@ -107,7 +107,7 @@ ricevute (niente supposizioni, niente numeri di ticket o dati personali).
 | Campo | Significato |
 |---|---|
 | `date` | Giorno dell'osservazione, `YYYY-MM-DD` (tra apici in YAML) |
-| `outcome` | Uno tra: `bounce_no_mailbox` (l'indirizzo non esiste), `bounce_blocked` (il server destinatario rifiuta), `no_reply` (nulla dopo la scadenza di legge), `out_of_office`, `acknowledged` (solo ricevuta o ticket), `acknowledged_will_delete` (dichiara che cancella o considera evasa la richiesta), `needs_portal` (va fatta dal loro portale o modulo), `needs_identifier` (servono cookie ID o ID pubblicitario), `needs_extra_info`, `completed`, `refused` |
+| `outcome` | Uno tra: `bounce_no_mailbox` (l'indirizzo non esiste), `bounce_blocked` (il server destinatario rifiuta), `no_reply` (nulla dopo la scadenza di legge), `no_data_held` (dichiara di non avere dati sul richiedente), `out_of_office`, `acknowledged` (solo ricevuta o ticket), `acknowledged_will_delete` (dichiara che cancella o considera evasa la richiesta), `needs_portal` (va fatta dal loro portale o modulo), `needs_identifier` (servono cookie ID o ID pubblicitario), `needs_extra_info`, `completed`, `refused` |
 | `reachable` | `false` se il canale non ha funzionato (rimbalzo), `true` se qualcuno ha risposto |
 | `channel` | Il contatto a cui si riferisce (un valore di `channels`) |
 | `requires` | Cosa chiede per procedere: `portal`, `email_verification`, `device_identifier`, `linkedin_url`, `id_document` |

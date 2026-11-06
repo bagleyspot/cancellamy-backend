@@ -67,6 +67,7 @@ describe('registry', () => {
       }
     }
     expect(real.find((e) => e.slug === 'ediscom')?.observed[0]).toMatchObject({ outcome: 'acknowledged_will_delete', reachable: true });
+    expect(real.find((e) => e.slug === 'yourdata')?.observed.map((o) => o.outcome)).toEqual(['out_of_office', 'no_data_held']);
     expect(real.find((e) => e.slug === 'truecaller')?.observed[0]).toMatchObject({ outcome: 'bounce_no_mailbox', reachable: false });
   });
 
