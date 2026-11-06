@@ -19,6 +19,7 @@ import { SenderAuthError } from '../sender/smtp-sender.service';
 import { ChannelPlan, planChannel } from './channel-plan';
 import { ReplyLabel, classifyReply, indicatesNoData } from './reply-classifier';
 import { RequestStatus, canTransition } from './status';
+import { ReplyOutcome, ReplyPlan, isGenuineReply, planReply, replyLabel } from './reply-outcome';
 import { MailQuotaService } from '../mail/mail-quota.service';
 
 const REF_ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -361,6 +362,49 @@ export class RequestEngine {
   }
 
   // ------------------------------------------------------------------ replies
+  /**
+   * Records how a broker answered, with a short note in our own words (never the broker's full text).
+   * Moves the request like a real reply would (see `planReply`). Used by `npm run import:replies`.
+   */
+  async recordReply(
+    req: RequestDoc,
+    input: { outcome: ReplyOutcome; at: Date; from?: string; note?: string; manual?: { url?: string; steps?: string[]; email?: string } },
+  ): Promise<ReplyPlan> {
+    const plan = planReply(req.status, input.outcome);
+    req.reply = { outcome: input.outcome, at: input.at, ...(input.note ? { note: input.note } : {}) };
+    await this.storeMessage(req, {
+      direction: 'in',
+      at: input.at,
+      from: input.from ?? req.brokerName,
+      to: [],
+      subject: `Risposta registrata (${input.outcome})`,
+      text: input.note ?? input.outcome,
+      dryRun: false,
+      via: 'inbound',
+      classification: replyLabel(input.outcome),
+    });
+    this.timeline(req, 'reply_received', undefined, input.outcome);
+    if (isGenuineReply(input.outcome) && !req.firstReplyAt) req.firstReplyAt = input.at;
+    if (plan.to) {
+      this.transition(req, plan.to, { reason: plan.reason, note: input.outcome });
+      if (plan.completes) {
+        const now = this.clock.now();
+        req.completedAt = now;
+        if (req.kind !== 'access') req.nextCheckAt = addDays(now, this.config.renewalDays);
+      }
+    }
+    if (plan.to === 'action_required' && input.manual) {
+      // Keep the recipient stored on email requests: only the instructions are added.
+      const manual = req.manual ?? { steps: [] };
+      manual.steps = input.manual.steps ?? [];
+      if (input.manual.url) manual.url = input.manual.url;
+      if (input.manual.email) manual.email = input.manual.email;
+      req.manual = manual;
+    }
+    await req.save();
+    return plan;
+  }
+
   /** Stores an incoming message and moves the request according to the classified reply. */
   async applyReply(req: RequestDoc, input: InboundMessageInput): Promise<ReplyLabel> {
     const raw = classifyReply(input.subject, input.text);

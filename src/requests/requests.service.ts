@@ -74,6 +74,7 @@ export interface ListItemShape {
   status: string;
   group: RequestGroup;
   actionReason: string | null;
+  reply: { outcome: string; date: string; note: string | null } | null;
   cycle: number;
   custom: boolean;
   dryRun: boolean;
@@ -99,6 +100,7 @@ function toListItem(r: RequestDoc | (RemovalRequest & { _id: Types.ObjectId }), 
     status: r.status,
     group: groupOf(r.status),
     actionReason: r.actionReason ?? null,
+    reply: r.reply ? { outcome: r.reply.outcome, date: r.reply.at.toISOString(), note: r.reply.note ?? null } : null,
     cycle: r.cycle,
     custom: !!r.custom,
     dryRun: !!r.dryRun,
@@ -313,7 +315,7 @@ export class RequestsService {
         })),
       })),
       manual:
-        r.channel === 'manual' && pii
+        pii && (r.channel === 'manual' || (r.status === 'action_required' && (r.manual?.steps?.length ?? 0) > 0))
           ? {
               steps: r.manual?.steps ?? [],
               ...(r.manual?.url ? { url: r.manual.url } : {}),
