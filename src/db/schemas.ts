@@ -175,6 +175,15 @@ export class CustomSpec {
 }
 const CustomSpecModel = SchemaFactory.createForClass(CustomSpec);
 
+/** How the broker answered this request (recorded by the user or imported), shown in the list and the detail. */
+@Schema({ _id: false })
+export class RequestReply {
+  @Prop({ required: true }) outcome!: string; // an ObservationOutcome
+  @Prop({ required: true }) at!: Date;
+  @Prop() note?: string;
+}
+const RequestReplyModel = SchemaFactory.createForClass(RequestReply);
+
 @Schema({ timestamps: true, collection: 'removalrequests' })
 export class RemovalRequest {
   @Prop({ type: Types.ObjectId, required: true, index: true }) userId!: Types.ObjectId;
@@ -193,6 +202,7 @@ export class RemovalRequest {
   @Prop({ required: true, default: 1 }) cycle!: number;
   @Prop({ type: CustomSpecModel }) custom?: CustomSpec;
   @Prop({ type: ManualSpecModel }) manual?: ManualSpec;
+  @Prop({ type: RequestReplyModel }) reply?: RequestReply;
   @Prop({ default: false }) dryRun!: boolean;
   @Prop() sentAt?: Date;
   @Prop() dueAt?: Date;

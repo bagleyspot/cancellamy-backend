@@ -48,7 +48,7 @@ Editing the profile after activation is allowed; it does not re-send past reques
 
 | Method | Path | Body → Response |
 |---|---|---|
-| GET | /requests | ListRequestsQuery (query string) → Paginated<RequestListItem> |
+| GET | /requests | ListRequestsQuery (query string) → Paginated<RequestListItem>. `reply` is the broker's recorded answer (`outcome`, `date`, `note`), `null` until one is recorded (see `npm run import:replies`) |
 | GET | /requests/summary?profileId= | → SummaryDto |
 | GET | /requests/:id | → RequestDetail |
 | POST | /requests/custom | CustomRequestInput → 201 RequestListItem (409 `CUSTOM_LIMIT_REACHED`) |
