@@ -92,6 +92,9 @@ describe('matching brokers with a profile', () => {
       expect(before['global-adtech']).toEqual([['ALL'], false]);
       expect(before['unclassified']).toEqual([[], false]);
       const observed = (await ctx.connection.collection('brokers').findOne({ slug: 'it-official' }))?.observed;
+      const api = await authed(ctx, s).get('/brokers/it-official').expect(200);
+      expect(api.body.observed).toEqual([{ date: '2026-11-05', outcome: 'acknowledged', reachable: true, channel: 'privacy@italiano-verificato.example', requires: [], note: 'Receipt only' }]);
+      expect((await authed(ctx, s).get('/brokers/it-auto').expect(200)).body.observed).toEqual([]);
       expect(observed).toEqual([{ date: '2026-11-05', outcome: 'acknowledged', reachable: true, channel: 'privacy@italiano-verificato.example', requires: [], note: 'Receipt only' }]);
     });
   });

@@ -21,6 +21,8 @@ export interface BrokerDtoShape {
   idRequested: string | null;
   sendEnabled: boolean;
   notes: string | null;
+  /** What was seen when the broker was really contacted, newest first. */
+  observed: { date: string; outcome: string; reachable: boolean; channel?: string; requires: string[]; note?: string }[];
 }
 
 export function toBrokerDto(b: Broker): BrokerDtoShape {
@@ -39,6 +41,16 @@ export function toBrokerDto(b: Broker): BrokerDtoShape {
     idRequested: b.idRequested ?? null,
     sendEnabled: b.sendEnabled,
     notes: b.notes ?? null,
+    observed: [...(b.observed ?? [])]
+      .sort((a, c) => c.date.localeCompare(a.date))
+      .map((o) => ({
+        date: o.date,
+        outcome: o.outcome,
+        reachable: o.reachable,
+        ...(o.channel ? { channel: o.channel } : {}),
+        requires: [...(o.requires ?? [])],
+        ...(o.note ? { note: o.note } : {}),
+      })),
   };
 }
 

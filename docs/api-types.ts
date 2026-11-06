@@ -230,6 +230,32 @@ export interface BrokerChannelDto {
   verified: boolean;
 }
 
+/** How a broker answered a real request (registry `observed`). */
+export type ObservationOutcome =
+  | 'bounce_no_mailbox' // the address does not exist
+  | 'bounce_blocked' // the recipient server rejected the message
+  | 'no_reply' // nothing after the legal deadline
+  | 'no_data_held' // says it holds nothing about the requester
+  | 'out_of_office'
+  | 'acknowledged' // receipt only (ticket, auto reply)
+  | 'acknowledged_will_delete' // says it will delete, or treats the request as done
+  | 'needs_portal' // the request must go through their portal or form
+  | 'needs_identifier' // needs a device or cookie identifier
+  | 'needs_extra_info'
+  | 'completed' // confirms the erasure
+  | 'refused';
+
+export type ObservationRequirement = 'portal' | 'email_verification' | 'device_identifier' | 'linkedin_url' | 'id_document';
+
+export interface BrokerObservationDto {
+  date: string; // YYYY-MM-DD
+  outcome: ObservationOutcome;
+  reachable: boolean; // false when the channel did not work (bounce)
+  channel?: string; // the contact the observation refers to
+  requires: ObservationRequirement[];
+  note?: string;
+}
+
 export interface BrokerSummary {
   id: string;
   name: string;
@@ -248,6 +274,7 @@ export interface BrokerDto extends BrokerSummary {
   idRequested: string | null; // yes | no | maybe | not-stated
   sendEnabled: boolean; // false => not contacted automatically yet
   notes: string | null;
+  observed: BrokerObservationDto[]; // newest first; empty when the broker was never observed
 }
 
 export interface BrokerStatsDto {

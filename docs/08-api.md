@@ -126,7 +126,7 @@ consentite in quel momento.
 | Metodo | Percorso | Note |
 |---|---|---|
 | GET | `/config` | Pubblico: `mailMode`, limiti, conteggi del registry |
-| GET | `/brokers`, `/brokers/stats`, `/brokers/:id` | Pubblici; filtri `q`, `category`, `status`, `sendable` |
+| GET | `/brokers`, `/brokers/stats`, `/brokers/:id` | Pubblici; filtri `q`, `category`, `status`, `sendable`. Ogni broker porta `observed` (osservazioni sul comportamento, dalla più recente) |
 | GET | `/notifications`, `/notifications/unread-count` | |
 | POST | `/notifications/read` | `{ ids? }`; senza `ids` le segna tutte |
 | GET | `/reports` | Filtro `profileId` |
