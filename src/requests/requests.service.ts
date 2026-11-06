@@ -353,6 +353,7 @@ export class RequestsService {
       idRequested: null,
       sendEnabled: false,
       notes: r.custom?.notes ?? null,
+      observed: [],
     };
   }
 

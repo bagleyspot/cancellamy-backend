@@ -73,7 +73,7 @@ Manual-channel requests are created directly in `action_required`.
 | GET | /config | - | PublicConfigDto |
 | GET | /brokers?q=&category=&status=&sendable=&page=&limit= | - | Paginated<BrokerDto> |
 | GET | /brokers/stats | - | BrokerStatsDto |
-| GET | /brokers/:id | - | BrokerDto |
+| GET | /brokers/:id | - | BrokerDto (`observed`: what happened when the broker was really contacted, newest first; also inside `RequestDetail.broker`) |
 
 ## Notifications and reports
 
