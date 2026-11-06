@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { defaultSendEnabled, loadRegistryFile, parseMarkets, parseRegistry } from './registry';
+import { OBSERVATION_OUTCOMES, defaultSendEnabled, loadRegistryFile, parseMarkets, parseObserved, parseRegistry } from './registry';
 
 describe('registry', () => {
   const real = loadRegistryFile(join(__dirname, '..', '..', 'registry', 'brokers.yaml'));
@@ -55,5 +55,40 @@ describe('registry', () => {
   it('normalises unknown channel types to other and drops empty values', () => {
     const [e] = parseRegistry("entries:\n  - id: a\n    name: A\n    category: other\n    channels:\n      - {type: fax, value: '123'}\n      - {type: email, value: ''}");
     expect(e?.channels).toEqual([{ type: 'other', value: '123', label: undefined, verified: false }]);
+  });
+
+  it('reads the observed behaviour of the shipped entries', () => {
+    const observed = real.filter((e) => e.observed.length > 0);
+    expect(observed.length).toBeGreaterThan(20);
+    for (const e of observed) {
+      for (const o of e.observed) {
+        expect(o.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(OBSERVATION_OUTCOMES).toContain(o.outcome);
+      }
+    }
+    expect(real.find((e) => e.slug === 'ediscom')?.observed[0]).toMatchObject({ outcome: 'acknowledged_will_delete', reachable: true });
+    expect(real.find((e) => e.slug === 'truecaller')?.observed[0]).toMatchObject({ outcome: 'bounce_no_mailbox', reachable: false });
+  });
+
+  it('parses observations and fails loudly on a malformed one', () => {
+    const [a] = parseRegistry(
+      [
+        'entries:',
+        '  - id: a',
+        '    name: A',
+        '    category: other',
+        '    observed:',
+        '      - {date: 2026-11-05, outcome: needs_portal, reachable: true, channel: privacy@a.example, requires: [portal, email_verification], note: Use the portal}',
+      ].join('\n'),
+    );
+    expect(a?.observed).toEqual([
+      { date: '2026-11-05', outcome: 'needs_portal', reachable: true, channel: 'privacy@a.example', requires: ['portal', 'email_verification'], note: 'Use the portal' },
+    ]);
+    expect(parseObserved(undefined, 'x')).toEqual([]);
+    expect(() => parseObserved('nope', 'x')).toThrow('must be a list');
+    expect(() => parseObserved([{ date: '5 Nov', outcome: 'acknowledged', reachable: true }], 'x')).toThrow('YYYY-MM-DD');
+    expect(() => parseObserved([{ date: '2026-11-05', outcome: 'maybe', reachable: true }], 'x')).toThrow('outcome must be one of');
+    expect(() => parseObserved([{ date: '2026-11-05', outcome: 'acknowledged' }], 'x')).toThrow('reachable');
+    expect(() => parseObserved([{ date: '2026-11-05', outcome: 'acknowledged', reachable: true, requires: ['magic'] }], 'x')).toThrow('requires');
   });
 });

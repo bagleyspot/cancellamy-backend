@@ -1,8 +1,24 @@
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
-import { BrokerChannel } from '../db/schemas';
+import { BrokerChannel, BrokerObservation } from '../db/schemas';
 
 export const CHANNEL_TYPES = ['email', 'pec', 'web_form', 'phone', 'postal', 'other'] as const;
+
+/** How a broker answered a real request (see docs/04-registry.md, "Comportamento osservato"). */
+export const OBSERVATION_OUTCOMES = [
+  'bounce_no_mailbox', // the address does not exist
+  'bounce_blocked', // the recipient server rejected the message
+  'no_reply', // nothing after the legal deadline
+  'out_of_office', // automatic absence message
+  'acknowledged', // receipt only (ticket, auto reply)
+  'acknowledged_will_delete', // says it will delete, or treats the request as done
+  'needs_portal', // the request must go through their portal or form
+  'needs_identifier', // needs a device or cookie identifier
+  'needs_extra_info', // asks for something else (see `requires`)
+  'completed', // confirms the erasure
+  'refused', // refuses, with or without a reason
+] as const;
+export const OBSERVATION_REQUIREMENTS = ['portal', 'email_verification', 'device_identifier', 'linkedin_url', 'id_document'] as const;
 
 /** Categories never contacted automatically by default: erasure is limited by law or they are the regulator. */
 export const DEFAULT_EXCLUDED_CATEGORIES = new Set([
@@ -29,6 +45,7 @@ export interface RegistryEntry {
   obstacles?: string;
   idRequested?: string;
   notes?: string;
+  observed: BrokerObservation[];
   streams: string[];
 }
 
@@ -47,6 +64,7 @@ interface RawEntry {
   obstacles?: string;
   id_requested?: string | boolean;
   notes?: string;
+  observed?: unknown;
   stream_origin?: string[];
 }
 
@@ -56,6 +74,25 @@ const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim
 export function parseMarkets(raw: unknown): string[] {
   const tokens = (Array.isArray(raw) ? raw : []).flatMap((m) => String(m).split(/[\s,;/]+/));
   return [...new Set(tokens.map((t) => t.trim().toUpperCase()).filter((t) => t && t !== 'UNKNOWN'))];
+}
+
+/** `observed` is a list of dated observations; a malformed one fails the load so a typo cannot silently drop data. */
+export function parseObserved(raw: unknown, slug: string): BrokerObservation[] {
+  if (raw === undefined || raw === null) return [];
+  if (!Array.isArray(raw)) throw new Error(`${slug}: observed must be a list`);
+  return raw.map((item: Record<string, unknown>, i) => {
+    const where = `${slug}: observed[${i}]`;
+    const date = item.date instanceof Date ? item.date.toISOString().slice(0, 10) : str(item.date);
+    if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`${where}.date must be a YYYY-MM-DD date`);
+    const outcome = str(item.outcome);
+    if (!outcome || !(OBSERVATION_OUTCOMES as readonly string[]).includes(outcome)) throw new Error(`${where}.outcome must be one of ${OBSERVATION_OUTCOMES.join(', ')}`);
+    if (typeof item.reachable !== 'boolean') throw new Error(`${where}.reachable must be true or false`);
+    const requires = item.requires === undefined ? [] : item.requires;
+    if (!Array.isArray(requires) || requires.some((r) => !(OBSERVATION_REQUIREMENTS as readonly string[]).includes(String(r)))) {
+      throw new Error(`${where}.requires must be a list of ${OBSERVATION_REQUIREMENTS.join(', ')}`);
+    }
+    return { date, outcome, reachable: item.reachable, channel: str(item.channel), requires: requires.map(String), note: str(item.note) };
+  });
 }
 
 export function parseRegistry(source: string): RegistryEntry[] {
@@ -94,6 +131,7 @@ export function parseRegistry(source: string): RegistryEntry[] {
       obstacles: str(raw.obstacles),
       idRequested: raw.id_requested === undefined ? undefined : String(raw.id_requested),
       notes: str(raw.notes),
+      observed: parseObserved(raw.observed, slug),
       streams: Array.isArray(raw.stream_origin) ? raw.stream_origin.map(String) : [],
     });
   }

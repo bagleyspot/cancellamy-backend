@@ -89,7 +89,33 @@ ufficiale.
       license: own-research
       verified_on_official_site: true
   stream_origin: [D]
+  observed:                       # facoltativo: cosa è successo quando è stato contattato davvero (vedi sotto)
+    - date: '2026-11-05'
+      outcome: needs_portal
+      reachable: true
+      channel: privacy@lusha.com
+      requires: [portal, email_verification]
+      note: Only requests made through its Privacy Center are processed.
 ```
+
+## Comportamento osservato (`observed`)
+
+Il registry dice a chi scrivere; `observed` dice **cosa è successo quando l'abbiamo fatto**. È una lista facoltativa di
+osservazioni datate (dalla più vecchia alla più recente), una per episodio, basata solo su fatti letti nelle risposte
+ricevute (niente supposizioni, niente numeri di ticket o dati personali).
+
+| Campo | Significato |
+|---|---|
+| `date` | Giorno dell'osservazione, `YYYY-MM-DD` (tra apici in YAML) |
+| `outcome` | Uno tra: `bounce_no_mailbox` (l'indirizzo non esiste), `bounce_blocked` (il server destinatario rifiuta), `no_reply` (nulla dopo la scadenza di legge), `out_of_office`, `acknowledged` (solo ricevuta o ticket), `acknowledged_will_delete` (dichiara che cancella o considera evasa la richiesta), `needs_portal` (va fatta dal loro portale o modulo), `needs_identifier` (servono cookie ID o ID pubblicitario), `needs_extra_info`, `completed`, `refused` |
+| `reachable` | `false` se il canale non ha funzionato (rimbalzo), `true` se qualcuno ha risposto |
+| `channel` | Il contatto a cui si riferisce (un valore di `channels`) |
+| `requires` | Cosa chiede per procedere: `portal`, `email_verification`, `device_identifier`, `linkedin_url`, `id_document` |
+| `note` | Una frase con il dettaglio utile e il canale alternativo |
+
+Un'osservazione malformata (data o esito non validi, `reachable` mancante) blocca il caricamento con un errore chiaro. Il
+campo è del registry: viene riletto dal file a ogni avvio e non si modifica dall'area admin. Per ora non cambia chi viene
+contattato: è la base per decidere, ad esempio, di non riscrivere a un indirizzo che rimbalza.
 
 Campi obbligatori all'importazione: `id`, `name`, `category`. Id duplicati bloccano il caricamento (errore chiaro nei
 log: l'API continua a funzionare con i dati già presenti).
