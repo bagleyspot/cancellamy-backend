@@ -1,7 +1,8 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Profile, ProfileDoc, RemovalRequest, RequestDoc } from '../db/schemas';
+import { APP_CONFIG, AppConfig } from '../config/app-config';
 import { Clock } from '../common/clock';
 import { CryptoService } from '../common/crypto.service';
 import { badRequest, CodedException } from '../common/errors';
@@ -30,6 +31,7 @@ export class SenderService {
     private readonly gmailSender: GmailSenderService,
     private readonly crypto: CryptoService,
     private readonly clock: Clock,
+    @Inject(APP_CONFIG) private readonly config: AppConfig,
   ) {}
 
   private toDto(profile: ProfileDoc): SenderDtoShape {
@@ -41,7 +43,8 @@ export class SenderService {
       gmail: g ? { email: g.email } : null,
       verifiedAt: profile.smtpVerifiedAt ? profile.smtpVerifiedAt.toISOString() : null,
       lastError: profile.senderError ?? null,
-      replyAddress: this.data.replyAddress(profile),
+      // In mailbox mode there is no Cancellamy alias: broker replies reach the user's own address.
+      replyAddress: this.config.mailMode === 'mailbox' && (s || g) ? (s?.fromAddress ?? g?.email ?? '') : this.data.replyAddress(profile),
     };
   }
 

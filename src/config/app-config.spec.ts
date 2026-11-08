@@ -36,6 +36,14 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ NODE_ENV: 'development', BROKER_RELEVANCE: 'everyone' })).toThrow(/BROKER_RELEVANCE/);
   });
 
+  it('mailbox mode needs no Resend settings; the test redirect only works in mailbox mode and must be an address', () => {
+    expect(loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'mailbox' })).toMatchObject({ mailMode: 'mailbox', mailRedirectTo: '' });
+    expect(loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'mailbox', MAIL_REDIRECT_TO: ' Me@Example.org ' }).mailRedirectTo).toBe('me@example.org');
+    expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'dry-run', MAIL_REDIRECT_TO: 'me@example.org' })).toThrow(/MAIL_REDIRECT_TO is only used/);
+    expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'mailbox', MAIL_REDIRECT_TO: 'not an address' })).toThrow(/email address/);
+    expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'carrier-pigeon' })).toThrow(/MAIL_MODE/);
+  });
+
   it('requires an API key and inbound domain for real sending', () => {
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'resend' })).toThrow(/RESEND_API_KEY/);
     expect(() => loadConfig({ NODE_ENV: 'development', MAIL_MODE: 'resend', RESEND_API_KEY: 're_x' })).toThrow(/INBOUND_DOMAIN/);

@@ -30,6 +30,7 @@ export class BrokersController {
     const counts = await this.brokers.count();
     return {
       mailMode: this.config.mailMode,
+      mailRedirect: !!this.config.mailRedirectTo, // mailbox mode: emails are diverted to a test address
       features: computeFeatures(this.config),
       leaderboardMinUsers: this.config.leaderboardMinUsers,
       attachmentRetentionDays: this.config.attachmentRetentionDays,
