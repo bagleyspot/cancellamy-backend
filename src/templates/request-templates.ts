@@ -1,4 +1,5 @@
 import { ProfilePii, formatAddress, fullName } from '../profiles/profile.types';
+import { accessEmailSelf, erasureEmailSelf, idProvidedEmailSelf, reminderEmailSelf } from './request-templates-self';
 
 export type Lang = 'it' | 'en';
 
@@ -15,6 +16,8 @@ export interface RequestEmailContext {
   firstSentOn?: string;
   /** Deadline date shown in reminders. */
   dueOn?: string;
+  /** The email is sent from the data subject's own mailbox: first person, no mandate, no delega. */
+  self?: boolean;
 }
 
 export interface EmailContent {
@@ -54,6 +57,7 @@ function identifyingData(pii: ProfilePii, lang: Lang): string[] {
 }
 
 export function erasureEmail(ctx: RequestEmailContext): EmailContent {
+  if (ctx.self) return erasureEmailSelf(ctx, identifyingData);
   const name = fullName(ctx.pii);
   const renewal = ctx.cycle > 1;
   if (ctx.lang === 'it') {
@@ -138,6 +142,7 @@ export function erasureEmail(ctx: RequestEmailContext): EmailContent {
 }
 
 export function accessEmail(ctx: RequestEmailContext): EmailContent {
+  if (ctx.self) return accessEmailSelf(ctx, identifyingData);
   const name = fullName(ctx.pii);
   if (ctx.lang === 'it') {
     return {
@@ -217,6 +222,7 @@ export function accessEmail(ctx: RequestEmailContext): EmailContent {
 }
 
 export function reminderEmail(ctx: RequestEmailContext & { reminderNumber: number }): EmailContent {
+  if (ctx.self) return reminderEmailSelf(ctx);
   const name = fullName(ctx.pii);
   if (ctx.kind === 'access') {
     const it = ctx.lang === 'it';
@@ -303,6 +309,7 @@ export function reminderEmail(ctx: RequestEmailContext & { reminderNumber: numbe
 }
 
 export function idProvidedEmail(ctx: RequestEmailContext, note?: string): EmailContent {
+  if (ctx.self) return idProvidedEmailSelf(ctx, note);
   const name = fullName(ctx.pii);
   if (ctx.lang === 'it') {
     return {
@@ -410,6 +417,8 @@ export interface ComplaintContext {
   reminders: { on: string }[];
   operatorName: string;
   generatedOn: string;
+  /** The requests were sent by the data subject from their own mailbox: no mandate, no delega to attach. */
+  self?: boolean;
 }
 
 /** Draft of the "reclamo" to the Italian DPA (art. 77 GDPR; artt. 140-bis ss. Codice privacy). */
@@ -425,7 +434,7 @@ export function complaintText(ctx: ComplaintContext): string {
     `Il/La sottoscritto/a ${name}, ${ctx.pii.dateOfBirth ? `nato/a il ${ctx.pii.dateOfBirth}, ` : ''}${ctx.pii.fiscalCode ? `C.F. ${ctx.pii.fiscalCode}, ` : ''}${ctx.pii.addresses[0] ? `residente in ${formatAddress(ctx.pii.addresses[0])}, ` : ''}indirizzo email ${ctx.pii.emails[0] ?? '-'},`,
     '',
     'ESPONE E PREMETTE CHE',
-    `- in data ${ctx.sentOn} il/la reclamante ha formalmente esercitato, per il tramite di ${ctx.operatorName} munito di regolare delega scritta allegata all'istanza, i diritti di revoca del consenso, cancellazione dei dati personali ("diritto all'oblio") e opposizione al trattamento (artt. 7, 17, 19 e 21 GDPR) nei confronti del titolare del trattamento ${ctx.brokerName}${ctx.brokerWebsite ? ` (sito web: ${ctx.brokerWebsite})` : ''} (riferimento pratica ${ctx.shortRef});`,
+    `- in data ${ctx.sentOn} il/la reclamante ha formalmente esercitato ${ctx.self ? 'personalmente' : `per il tramite di ${ctx.operatorName} munito di regolare delega scritta allegata all'istanza,`} i diritti di revoca del consenso, cancellazione dei dati personali ("diritto all'oblio") e opposizione al trattamento (artt. 7, 17, 19 e 21 GDPR) nei confronti del titolare del trattamento ${ctx.brokerName}${ctx.brokerWebsite ? ` (sito web: ${ctx.brokerWebsite})` : ''} (riferimento pratica ${ctx.shortRef});`,
     `- il termine perentorio di un (1) mese previsto dall'art. 12, par. 3 GDPR per fornire riscontro è scaduto in data ${ctx.dueOn}${ctx.reminders.length ? `; sono stati inviati ${ctx.reminders.length} solleciti (${ctx.reminders.map((r) => r.on).join(', ')})` : ''};`,
     "- alla data odierna il titolare del trattamento non ha fornito alcun riscontro idoneo, non ha comunicato motivi di proroga o di rifiuto ai sensi dell'art. 12, par. 3 e 4 GDPR e non ha dimostrato di aver provveduto alla cancellazione dei dati e alla notifica ai destinatari.",
     '',
@@ -439,10 +448,12 @@ export function complaintText(ctx: ComplaintContext): string {
     "3. adottare ogni ulteriore provvedimento correttivo e sanzionatorio ritenuto opportuno ai sensi degli artt. 58, par. 2, lett. i) e 83, par. 5, lett. b) GDPR.",
     '',
     'SI ALLEGANO:',
-    "1. copia del documento di identità del reclamante in corso di validità;",
-    "2. atto di delega sottoscritto dall'interessato;",
-    '3. copia integrale della richiesta inviata e dei successivi solleciti (completi di data, intestazioni e codice di riferimento);',
-    '4. eventuali comunicazioni o riscontri parziali ricevuti dal titolare.',
+    ...[
+      'copia del documento di identità del reclamante in corso di validità;',
+      ...(ctx.self ? [] : ["atto di delega sottoscritto dall'interessato;"]),
+      'copia integrale della richiesta inviata e dei successivi solleciti (completi di data, intestazioni e codice di riferimento);',
+      'eventuali comunicazioni o riscontri parziali ricevuti dal titolare.',
+    ].map((item, i) => `${i + 1}. ${item}`),
     '',
     `Luogo e data: ____________________, ${ctx.generatedOn}`,
     `Firma: ____________________ (${name})`,

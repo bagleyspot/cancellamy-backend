@@ -113,7 +113,8 @@ describe('send from the user mailbox (SMTP)', () => {
     expect(raw).toMatch(/^Reply-To: r-[a-z0-9]+@in\.example\.org/mi);
     expect(raw).toMatch(/^X-Cancellamy-Ref: CNC-/m);
     expect(raw).toMatch(/Message-ID: <[^@]+@example\.it>/i);
-    expect(raw).toContain('delega.pdf');
+    expect(raw).not.toContain('delega.pdf'); // sent as the data subject: no delega attached
+    expect(raw.replace(/=\r?\n/g, '')).toContain('am the data subject'); // quoted-printable soft breaks removed; full text checked in own-mailbox.e2e-spec
     expect(mine[0]!.from).toBe('mario@example.it');
 
     const d = await detail(ctx, s, acme.id);

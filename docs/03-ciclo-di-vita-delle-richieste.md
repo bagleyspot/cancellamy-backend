@@ -109,7 +109,10 @@ secondo una politica di equità (**Fair-Share**) e protezione delle quote del fo
 - **Mittente:** `Cancellamy per conto di Nome Cognome <indirizzo MAIL_FROM>`.
 - **Rispondi a:** un indirizzo per profilo, `r-<token>@INBOUND_DOMAIN`, che permette di collegare le risposte.
 - **Oggetto:** `Richiesta di cancellazione e opposizione (artt. 17 e 21 GDPR) - Nome Cognome [CNC-XXXXXXXX]`.
-- **Allegato:** `delega.pdf` firmata.
+- **Allegato:** `delega.pdf` firmata. Se il profilo invia dalla propria casella (SMTP, Gmail, o `MAIL_MODE=mailbox`)
+  la delega non serve e non c'è nessun allegato: i testi sono in prima persona («Io sottoscritto/a … esercito
+  personalmente i diritti…», senza mandato né operatore) e lo stesso vale per solleciti, invio del documento e bozza di
+  reclamo. Un profilo di questo tipo nasce già `ready`.
 - **Testo:** italiano se il broker è italiano (sede IT o dominio `.it`), inglese altrimenti. Include artt. 17, 21 e 19,
   la richiesta di riscontro entro un mese, i soli dati identificativi forniti dall'utente, l'invito a non chiedere
   documenti se non indispensabili (minimizzazione) e l'avviso del possibile reclamo al Garante.

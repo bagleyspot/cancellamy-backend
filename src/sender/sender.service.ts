@@ -8,6 +8,7 @@ import { CryptoService } from '../common/crypto.service';
 import { badRequest, CodedException } from '../common/errors';
 import { MailError } from '../mail/mail.types';
 import { ProfileDataService } from '../profiles/profile-data.service';
+import { delegaRequired } from '../profiles/delega';
 import { GmailAuthError, GmailSenderService, GmailSettings } from './gmail-sender.service';
 import { CompleteGmailDto, SetSenderDto, SmtpInputDto } from './sender.dto';
 import { SmtpConfigError, SmtpSenderService, SmtpSettings } from './smtp-sender.service';
@@ -73,6 +74,7 @@ export class SenderService {
     await this.verify(profile, settings);
     await this.dropGmail(profile);
     profile.senderMode = 'smtp';
+    this.readyWithoutDelega(profile);
     profile.smtpEnc = this.crypto.encryptJson(settings);
     profile.smtpVerifiedAt = this.clock.now();
     profile.senderError = undefined;
@@ -122,6 +124,7 @@ export class SenderService {
     }
     await this.dropGmail(profile);
     profile.senderMode = 'gmail';
+    this.readyWithoutDelega(profile);
     profile.gmailEnc = this.crypto.encryptJson(result.settings);
     profile.smtpEnc = undefined;
     profile.smtpVerifiedAt = this.clock.now();
@@ -138,7 +141,19 @@ export class SenderService {
     profile.gmailEnc = undefined;
   }
 
+  /** Writing from their own mailbox the user is the data subject: no delega to sign, so a profile waiting for it is ready. */
+  private readyWithoutDelega(profile: ProfileDoc): void {
+    if (profile.status === 'draft') profile.status = 'ready';
+  }
+
   private async clear(profile: ProfileDoc): Promise<SenderDtoShape> {
+    // Back to Cancellamy writing on the user's behalf: that needs the signed delega.
+    if (delegaRequired({ senderMode: 'cancellamy' }, this.config.mailMode) && !(await this.data.activeAuthorization(profile._id))) {
+      if (profile.status === 'active' || profile.status === 'paused') {
+        throw badRequest('Sign the delega before sending from Cancellamy', 'AUTHORIZATION_REQUIRED');
+      }
+      profile.status = 'draft';
+    }
     await this.dropGmail(profile);
     profile.senderMode = 'cancellamy';
     profile.smtpEnc = undefined;

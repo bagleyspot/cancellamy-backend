@@ -6,12 +6,17 @@ import { ALL_STATUSES, GROUP_STATUSES } from './status';
 
 const trim = ({ value }: { value: unknown }) => (typeof value === 'string' ? value.trim() : value);
 
+/** Geographic area of the broker, seen from Italy: covers Italy (IT, EU/EEA, worldwide), other markets only, or not classified. */
+export const REQUEST_AREAS = ['italy', 'other', 'unknown'] as const;
+export type RequestArea = (typeof REQUEST_AREAS)[number];
+
 export class ListRequestsQuery extends PaginationQuery {
   @IsOptional() @IsIn(['erasure', 'access']) kind?: 'erasure' | 'access';
   @IsOptional() @IsMongoId() profileId?: string;
   @IsOptional() @IsIn(Object.keys(GROUP_STATUSES)) group?: 'in_progress' | 'action_required' | 'completed' | 'not_removable';
   @IsOptional() @IsIn(ALL_STATUSES) status?: string;
   @IsOptional() @IsIn(BROKER_CATEGORIES as readonly string[]) category?: string;
+  @IsOptional() @IsIn(REQUEST_AREAS as readonly string[]) area?: RequestArea;
   @IsOptional() @IsString() @MaxLength(100) q?: string;
 }
 

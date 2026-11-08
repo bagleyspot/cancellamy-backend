@@ -23,6 +23,7 @@ import { RequestCounts, addToCounts, emptyCounts } from '../requests/status';
 import { AuthUser } from '../auth/auth.types';
 import { IdentityService } from '../identity/identity.service';
 import { GmailSettings, revokeGoogleToken } from '../sender/gmail-sender.service';
+import { delegaRequired } from './delega';
 import { ProfileDataService } from './profile-data.service';
 import { ProfileInputDto, UpdateProfileDto } from './profile.dto';
 import { ProfilePii, fullName } from './profile.types';
@@ -32,6 +33,8 @@ export interface ProfileDtoShape extends ProfilePii {
   status: string;
   identityVerified: boolean;
   senderMode: 'cancellamy' | 'smtp' | 'gmail';
+  /** False when the profile sends from its own mailbox: the user writes as the data subject and no delega is needed. */
+  authorizationRequired: boolean;
   authorization: { id: string; signedAt: string; signatureName: string; textVersion: string; revokedAt: string | null } | null;
   requestCounts: RequestCounts;
   createdAt: string;
@@ -101,7 +104,8 @@ export class ProfilesService {
     }
     const doc = await this.profiles.create({
       userId: new Types.ObjectId(user.id),
-      status: 'draft',
+      // Without a delega to sign (mailbox mode) the profile is ready as soon as it exists.
+      status: delegaRequired({ senderMode: 'cancellamy' }, this.config.mailMode) ? 'draft' : 'ready',
       pii: this.crypto.encryptJson(normalisePii(dto)),
       replyToken: randomToken(12).toLowerCase().replace(/[^a-z0-9]/g, 'x'),
     });
@@ -247,6 +251,7 @@ export class ProfilesService {
         status: d.status,
         identityVerified: this.identity.isVerified(d),
         senderMode: d.senderMode ?? 'cancellamy',
+        authorizationRequired: delegaRequired({ senderMode: d.senderMode ?? 'cancellamy' }, this.config.mailMode),
         authorization: auth ? this.toAuthorizationDto(auth) : null,
         requestCounts: counts.get(String(d._id)) ?? emptyCounts(),
         createdAt: d.createdAt.toISOString(),
