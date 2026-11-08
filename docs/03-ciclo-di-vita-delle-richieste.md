@@ -141,6 +141,28 @@ I broker rispondono a `r-<token>@INBOUND_DOMAIN`. Il fornitore email avvisa l'AP
 
 La classificazione è **euristica**: l'utente può sempre correggere l'esito dalla pagina della richiesta.
 
+### Risposte registrate a mano (`reply`)
+
+Con l'invio dalla propria casella (`MAIL_MODE=mailbox`, SMTP o Gmail) le risposte arrivano nella casella dell'utente e non
+passano dal webhook. Per riportarle nell'app c'è `npm run import:replies -- risposte.json [--apply]` (avviarlo con
+`SCHEDULER_ENABLED=false QUEUE_ENABLED=false`): senza `--apply` mostra solo cosa cambierebbe. Il file è una lista di
+`{ ref, outcome, at, from?, note?, manual?: { url?, steps?, email? } }`, dove `ref` è il codice `CNC-…`, `outcome` è uno
+degli esiti del registry (vedi [4 · Registry](./04-registry.md#comportamento-osservato-observed)) e `note` una frase con
+parole nostre (non si copia il testo del broker). Ogni risposta salva un messaggio in ingresso, una voce nella cronologia
+e il campo `reply` della richiesta (visibile nell'elenco e nel dettaglio), e muove lo stato così:
+
+| Esito | Effetto sullo stato |
+|---|---|
+| `no_data_held`, `completed` | `completed`; verifica tra 90 giorni |
+| `refused` | `refused` |
+| `acknowledged`, `acknowledged_will_delete` | `replied` (da `sent`) |
+| `needs_portal` | `action_required` (`manual_form`), con le istruzioni `manual` se indicate |
+| `needs_identifier`, `needs_extra_info` | `action_required` (`more_info`) |
+| `bounce_no_mailbox`, `bounce_blocked` | `action_required` (`manual_steps`) |
+| `out_of_office`, `no_reply` | nessun cambio |
+
+Una richiesta già chiusa (`completed`, `refused`, `cancelled`) non viene riaperta: aggiorna solo il campo `reply`.
+
 ## Scadenze e solleciti
 
 - La scadenza è di **30 giorni** dall'invio (`RESPONSE_DEADLINE_DAYS`), come l'art. 12.3 GDPR.

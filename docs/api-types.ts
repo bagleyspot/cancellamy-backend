@@ -309,6 +309,13 @@ export type RequestKind = 'erasure' | 'access'; // erasure + objection (art. 17,
 export type ActionReason = 'id_required' | 'manual_form' | 'manual_steps' | 'more_info' | 'reply_review';
 export type ReplyLabel = 'completed' | 'refused' | 'id_required' | 'more_info' | 'auto_reply' | 'data_provided' | 'unknown';
 
+/** The broker's answer to this request, when one was recorded. */
+export interface RequestReplyDto {
+  outcome: ObservationOutcome;
+  date: string; // ISO timestamp of the answer
+  note: string | null;
+}
+
 export interface RequestListItem {
   kind: RequestKind;
   id: string;
@@ -319,6 +326,7 @@ export interface RequestListItem {
   status: RequestStatus;
   group: RequestGroup;
   actionReason: ActionReason | null;
+  reply: RequestReplyDto | null; // how the broker answered, null while nothing was recorded
   cycle: number; // 1 = first request, >1 = periodic renewal
   custom: boolean;
   dryRun: boolean; // true when the email was only recorded, never really sent

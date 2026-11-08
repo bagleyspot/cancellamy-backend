@@ -14,6 +14,7 @@
     "test": "jest --config jest.config.js",
     "test:e2e": "jest --config test/jest-e2e.config.js --runInBand",
     "verify:brokers": "nest build && node dist/brokers/verify-registry.cli.js",
+    "import:replies": "nest build && node dist/requests/import-replies.cli.js",
     "openapi": "nest build && node dist/openapi.js",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "check:licenses": "license-checker-rseidelsohn --production --excludePackages \"cancellamy-backend@0.1.0\" --onlyAllow \"MIT;MIT-0;ISC;Apache-2.0;BSD-2-Clause;BSD-3-Clause;0BSD;Unlicense;Python-2.0;PSF-2.0;(MIT AND Zlib);MIT*;BlueOak-1.0.0;CC0-1.0\" --summary"
