@@ -67,6 +67,7 @@ export class BrokersService {
         idRequested: e.idRequested,
         streams: e.streams,
         lastVerified: e.lastVerified,
+        observed: e.observed,
       };
       const guarded: Record<string, unknown> = {
         verificationStatus: e.verificationStatus,

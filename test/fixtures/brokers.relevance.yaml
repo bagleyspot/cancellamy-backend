@@ -12,6 +12,8 @@ entries:
     provenance:
       - { stream: G, ref: 'https://www.italiano-verificato.example/privacy', license: own-research, verified_on_official_site: true }
     stream_origin: [G]
+    observed:
+      - {date: '2026-11-05', outcome: acknowledged, reachable: true, channel: privacy@italiano-verificato.example, note: Receipt only}
   - id: it-auto
     name: Italiano Automatico SRL
     website: https://www.italiano-automatico.example

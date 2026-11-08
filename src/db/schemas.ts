@@ -106,6 +106,18 @@ export class BrokerChannel {
 }
 const BrokerChannelModel = SchemaFactory.createForClass(BrokerChannel);
 
+/** What was seen when a broker was actually contacted (registry `observed`): its reply, whether it is reachable, what it asks for. */
+@Schema({ _id: false })
+export class BrokerObservation {
+  @Prop({ required: true }) date!: string; // YYYY-MM-DD
+  @Prop({ required: true }) outcome!: string;
+  @Prop({ required: true }) reachable!: boolean;
+  @Prop() channel?: string; // the contact the observation refers to (a channel value)
+  @Prop({ type: [String], default: [] }) requires!: string[];
+  @Prop() note?: string;
+}
+const BrokerObservationModel = SchemaFactory.createForClass(BrokerObservation);
+
 @Schema({ timestamps: true, collection: 'brokers' })
 export class Broker {
   @Prop({ required: true, unique: true }) slug!: string;
@@ -129,6 +141,8 @@ export class Broker {
   /** Fields edited by an admin: the registry reseed never overwrites them. */
   @Prop({ type: [String], default: [] }) adminEdited!: string[];
   @Prop({ type: [String], default: [] }) streams!: string[];
+  /** Observed behaviour, oldest first. Registry-owned: reseeded from the file, not editable from the admin area. */
+  @Prop({ type: [BrokerObservationModel], default: [] }) observed!: BrokerObservation[];
 }
 export type BrokerDoc = HydratedDocument<Broker>;
 export const BrokerModel = SchemaFactory.createForClass(Broker);
