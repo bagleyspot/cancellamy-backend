@@ -129,7 +129,7 @@ Endpoints of a disabled feature answer `404` with `code: FEATURE_DISABLED`.
 |---|---|---|
 | GET | /profiles/:id/sender | → SenderDto |
 | PUT | /profiles/:id/sender | SetSenderRequest → SenderDto. With `mode: 'smtp'` the connection is tested first; 400 `SMTP_CONNECTION_FAILED` (message explains) or `SMTP_HOST_NOT_ALLOWED` (private/loopback hosts and ports other than 25/465/587/2525 are refused); `fromAddress` must be one of the profile emails |
-| POST | /profiles/:id/sender/test | SmtpSettingsInput (optional; default = saved) → `{ ok: true }` or the same 400 errors. Connection test only, nothing is sent |
+| POST | /profiles/:id/sender/test | `{ smtp?: SmtpSettingsInput }` (optional; default = the saved settings) → `{ ok: true }` or the same 400 errors. Connection test only, nothing is sent |
 | DELETE | /profiles/:id/sender | → SenderDto (mode back to `cancellamy`; a connected Google grant is revoked at Google) |
 | POST | /profiles/:id/sender/gmail/start | → GmailStartResponse. Only when `features.senderGmail`; otherwise 404 `FEATURE_DISABLED`. The app sends the browser to `url` (Google consent, scope `gmail.send` only) |
 | POST | /sender/gmail/complete | CompleteGmailRequest → CompleteGmailResponse. Called by the route `/app/collega-google` after Google redirects back with `code` and `state`. 400 `GMAIL_AUTH_FAILED` (bad, foreign or expired state, permission refused, Google rejected the code) or `GMAIL_ADDRESS_NOT_IN_PROFILE` (the Google account must be one of the profile emails; the grant is revoked) |
