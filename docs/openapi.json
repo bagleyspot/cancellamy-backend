@@ -1036,6 +1036,19 @@
             }
           },
           {
+            "name": "area",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "italy",
+                "other",
+                "unknown"
+              ]
+            }
+          },
+          {
             "name": "q",
             "required": false,
             "in": "query",

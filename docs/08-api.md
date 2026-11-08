@@ -105,7 +105,7 @@ utente** (non si distingue), `413` file oltre 5 MB, `503` fornitore non raggiung
 
 | Metodo | Percorso | Note |
 |---|---|---|
-| GET | `/requests` | Filtri: `profileId`, `group`, `status`, `category`, `q`, `page`, `limit` |
+| GET | `/requests` | Filtri: `profileId`, `group`, `status`, `category`, `area` (`italy`, `other`, `unknown`: area geografica del broker vista dall'Italia), `q`, `page`, `limit` |
 | GET | `/requests/summary` | Contatori, copertura, andamento, attività recente |
 | GET | `/requests/:id` | Dettaglio con cronologia, messaggi, istruzioni manuali e flag di azione |
 | POST | `/requests/custom` | Richiesta personalizzata |
